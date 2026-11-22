@@ -89,10 +89,13 @@ jobs:
         with:
           enablement: true
 
-      - name: 🏗️ Bygg statisk Next.js eksport (uten API-nøkler)
+      - name: 🏗️ Bygg statisk Next.js eksport
         env:
           GITHUB_PAGES: 'true'
           NEXT_PUBLIC_BASE_PATH: '/matplanpluss'
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           rm -rf src/app/api
           npm run build
