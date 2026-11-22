@@ -218,9 +218,14 @@ export function loadOffersFromStoreJson(page: FlyerPageAsset): RawPageItemCandid
       storeOffersCache.set(filePath, data);
     }
 
-    const pageEntry = data.pages?.find((p) => p.pageNumber === page.pageNumber);
-    if (pageEntry && Array.isArray(pageEntry.items)) {
-      return pageEntry.items;
+    if (data && Array.isArray(data.pages)) {
+      const pageEntry = data.pages.find((p) => p.pageNumber === page.pageNumber);
+      if (pageEntry && Array.isArray(pageEntry.items)) {
+        return pageEntry.items;
+      }
+      // Hvis offers.json finnes og inneholder sider, betyr det at denne butikken er skannet.
+      // Hvis denne spesifikke siden ikke har en egen entry, betyr det 0 veganske tilbud på denne siden (returner tom array istedenfor null).
+      return [];
     }
   } catch (err) {
     console.warn(`[FlyerScanner] Kunne ikke lese ${filePath}:`, err);
