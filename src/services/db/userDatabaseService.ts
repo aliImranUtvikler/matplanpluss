@@ -499,8 +499,8 @@ function notifyHouseholdSync(updated: UserDashboardData): void {
  */
 export function generateHouseholdInviteCode(householdName?: string): string {
   const codeSuffix = Math.floor(1000 + Math.random() * 9000);
-  if (householdName && householdName.toLowerCase().includes('luna')) {
-    return 'HUS-ALILUNA';
+  if (householdName && (householdName.toLowerCase().includes('luna') || householdName.toLowerCase().includes('alex'))) {
+    return 'HUS-ALEXLUNA';
   }
   return `HUS-${codeSuffix}`;
 }
@@ -568,11 +568,11 @@ export async function linkAccountsToHousehold(
   // Hvis partnerInput er en kjent demo-spesifikk hurtigbinding (Alex & Luna)
   const isAlexLunaPair =
     (currentCleanEmail.includes('alex') || currentCleanEmail.includes('styrke')) &&
-    (partnerClean.includes('luna') || partnerClean.includes('grunerlokka') || partnerClean === 'luna' || partnerClean === 'hus-alexluna');
+    (partnerClean.includes('luna') || partnerClean.includes('grunerlokka') || partnerClean === 'luna' || partnerClean === 'hus-alexluna' || partnerClean === 'hus-aliluna');
 
-  if (isAlexLunaPair || partnerClean === 'hus-alexluna') {
+  if (isAlexLunaPair || partnerClean === 'hus-alexluna' || partnerClean === 'hus-aliluna') {
     householdId = 'household_alex_luna';
-    inviteCode = 'HUS-ALILUNA';
+    inviteCode = 'HUS-ALEXLUNA';
     resolvedName = 'Alex & Luna (Felles Husstand)';
   } else if (!householdId) {
     householdId = `household_${Math.random().toString(36).substring(2, 9)}_${Date.now().toString(36)}`;
@@ -837,7 +837,7 @@ export async function loadUserDashboard(
     return localData;
   }
 
-  // 4. Ingen data funnet: Initialexser et nytt dashboard
+  // 4. Ingen data funnet: Initialiser et nytt dashboard
   const freshData = createDefaultUserDashboard(userId, userEmail || '', '', defaultInventory);
 
   if (typeof window !== 'undefined' && window.localStorage) {

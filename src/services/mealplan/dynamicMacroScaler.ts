@@ -91,7 +91,13 @@ const INGREDIENT_MACROS: Record<
   vårløk: { protein: 2, kcal: 32, carbs: 5, fat: 0.2 },
   'fersk koriander': { protein: 2, kcal: 23, carbs: 2, fat: 0.5 },
   lime: { protein: 0.7, kcal: 30, carbs: 8, fat: 0.2 },
-  avokado: { protein: 2, kcal: 160, carbs: 9, fat: 15 }
+  avokado: { protein: 2, kcal: 160, carbs: 9, fat: 15 },
+  gulrot: { protein: 0.9, kcal: 36, carbs: 6.5, fat: 0.2 },
+  kålrot: { protein: 1.1, kcal: 35, carbs: 6.4, fat: 0.2 },
+  rotmiks: { protein: 1.2, kcal: 40, carbs: 7.5, fat: 0.2 },
+  purre: { protein: 1.5, kcal: 29, carbs: 4.5, fat: 0.3 },
+  løk: { protein: 1.1, kcal: 40, carbs: 8.0, fat: 0.1 },
+  'ferske urter': { protein: 2.5, kcal: 30, carbs: 3.5, fat: 0.5 }
 };
 
 /**
@@ -531,6 +537,211 @@ export const CHEF_CATALOG_RECIPES: Record<CuisineStyle, MealPlanDay[]> = {
 };
 
 /**
+ * 100% NØYTRALE OG TILBUDSBASERTE OPPSKRIFTER (Stats & Ukens Tilbud)
+ * Bygget uten etniske eller landsspesifikke temaer, og designet primært
+ * rundt råvarer som er på tilbud denne uken (Jasminris -50%, Poteter, Brokkoli, Rotmiks, Spinat, etc.).
+ */
+export const NEUTRAL_OFFER_RECIPES: MealPlanDay[] = [
+  {
+    dayNumber: 1,
+    dayName: 'Mandag',
+    title: 'Ukens Tilbudskupp: Stekt Jasminris med Tofu, Fersk Brokkoli & Sesam',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Jasminris', dryWeightGramsPerPerson: 80 },
+    proteinSources: ['Fast tofu (200g)', 'Næringsgjær (10g)', 'Sesamfrø (10g)'],
+    gutHealthHighlights: ['Dampet fersk brokkoli', 'Babyspinat', 'Norsk løk', 'Næringsgjær'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Ristede sesamfrø' },
+    macros: { proteinGramsPerPerson: 46, kcalPerPerson: 730, carbsGramsPerPerson: 84, fatGramsPerPerson: 18, plantCount: 8 },
+    ingredients: [
+      { name: 'Jasminris', amountGrams: 160, displayAmount: '160g tørrvekt (Toro boil-in-bag)', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Fast tofu', amountGrams: 400, displayAmount: '400g tofu i terninger', inStock: false, category: 'Kjøl/Tofu' },
+      { name: 'Brokkoli', amountGrams: 300, displayAmount: '300g ferske buketter', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Spinat', amountGrams: 120, displayAmount: '120g fersk babyspinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Løk', amountGrams: 100, displayAmount: '100g hakket løk', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Sesamfrø', amountGrams: 20, displayAmount: '20g sesamfrø', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Soyasaus / Tamari', amountGrams: 30, displayAmount: '2 ss soyasaus', inStock: true, category: 'Krydder/Sauser' },
+      { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g næringsgjær', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Kok Toro Jasminris i lettsaltet vann i 12 minutter.',
+      'Brun tofuterninger i tørr/lett oljet panne sammen med hakket løk til sprø og gyllen.',
+      'Damp ferske brokkolibuketter i 3 minutter til knasende møre.',
+      'Vend inn fersk babyspinat og soyasaus de siste 60 sekundene så spinaten faller lett sammen.',
+      'Anrett i skål med jasminris, topp med sprø tofu og grønnsaker, dryss over sesamfrø og næringsgjær.'
+    ],
+    prepTimeMinutes: 18
+  },
+  {
+    dayNumber: 2,
+    dayName: 'Tirsdag',
+    title: 'Høstgryte på Tilbud: Norske Poteter & Rotmiks med Hvite Bønner og Babyspinat',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Poteter', dryWeightGramsPerPerson: 75 },
+    proteinSources: ['Hvite bønner (150g)', 'Næringsgjær (15g)', 'Solsikkekjerner (15g)'],
+    gutHealthHighlights: ['Norsk rotmiks og beter', 'Norske poteter med skall', 'Babyspinat', 'Prebiotiske hvite bønner'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Solsikkekjerner' },
+    macros: { proteinGramsPerPerson: 46, kcalPerPerson: 735, carbsGramsPerPerson: 88, fatGramsPerPerson: 18, plantCount: 10 },
+    ingredients: [
+      { name: 'Poteter', amountGrams: 500, displayAmount: '500g norske poteter', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Rotmiks', amountGrams: 250, displayAmount: '250g rotmiks/gulrøtter', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Hvite bønner', amountGrams: 300, displayAmount: '300g kokte hvite bønner', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Hakkede tomater', amountGrams: 240, displayAmount: '240g tomater', inStock: false, category: 'Krydder/Sauser' },
+      { name: 'Spinat', amountGrams: 120, displayAmount: '120g fersk babyspinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Løk', amountGrams: 100, displayAmount: '100g hakket løk', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Solsikkekjerner', amountGrams: 20, displayAmount: '20g solsikkekjerner', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Næringsgjær', amountGrams: 25, displayAmount: '25g næringsgjær', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Kutt poteter og rotmiks i munnfullstore biter, kok i lettsaltet vann i 12 minutter.',
+      'Fres hakket løk i en vid gryte til gyllen og myk.',
+      'Tilsett hakkede tomater, hvite bønner og litt urter, og la småputre i 6 minutter.',
+      'Vend inn de møre potetene og fersk babyspinat rett før servering.',
+      'Topp med næringsgjær og ristede solsikkekjerner for fyldig umami og mettende næring.'
+    ],
+    prepTimeMinutes: 20
+  },
+  {
+    dayNumber: 3,
+    dayName: 'Onsdag',
+    title: 'Ukens Tilbudskupp: Varmende Kålrot-, Gulrot- & Linsegryte med Friske Urter',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Jasminris', dryWeightGramsPerPerson: 80 },
+    proteinSources: ['Røde linser (65g tørre)', 'Soya chunks (40g tørre)', 'Næringsgjær (10g)'],
+    gutHealthHighlights: ['Norsk kålrot', 'Norske gulrøtter', 'Prebiotiske røde linser', 'Ferske urter'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Solsikkekjerner' },
+    macros: { proteinGramsPerPerson: 47, kcalPerPerson: 745, carbsGramsPerPerson: 87, fatGramsPerPerson: 17, plantCount: 9 },
+    ingredients: [
+      { name: 'Jasminris', amountGrams: 160, displayAmount: '160g tørrvekt', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Røde linser (tørre)', amountGrams: 130, displayAmount: '130g tørre linser', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Soya chunks (tørre)', amountGrams: 80, displayAmount: '80g tørre chunks', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Kålrot', amountGrams: 250, displayAmount: '250g kålrot i terninger', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Gulrot', amountGrams: 200, displayAmount: '200g gulrøtter i skiver', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Løk', amountGrams: 100, displayAmount: '100g løk', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g', inStock: true, category: 'Krydder/Sauser' },
+      { name: 'Ferske urter', amountGrams: 20, displayAmount: '20g hakket persille', inStock: false, category: 'Frukt & Grønt' }
+    ],
+    steps: [
+      'Kok opp røde linser, kålrot, gulrot og løk i buljongvann, la småkoke i 15 minutter til mørt.',
+      'Rehydrer soya chunks i varmt vann i 5 minutter, klem ut overskuddsvann og brun i panne.',
+      'Kok Toro Jasminris etter anvisning på pakken.',
+      'Vend soya chunks inn i grønnsaks- og linsegryten og la samle seg i 2 minutter.',
+      'Server med ris, dryss over rikelig med næringsgjær og friske urter.'
+    ],
+    prepTimeMinutes: 22
+  },
+  {
+    dayNumber: 4,
+    dayName: 'Torsdag',
+    title: 'Kundeavis-Favoritt: Bakt Mandelpotet & Sprø Kikerter med Tomater, Purre og Tahini',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Poteter', dryWeightGramsPerPerson: 75 },
+    proteinSources: ['Kikerter (140g)', 'Fast tofu (120g)', 'Næringsgjær (10g)'],
+    gutHealthHighlights: ['Mandelpoteter med skall', 'Fersk purreløk', 'Solmodne tomater', 'Fiberrike kikerter'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Hvitløks-tahini' },
+    macros: { proteinGramsPerPerson: 46, kcalPerPerson: 750, carbsGramsPerPerson: 86, fatGramsPerPerson: 20, plantCount: 9 },
+    ingredients: [
+      { name: 'Poteter', amountGrams: 500, displayAmount: '500g mandelpoteter', inStock: false, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Kikerter', amountGrams: 280, displayAmount: '280g kokte kikerter', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Fast tofu', amountGrams: 240, displayAmount: '240g fast tofu', inStock: false, category: 'Kjøl/Tofu' },
+      { name: 'Hakkede tomater', amountGrams: 200, displayAmount: '200g tomater', inStock: false, category: 'Krydder/Sauser' },
+      { name: 'Purre', amountGrams: 120, displayAmount: '120g finsnittet purre', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Spinat', amountGrams: 100, displayAmount: '100g spinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Tahini', amountGrams: 30, displayAmount: '30g tahini', inStock: true, category: 'Krydder/Sauser' },
+      { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Del mandelpoteter i to og bak i ovn eller airfryer i 18 minutter til gylne og møre.',
+      'Brun terninger av tofu og kikerter i panne sammen med finsnittet purre i 7 minutter.',
+      'Pisk tahini med varmt vann, sitron og salt til en silkemyk dressing.',
+      'Vend inn spinat og tomater i pannen i 1 minutt til spinaten mykner.',
+      'Legg opp med bakte mandelpoteter, pannestekte kikerter og tofu, og ringle tahini over.'
+    ],
+    prepTimeMinutes: 25
+  },
+  {
+    dayNumber: 5,
+    dayName: 'Fredag',
+    title: 'Ukens Tilbudskupp: Jasminris Power Bowl med Dampet Brokkoli, Edamame & Avokado',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Jasminris', dryWeightGramsPerPerson: 80 },
+    proteinSources: ['Fast tofu (180g)', 'Edamamebønner (70g)', 'Næringsgjær (10g)'],
+    gutHealthHighlights: ['Fersk brokkoli', 'Moden avokado', 'Babyspinat', 'Prebiotisk edamame'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Avokado og sesamfrø' },
+    macros: { proteinGramsPerPerson: 47, kcalPerPerson: 760, carbsGramsPerPerson: 85, fatGramsPerPerson: 22, plantCount: 8 },
+    ingredients: [
+      { name: 'Jasminris', amountGrams: 160, displayAmount: '160g tørrvekt (Toro boil-in-bag)', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Fast tofu', amountGrams: 360, displayAmount: '360g fast tofu', inStock: false, category: 'Kjøl/Tofu' },
+      { name: 'Edamamebønner', amountGrams: 140, displayAmount: '140g edamamebønner', inStock: false, category: 'Kjøl/Tofu' },
+      { name: 'Brokkoli', amountGrams: 250, displayAmount: '250g ferske buketter', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Avokado', amountGrams: 100, displayAmount: '1 moden avokado', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Spinat', amountGrams: 100, displayAmount: '100g babyspinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Sesamfrø', amountGrams: 15, displayAmount: '15g sesamfrø', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Kok Jasminris i lettsaltet vann i 12 minutter.',
+      'Sprøstek tofu i terninger i panne med litt salt og pepper.',
+      'Damp fersk brokkoli og edamamebønner i 3-4 minutter så de holder seg spenstige og friske.',
+      'Skjær avokado i tynne skiver.',
+      'Bygg skålen med ris i bunnen, legg opp stekt tofu, dampede grønnsaker, frisk spinat og avokado.',
+      'Dryss med ristede sesamfrø og næringsgjær for fullverdig smak.'
+    ],
+    prepTimeMinutes: 20
+  },
+  {
+    dayNumber: 1,
+    dayName: 'Mandag',
+    title: '18-min Rask Nøytral: Jasminris med Stekt Tofu, Sprø Gulrot & Babyspinat',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Jasminris', dryWeightGramsPerPerson: 80 },
+    proteinSources: ['Fast tofu (200g)', 'Næringsgjær (10g)'],
+    gutHealthHighlights: ['Norske gulrøtter', 'Babyspinat', 'Hvitløk', 'Næringsgjær'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Sesamfrø' },
+    macros: { proteinGramsPerPerson: 46, kcalPerPerson: 730, carbsGramsPerPerson: 84, fatGramsPerPerson: 18, plantCount: 7 },
+    ingredients: [
+      { name: 'Jasminris', amountGrams: 160, displayAmount: '160g tørrvekt', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Fast tofu', amountGrams: 400, displayAmount: '400g tofu', inStock: false, category: 'Kjøl/Tofu' },
+      { name: 'Gulrot', amountGrams: 200, displayAmount: '200g strimlet gulrot', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Spinat', amountGrams: 120, displayAmount: '120g babyspinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Soyasaus / Tamari', amountGrams: 30, displayAmount: '2 ss soyasaus', inStock: true, category: 'Krydder/Sauser' },
+      { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Kok Jasminris i 12 minutter.',
+      'Stek terninger av tofu med soyasaus og strimlet gulrot i 6 minutter.',
+      'Vend inn fersk spinat de siste 60 sekundene.',
+      'Server rykende varmt toppet med næringsgjær.'
+    ],
+    prepTimeMinutes: 18
+  },
+  {
+    dayNumber: 2,
+    dayName: 'Tirsdag',
+    title: '15-min Hurtigpotet med Hvite Bønner, Solmodne Tomater og Urter',
+    cuisine: 'Nøytral (Stats & Tilbud)',
+    carbBase: { name: 'Poteter', dryWeightGramsPerPerson: 75 },
+    proteinSources: ['Hvite bønner (160g)', 'Næringsgjær (12g)'],
+    gutHealthHighlights: ['Poteter', 'Hvite bønner', 'Tomatantioksidanter', 'Spinat'],
+    allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Solsikkekjerner' },
+    macros: { proteinGramsPerPerson: 45, kcalPerPerson: 720, carbsGramsPerPerson: 86, fatGramsPerPerson: 16, plantCount: 7 },
+    ingredients: [
+      { name: 'Poteter', amountGrams: 500, displayAmount: '500g kokefaste poteter', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Hvite bønner', amountGrams: 320, displayAmount: '320g kokte bønner', inStock: true, category: 'Tørrvarer/Belgvekster' },
+      { name: 'Hakkede tomater', amountGrams: 240, displayAmount: '240g tomater', inStock: false, category: 'Krydder/Sauser' },
+      { name: 'Spinat', amountGrams: 100, displayAmount: '100g spinat', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Løk', amountGrams: 80, displayAmount: '80g løk', inStock: false, category: 'Frukt & Grønt' },
+      { name: 'Næringsgjær', amountGrams: 24, displayAmount: '24g', inStock: true, category: 'Krydder/Sauser' }
+    ],
+    steps: [
+      'Skjær poteter i tynne skiver og damp/kok i 10 minutter.',
+      'Varm bønner, løk og tomater i panne i 4 minutter.',
+      'Vend inn potetskiver og spinat, dryss med næringsgjær og server.'
+    ],
+    prepTimeMinutes: 15
+  }
+];
+
+/**
  * Velger og tilpasser 5 dager ut fra brukerens Kokkens Modus-innstillinger og ukens kundeavistilbud.
  * 
  * - Hvis `enableCuisineFilter` er false (NØYTRAL / INGEN LANDFOKUS):
@@ -577,7 +788,10 @@ export function selectAndAdjustDaysForChefModes(
     }
   } else {
     // 🌍 NØYTRAL / STATS-BASERT MODUS (Ingen landbegrensning):
-    // Hele katalogen og alle dager er tilgjengelige for objektiv rangering
+    // 100% nøytrale, tilbuds- og statsbaserte retter prioriteres først!
+    candidatePool.push(...NEUTRAL_OFFER_RECIPES);
+
+    // Legg til andre dager som reserve-kandidater
     for (const cuisineList of Object.values(CHEF_CATALOG_RECIPES)) {
       for (const recipe of cuisineList) {
         if (!candidatePool.some(c => cleanSlug(c.title) === cleanSlug(recipe.title))) {
@@ -601,6 +815,12 @@ export function selectAndAdjustDaysForChefModes(
   const scoredCandidates = candidatePool.map((recipe) => {
     let score = 100; // Grunnscore
     const prepTime = recipe.prepTimeMinutes || 25;
+    const isNeutralRecipe = recipe.cuisine?.toLowerCase().includes('nøytral') || false;
+
+    // Hvis brukeren har Nøytral modus aktiv, gi preferanse til nøytrale retter uten landknytting
+    if (!isCuisineFilterActive && isNeutralRecipe) {
+      score += 60;
+    }
 
     // 1. TILBUDS-FOKUS: Nøyaktig matching mot ukens kundeaviser
     let matchingOffersCount = 0;
@@ -618,14 +838,14 @@ export function selectAndAdjustDaysForChefModes(
 
     if (chefModes.focusOffers) {
       // Massiv prioritering av oppskrifter bygget på ukens tilbud:
-      // +40 poeng per tilbudsvare
-      // + opptil 80 poeng for høy tilbudsdekning (andel råvarer på tilbud)
-      // + opptil 50 poeng for sum rabattkroner
-      score += matchingOffersCount * 40;
-      score += Math.round(offerCoverageRatio * 80);
-      score += Math.min(50, Math.round(totalOfferSavingsNok * 0.5));
+      // +50 poeng per tilbudsvare
+      // + opptil 120 poeng for høy tilbudsdekning (andel råvarer på tilbud)
+      // + opptil 60 poeng for sum rabattkroner
+      score += matchingOffersCount * 50;
+      score += Math.round(offerCoverageRatio * 120);
+      score += Math.min(60, Math.round(totalOfferSavingsNok * 0.5));
     } else {
-      score += matchingOffersCount * 8;
+      score += matchingOffersCount * 10;
     }
 
     // 2. TØM SKAPET FØRST (prioriter råvarer som allerede er på lager)
@@ -1085,5 +1305,81 @@ export function scaleMealPlanToMacroTargets(
     days: scaledDays,
     shoppingList: enrichedShoppingList,
     pantryItemsUsed: Array.from(pantrySet).sort()
+  };
+}
+
+/**
+ * Finner en alternativ oppskrift for en spesifikk dag uten at brukeren må velge land.
+ * Prioriterer 100% nøytrale og tilbudsbaserte oppskrifter hvis kokkens modus er nøytral/tilbudsfokusert.
+ */
+export function getAlternativeRecipeForDay(
+  currentTitle: string,
+  dayNumber: 1 | 2 | 3 | 4 | 5,
+  chefModes?: ChefModePreferences,
+  inventory: InventoryItem[] = [],
+  offers: NormalizedOffer[] = [],
+  usedTitles: string[] = []
+): MealPlanDay | null {
+  const isCuisineFilterActive = Boolean(
+    chefModes?.enableCuisineFilter &&
+    chefModes.selectedCuisines &&
+    chefModes.selectedCuisines.length > 0
+  );
+
+  const candidatePool: MealPlanDay[] = [];
+
+  if (isCuisineFilterActive && chefModes?.selectedCuisines) {
+    for (const c of chefModes.selectedCuisines) {
+      candidatePool.push(...(CHEF_CATALOG_RECIPES[c] || []));
+    }
+  } else {
+    // 🌍 NØYTRAL & TILBUD: Bruk de nøytrale rettene først!
+    candidatePool.push(...NEUTRAL_OFFER_RECIPES);
+    for (const list of Object.values(CHEF_CATALOG_RECIPES)) {
+      candidatePool.push(...list);
+    }
+  }
+
+  const currentSlug = cleanSlug(currentTitle);
+  const usedSlugs = new Set(usedTitles.map(cleanSlug));
+
+  // Filtrer bort nåværende oppskrift og de som allerede er brukt på andre dager
+  let available = candidatePool.filter(
+    (r) => cleanSlug(r.title) !== currentSlug && !usedSlugs.has(cleanSlug(r.title))
+  );
+
+  if (available.length === 0) {
+    // Fallback hvis alle er brukt
+    available = candidatePool.filter((r) => cleanSlug(r.title) !== currentSlug);
+  }
+
+  if (available.length === 0) return null;
+
+  // Ranger etter tilbud og stats
+  const scored = available.map((r) => {
+    let score = 100;
+    const isNeutral = r.cuisine?.toLowerCase().includes('nøytral');
+    if (!isCuisineFilterActive && isNeutral) score += 60;
+
+    let matchCount = 0;
+    for (const ing of r.ingredients) {
+      if (findMatchingOffersForIngredientName(ing.name, offers, 1).length > 0) {
+        matchCount++;
+      }
+    }
+    if (chefModes?.focusOffers) {
+      score += matchCount * 50;
+    }
+    return { r, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const best = scored[0].r;
+
+  const DAY_NAMES = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag'] as const;
+  return {
+    ...best,
+    dayNumber,
+    dayName: DAY_NAMES[dayNumber - 1]
   };
 }

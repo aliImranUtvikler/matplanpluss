@@ -26,7 +26,7 @@ export interface GoogleUserProfile {
   /** Språkkode (f.eks. 'no', 'en') */
   locale?: string;
   /** Autentiseringskilde */
-  provider: 'google_gsi' | 'google_demo';
+  provider: 'google_gsi' | 'google_demo' | 'google_email';
   /** Tidsstempel for siste innlogging (ISO 8601) */
   lastLoginAt: string;
   /** Valgfritt mat- eller kostholdsfokus tilknyttet profilen */
@@ -66,7 +66,7 @@ export interface GoogleGsiButtonConfig {
   size?: 'large' | 'medium' | 'small';
   text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin';
   shape?: 'rectangular' | 'pill' | 'circle' | 'square';
-  logo_alexgnment?: 'left' | 'center';
+  logo_alignment?: 'left' | 'center';
   width?: number | string;
   locale?: string;
 }
@@ -79,7 +79,7 @@ declare global {
     google?: {
       accounts?: {
         id?: {
-          initialexze: (config: {
+          initialize: (config: {
             client_id: string;
             callback: (response: { credential?: string; select_by?: string }) => void;
             auto_select?: boolean;
@@ -143,6 +143,51 @@ export const DEMO_GOOGLE_ACCOUNTS: GoogleUserProfile[] = [
     dietaryFocus: 'Studentøkonomi, 38–46g protein, 720 kcal, Blindern'
   }
 ];
+
+/**
+ * De tre eneste gyldige system-demo-ID-ene.
+ */
+export const DEMO_USER_IDS: ReadonlySet<string> = new Set([
+  'demo_styrke_majorstuen',
+  'demo_standard_grunerlokka',
+  'demo_student_blindern'
+]);
+
+/**
+ * Returnerer true KUN for de 3 offisielle demo-profilene (Alex, Luna, Familien Berg),
+ * og ALDRI for en brukers egen Gmail- eller e-post-konto (som f.eks. imran.jobb@gmail.com).
+ */
+export function isDemoAccount(user: GoogleUserProfile | null | undefined): boolean {
+  if (!user || !user.id) return false;
+  return DEMO_USER_IDS.has(user.id);
+}
+
+/**
+ * Formaterer en pen visnings-streng og fornavn fra en e-postadresse
+ * F.eks. "imran.jobb@gmail.com" -> name: "Imran Jobb", givenName: "Imran"
+ * F.eks. "ola_nordmann@online.no" -> name: "Ola Nordmann", givenName: "Ola"
+ */
+export function formatDisplayNameFromEmail(email: string): { name: string; givenName: string } {
+  if (!email) return { name: 'Innlogget Bruker', givenName: 'Bruker' };
+  const localPart = email.split('@')[0] || '';
+  const tokens = localPart
+    .replace(/[._+\-]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    return { name: 'Innlogget Bruker', givenName: 'Bruker' };
+  }
+
+  const titleCasedTokens = tokens.map((token) => {
+    return token.charAt(0).toUpperCase() + token.slice(1).toLowerCase();
+  });
+
+  const fullName = titleCasedTokens.join(' ');
+  const givenName = titleCasedTokens[0];
+  return { name: fullName, givenName };
+}
 
 // In-memory tilstand
 let activeInMemorySession: AuthSession | null = null;
@@ -335,7 +380,7 @@ export function signInWithGoogleCredential(jwtCredential: string): AuthSession {
  */
 export function signInWithGoogleProfile(profileInput: {
   email: string;
-  name: string;
+  name?: string;
   pictureUrl?: string;
   dietaryFocus?: string;
 }): AuthSession {
@@ -352,33 +397,52 @@ export function signInWithGoogleProfile(profileInput: {
   let userId: string;
   let pictureUrl = profileInput.pictureUrl;
   let dietaryFocus = profileInput.dietaryFocus;
+  let cleanName: string;
+  let givenName: string;
+  let provider: 'google_gsi' | 'google_demo' | 'google_email';
 
   if (existingDemo) {
     userId = existingDemo.id;
     pictureUrl = pictureUrl || existingDemo.pictureUrl;
     dietaryFocus = dietaryFocus || existingDemo.dietaryFocus;
+    cleanName = existingDemo.name;
+    givenName = existingDemo.givenName || existingDemo.name.split(' ')[0];
+    provider = 'google_demo';
   } else {
-    // Generer stabil ID basert på e-post
-    const safeSlug = cleanEmail.replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-    userId = `google-demo-${safeSlug}`;
-  }
+    // Egen e-post (f.eks. imran.jobb@gmail.com) - ALDRI regnet som demo!
+    const safeSlug = cleanEmail
+      .replace(/[^a-z0-9]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+    userId = `user_${safeSlug}`;
+    provider = 'google_email';
 
-  const cleanName = profileInput.name.trim() || cleanEmail.split('@')[0];
-  const givenName = cleanName.split(' ')[0];
+    const rawInputName = profileInput.name?.trim();
+    if (rawInputName && rawInputName !== cleanEmail && rawInputName !== cleanEmail.split('@')[0]) {
+      cleanName = rawInputName;
+      givenName = cleanName.split(' ')[0] || cleanName;
+    } else {
+      const formatted = formatDisplayNameFromEmail(cleanEmail);
+      cleanName = formatted.name;
+      givenName = formatted.givenName;
+    }
+  }
 
   const user: GoogleUserProfile = {
     id: userId,
     email: cleanEmail,
     name: cleanName,
     givenName,
-    pictureUrl: pictureUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`,
+    pictureUrl:
+      pictureUrl ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`,
     locale: 'nb',
-    provider: 'google_demo',
+    provider,
     lastLoginAt: new Date().toISOString(),
     dietaryFocus
   };
 
-  // Demo-sesjon settes til 30 dagers levetid
+  // Sesjon settes til 30 dagers levetid
   const session: AuthSession = {
     user,
     expiresAt: Date.now() + 30 * 24 * 3600 * 1000
@@ -489,7 +553,7 @@ export interface InitGoogleIdentityOptions {
 }
 
 /**
- * Initialexserer Google Identity Services (GSI) med callback for mottak av JWT.
+ * Initialiserer Google Identity Services (GSI) med callback for mottak av JWT.
  */
 export async function initGoogleIdentityServices(
   options: InitGoogleIdentityOptions
@@ -505,7 +569,7 @@ export async function initGoogleIdentityServices(
   }
 
   try {
-    window.google.accounts.id.initialexze({
+    window.google.accounts.id.initialize({
       client_id: clientId,
       callback: (response) => {
         if (response?.credential) {
@@ -558,7 +622,7 @@ export function renderGoogleSignInButton(
     size: 'large',
     text: 'signin_with',
     shape: 'pill',
-    logo_alexgnment: 'left',
+    logo_alignment: 'left',
     locale: 'nb',
     ...config
   };

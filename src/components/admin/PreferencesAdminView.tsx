@@ -99,7 +99,7 @@ export const CUISINE_OPTIONS: Array<{
 }> = [
   { id: 'ASIATISK', label: 'Asiatisk', subtext: 'Koreansk, Japansk, Thai & Ramen', flagEmoji: '🥢' },
   { id: 'INDISK', label: 'Indisk & Sør-Asiatisk', subtext: 'Dal, Tikka Masala, Curry & Basmati', flagEmoji: '🍛' },
-  { id: 'MIDDELHAVS', label: 'Middelhavs & Italexensk', subtext: 'Kikertpasta, Soltørket Tomat & Urter', flagEmoji: '🍝' },
+  { id: 'MIDDELHAVS', label: 'Middelhavs & Italiensk', subtext: 'Kikertpasta, Soltørket Tomat & Urter', flagEmoji: '🍝' },
   { id: 'MIDTOSTEN', label: 'Midtøsten & Levantinsk', subtext: 'Shawarma, Kikerter & Hvitløks-Tahini', flagEmoji: '🧆' },
   { id: 'LATIN_AMERIKANSK', label: 'Latin-Amerikansk & Meksikansk', subtext: 'Svarte Bønner, Chipotle Tofu & Lime', flagEmoji: '🌮' }
 ];
@@ -163,6 +163,9 @@ export default function PreferencesAdminView({
   const [customPrompt, setCustomPrompt] = useState<string>('');
   const [aiGenerating, setAiGenerating] = useState<boolean>(false);
   const [aiMessage, setAiMessage] = useState<string | null>(null);
+
+  // Toggle for å skjule/vise test- og demoprofiler
+  const [showDemoProfiles, setShowDemoProfiles] = useState<boolean>(false);
 
   // Lagre oppdaterte makromål og adresse til brukerens dashboard
   const handleSavePreferences = async (
@@ -466,72 +469,77 @@ export default function PreferencesAdminView({
 
       {/* SEKSJON 1: GOOGLE SSO & KONTOVEKSLER */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
+          <div className="flex items-center gap-2.5 min-w-0">
             {currentUser.pictureUrl ? (
               <img
                 src={currentUser.pictureUrl}
                 alt={currentUser.name}
-                className="w-12 h-12 rounded-full border-2 border-emerald-500 object-cover shadow-md"
+                className="w-10 h-10 rounded-full border border-emerald-500 object-cover shrink-0"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-emerald-950 border-2 border-emerald-500 flex items-center justify-center font-bold text-emerald-400 text-lg">
-                {currentUser.name.charAt(0)}
+              <div className="w-10 h-10 rounded-full bg-emerald-950 border border-emerald-500 flex items-center justify-center font-bold text-emerald-400 text-sm shrink-0">
+                {currentUser.name.charAt(0).toUpperCase()}
               </div>
             )}
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-base text-white">{currentUser.name}</h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                  {currentUser.provider === 'google_gsi' ? 'Ekte Google SSO' : 'Aktiv Google-profil'}
-                </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-extrabold text-sm sm:text-base text-white truncate">{currentUser.name}</h3>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Aktiv innlogget profil" />
               </div>
-              <p className="text-xs text-slate-400">{currentUser.email}</p>
+              <p className="text-xs text-slate-400 truncate">{currentUser.email}</p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onLoggedOut}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-300 hover:text-white bg-rose-950/60 hover:bg-rose-900 border border-rose-800/60 transition-colors min-h-[44px]"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-800/40 transition-colors shrink-0 whitespace-nowrap min-h-[36px]"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Logg ut</span>
           </button>
         </div>
 
-        {/* 1-klikks bytte mellom demo Google-kontoer */}
-        <div>
-          <span className="text-xs font-semibold text-slate-300 block mb-2">
-            Bytt raskt til en annen Google-profil (Hver konto har sitt eget isolerte dashboard):
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {DEMO_GOOGLE_ACCOUNTS.map((acc) => {
-              const isCurrent = currentUser.id === acc.id || currentUser.email === acc.email;
-              return (
-                <button
-                  key={acc.id}
-                  type="button"
-                  onClick={() => handleSwitchAccount(acc.id)}
-                  className={`p-3 rounded-xl border text-left transition-all min-h-[48px] flex items-center gap-2.5 ${
-                    isCurrent
-                      ? 'bg-emerald-950/70 border-emerald-500 shadow-md shadow-emerald-500/20'
-                      : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
-                  }`}
-                >
-                  <img
-                    src={acc.pictureUrl}
-                    alt={acc.name}
-                    className="w-8 h-8 rounded-full border border-slate-700 object-cover shrink-0"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <span className="font-bold text-xs text-white block truncate">{acc.name}</span>
-                    <span className="text-[10px] text-slate-400 block truncate">{acc.dietaryFocus}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+        {/* Diskret test-/demoprofil veksler (skjult bak toggle på mobil) */}
+        <div className="pt-1">
+          <button
+            type="button"
+            onClick={() => setShowDemoProfiles(!showDemoProfiles)}
+            className="text-[11px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors py-1 cursor-pointer"
+          >
+            <span>{showDemoProfiles ? 'Skjul testprofiler ▴' : 'Bytt til en test-/demoprofil ▾'}</span>
+          </button>
+
+          {showDemoProfiles && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 animate-in fade-in duration-150">
+              {DEMO_GOOGLE_ACCOUNTS.map((acc) => {
+                const isCurrent = currentUser.id === acc.id || currentUser.email === acc.email;
+                return (
+                  <button
+                    key={acc.id}
+                    type="button"
+                    onClick={() => handleSwitchAccount(acc.id)}
+                    className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
+                      isCurrent
+                        ? 'bg-emerald-950/60 border-emerald-500'
+                        : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05]'
+                    }`}
+                  >
+                    <img
+                      src={acc.pictureUrl}
+                      alt={acc.name}
+                      className="w-7 h-7 rounded-full border border-slate-700 object-cover shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <span className="font-bold text-xs text-white block truncate">{acc.name}</span>
+                      <span className="text-[10px] text-slate-400 block truncate">{acc.dietaryFocus}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -777,7 +785,7 @@ export default function PreferencesAdminView({
                   )}
                 </div>
                 <span className="text-[11px] text-slate-400 block">
-                  Bygger oppskriftene utelukkende (eller så godt det lar seg gjøre) av råvarer som er på tilbud denne uken!
+                  Bygger oppskriftene utelukkende (eller så godt det lar seg gjøre) av råvarer som er på tilbud denne uken (f.eks. Jasminris -50%, Norske poteter, brokkoli, rotmiks, spinat)!
                 </span>
               </div>
             </div>
@@ -857,10 +865,10 @@ export default function PreferencesAdminView({
             <div>
               <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                 <span>🌍</span>
-                <span>Oppskriftsstil & Landfokus</span>
+                <span>Matstil: 100% Nøytral (Stats & Tilbud) vs Etniske Land</span>
               </h4>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                Velg om menyen skal settes sammen nøytralt basert på stats og tilbud, eller låses til bestemte land.
+                Standard er 100% Nøytral meny. Du trenger ALDRI å velge et land – oppskriftene komponeres rent ut fra dine makrostats og ukens tilbudsvarer.
               </p>
             </div>
 
@@ -885,7 +893,7 @@ export default function PreferencesAdminView({
                   <div className="flex items-center gap-2">
                     <span className="text-base">🌍</span>
                     <span className="text-xs sm:text-sm font-bold text-white">
-                      Nøytral (Stats & Tilbud)
+                      100% Nøytral (Stats & Tilbud)
                     </span>
                   </div>
                   <div className="shrink-0 text-emerald-400">
@@ -897,7 +905,7 @@ export default function PreferencesAdminView({
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-300 leading-relaxed">
-                  Ingen landfokus. Menyen velges 100 % nøytralt basert på makrostats, næring, skapstatus og ukens tilbud.
+                  Ingen land eller etniske temaer. Menyen velges 100 % nøytralt basert på makrostats, næring, skapstatus og ukens tilbud (Jasminris, poteter, brokkoli, rotmiks, bønner).
                 </p>
               </button>
 
@@ -921,7 +929,7 @@ export default function PreferencesAdminView({
                   <div className="flex items-center gap-2">
                     <span className="text-base">🌏</span>
                     <span className="text-xs sm:text-sm font-bold text-white">
-                      Spesifiser Verdensdel
+                      Spesifiser Verdensdel (Valgfritt)
                     </span>
                   </div>
                   <div className="shrink-0 text-emerald-400">
@@ -933,7 +941,7 @@ export default function PreferencesAdminView({
                   </div>
                 </div>
                 <p className="text-[10px] text-slate-300 leading-relaxed">
-                  Valgfritt. Begrens menyen til kun utvalgte kjøkken (f.eks. kun Asiatisk og Indisk).
+                  Valgfritt for spesielt interesserte. Begrens menyen til utvalgte internasjonale kjøkken (f.eks. kun Asiatisk eller Indisk).
                 </p>
               </button>
             </div>
@@ -1519,7 +1527,7 @@ export default function PreferencesAdminView({
             </span>
           </div>
           <p className="text-xs text-slate-400">
-            Gi kokken spesielle instrukser (f.eks. &quot;Lag mer asiatiske retter og prioriter fast tofu og kikerter&quot;):
+            Gi kokken spesielle instrukser (f.eks. &quot;Kun nøytrale retter basert på ukens tilbud, ekstra poteter og brokkoli, ingen etniske temaer&quot;):
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input

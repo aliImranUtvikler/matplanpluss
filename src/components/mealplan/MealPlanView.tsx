@@ -23,7 +23,8 @@ import {
 } from 'lucide-react';
 import {
   DEFAULT_USER_MACRO_TARGETS,
-  scaleMealPlanToMacroTargets
+  scaleMealPlanToMacroTargets,
+  getAlternativeRecipeForDay
 } from '../../services/mealplan/dynamicMacroScaler';
 import {
   findMatchingOffersForIngredientName,
@@ -43,21 +44,33 @@ import type { GoogleUserProfile } from '../../services/auth/googleSsoService';
 export function getShortDishName(title: string): string {
   const lower = title.toLowerCase();
 
-  // 1. Spesifikke mønstre
-  if (lower.includes('rotgrønnsak') || lower.includes('potetgryte')) return 'Rotgrønnsaksgryte';
-  if (lower.includes('gochujang') || (lower.includes('tofu') && lower.includes('bowl'))) return 'Koreansk Tofu Bowl';
-  if (lower.includes('dal') || lower.includes('lentil') || lower.includes('linse')) return 'Indisk Linse-Dal';
+  // 1. Nøytrale & Tilbudsbaserte retter (ingen tvungne land!)
+  if (lower.includes('jasminris') && lower.includes('tofu')) return 'Jasminris & Tofu';
+  if (lower.includes('jasminris') && lower.includes('brokkoli')) return 'Jasminris & Brokkoli';
+  if (lower.includes('høstgryte') || (lower.includes('potet') && lower.includes('rotmiks'))) return 'Potet & Rotmiks';
+  if (lower.includes('kålrot') || (lower.includes('gulrot') && lower.includes('linse'))) return 'Kålrot & Linsegryte';
+  if (lower.includes('mandelpotet') || (lower.includes('potet') && lower.includes('kikert'))) return 'Bakt Mandelpotet';
+  if (lower.includes('hurtigpotet') || (lower.includes('potet') && lower.includes('bønner'))) return 'Potet & Bønner';
+  if (lower.includes('jasminris') && lower.includes('gulrot')) return 'Jasminris & Gulrot';
+
+  // 2. Etniske stiler (KUN hvis eksplisitt nevnt i oppskriften)
+  if (lower.includes('gochujang') || lower.includes('koreansk')) return 'Koreansk Tofu';
+  if (lower.includes('dal') || (lower.includes('indisk') && lower.includes('linse'))) return 'Indisk Linse-Dal';
   if (lower.includes('fusilli') || lower.includes('pasta')) return 'Kremet Kikertpasta';
-  if (lower.includes('tempeh') || lower.includes('miso')) return 'Miso Tempeh Bowl';
-  if (lower.includes('tikka') || (lower.includes('kikerter') && lower.includes('spinat'))) return 'Kikerter Tikka';
+  if (lower.includes('tempeh') || lower.includes('miso')) return 'Miso Tempeh';
+  if (lower.includes('tikka')) return 'Kikerter Tikka';
   if (lower.includes('ramen')) return 'Kremet Ramen';
   if (lower.includes('burrito') || lower.includes('fajita')) return 'Burrito Bowl';
   if (lower.includes('shawarma')) return 'Shawarma Bowl';
   if (lower.includes('curry')) return 'Thai Curry';
 
-  // 2. Generell rensing for vilkårlige retter:
+  // 3. Generell rensing for vilkårlige retter:
   let cleaned = title
     .replace(/med\s+.*$/i, '')
+    .replace(/^kundeavis-(favoritt|kupp):\s*/i, '')
+    .replace(/^ukens tilbudskupp:\s*/i, '')
+    .replace(/^høstgryte på tilbud:\s*/i, '')
+    .replace(/^(15|18|20)-min\s+(rask\s+(nøytral\s+)?)?/i, '')
     .replace(/High-Protein\s+/gi, '')
     .replace(/Duftende\s+/gi, '')
     .replace(/Sprøstekt\s+TRS\s+/gi, '')
@@ -131,6 +144,67 @@ export default function MealPlanView({
   // Progressive Disclosure: Skjul/vis ingredienser og steg
   const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(false);
   const [isStepsOpen, setIsStepsOpen] = useState<boolean>(false);
+  const [swappingDay, setSwappingDay] = useState<boolean>(false);
+
+  // Bytt ut dagens rett med en alternativ nøytral/tilbudsbasert oppskrift uten å måtte velge land
+  const handleSwapCurrentDayRecipe = () => {
+    if (!mealPlanData?.days || !currentDay) return;
+    setSwappingDay(true);
+
+    let inventory: InventoryItem[] = [];
+    try {
+      const invSaved = localStorage.getItem('user_inventory');
+      if (invSaved) inventory = JSON.parse(invSaved);
+    } catch {}
+
+    const usedTitles = mealPlanData.days
+      .filter((d) => d.dayNumber !== currentDay.dayNumber)
+      .map((d) => d.title);
+
+    const alternative = getAlternativeRecipeForDay(
+      currentDay.title,
+      currentDay.dayNumber,
+      chefModes,
+      inventory,
+      weeklyOffersState,
+      usedTitles
+    );
+
+    if (!alternative) {
+      setSwappingDay(false);
+      return;
+    }
+
+    const updatedDays = mealPlanData.days.map((d) =>
+      d.dayNumber === currentDay.dayNumber ? alternative : d
+    );
+
+    const rescaleResponse = scaleMealPlanToMacroTargets(
+      updatedDays,
+      macroTargets,
+      inventory,
+      weeklyOffersState,
+      chefModes
+    );
+
+    setMealPlanData(rescaleResponse);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user_mealplan', JSON.stringify(rescaleResponse));
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
+      window.dispatchEvent(
+        new CustomEvent('matplan_plan_status', {
+          detail: {
+            state: 'done',
+            message: `✓ Oppskrift byttet til ${getShortDishName(alternative.title)} · kl. ${timeStr}`,
+            timestamp: timeStr
+          }
+        })
+      );
+    }
+    onPlanUpdated?.(rescaleResponse);
+    setTimeout(() => setSwappingDay(false), 350);
+  };
 
   // Hent og skaler ukeplan basert på brukerens makromål og kokkens modus
   const fetchMealPlan = async () => {
@@ -360,37 +434,54 @@ export default function MealPlanView({
         </div>
       )}
 
-      {/* 3. HERO-KORT FOR DAGENS MIDDAG (Soft & Borderless) */}
+      {/* 3. HERO-KORT FOR DAGENS MIDDAG (Soft & Borderless, flat på mobil) */}
       {loading ? (
         <div className="bg-white/[0.02] ring-1 ring-white/[0.05] rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center min-h-[260px]">
           <RefreshCw className="w-7 h-7 animate-spin text-emerald-500 mb-2" />
           <p className="text-xs">Laster meny...</p>
         </div>
       ) : currentDay ? (
-        <div className="bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/[0.06] shadow-xl shadow-black/25 rounded-3xl p-5 sm:p-7 space-y-4">
-          {/* Slank metadata-linje med prikker (ingen harde piller) */}
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 pb-3 border-b border-white/[0.06]">
-            <span className="font-semibold text-slate-200">{currentDay.cuisine}</span>
-            <span className="text-slate-600">·</span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
-              {currentDay.prepTimeMinutes} min
-            </span>
-            <span className="text-slate-600">·</span>
-            <span className="text-slate-300">
-              Karbobase:{' '}
-              <span className="text-amber-300 font-medium">
-                {currentDay.carbBase.name} ({currentDay.carbBase.dryWeightGramsPerPerson}g)
+        <div className="bg-transparent sm:bg-slate-900/50 backdrop-blur-none sm:backdrop-blur-sm ring-0 sm:ring-1 sm:ring-white/[0.06] shadow-none sm:shadow-xl sm:shadow-black/25 rounded-none sm:rounded-3xl p-0 sm:p-7 space-y-4">
+          {/* Slank metadata-linje med prikker og Bytt oppskrift-knapp */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/[0.06]">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+              <span className="font-semibold text-slate-200">
+                {currentDay.cuisine?.toLowerCase().includes('nøytral')
+                  ? '🌍 Nøytral (Stats & Tilbud)'
+                  : currentDay.cuisine}
               </span>
-            </span>
-            {currentDayOfferCount > 0 && (
-              <>
-                <span className="text-slate-600">·</span>
-                <span className="text-amber-400 font-medium">🏷️ {currentDayOfferCount} på tilbud</span>
-              </>
-            )}
-            <span className="text-slate-600">·</span>
-            <span className="text-emerald-400 font-medium">Peanøttfri</span>
+              <span className="text-slate-600">·</span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                {currentDay.prepTimeMinutes} min
+              </span>
+              <span className="text-slate-600">·</span>
+              <span className="text-slate-300">
+                Karbobase:{' '}
+                <span className="text-amber-300 font-medium">
+                  {currentDay.carbBase.name} ({currentDay.carbBase.dryWeightGramsPerPerson}g)
+                </span>
+              </span>
+              {currentDayOfferCount > 0 && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-amber-400 font-medium">🏷️ {currentDayOfferCount} på tilbud</span>
+                </>
+              )}
+              <span className="text-slate-600">·</span>
+              <span className="text-emerald-400 font-medium">Peanøttfri</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSwapCurrentDayRecipe}
+              disabled={swappingDay}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] text-xs font-semibold text-slate-300 hover:text-white ring-1 ring-white/[0.08] transition-all shrink-0 min-h-[36px]"
+              title="Bytt ut denne oppskriften med en annen nøytral tilbudsrett"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${swappingDay ? 'animate-spin' : ''}`} />
+              <span>Bytt oppskrift</span>
+            </button>
           </div>
 
           {/* Rettens fulle tittel */}
@@ -458,20 +549,20 @@ export default function MealPlanView({
             </div>
           )}
 
-          {/* Progressive disclosure: Myke trekkspill med ring-1 ring-white/[0.04] */}
+          {/* Progressive disclosure: Myke trekkspill (flat og luftig på mobil) */}
           <div className="space-y-2 pt-2 border-t border-white/[0.06]">
             {/* Trekkspill 1: Ingredienser */}
-            <div className="rounded-2xl overflow-hidden bg-white/[0.02] ring-1 ring-white/[0.04]">
+            <div className="rounded-none sm:rounded-2xl overflow-hidden bg-transparent sm:bg-white/[0.02] ring-0 sm:ring-1 sm:ring-white/[0.04]">
               <button
                 type="button"
                 onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
-                className="w-full p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors min-h-[44px]"
+                className="w-full py-3 sm:p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors border-b border-white/[0.06]"
               >
                 <div className="flex items-center gap-2">
-                  <ChefHat className="w-4 h-4 text-emerald-400" />
-                  <span>Ingredienser ({currentDay.ingredients.length} råvarer)</span>
+                  <ChefHat className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Ingredienser ({currentDay.ingredients.length})</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400 font-normal">
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-normal shrink-0">
                   <span>
                     {currentDay.ingredients.filter((i) => i.inStock).length} i skapet · {missingCount} kjøpes
                   </span>
@@ -483,86 +574,74 @@ export default function MealPlanView({
                 </div>
               </button>
 
+              {/* Flat, luftig ingrediensliste (INGEN boks-i-boks klemning) */}
               {isIngredientsOpen && (
-                <div className="p-3.5 pt-1 space-y-1.5 border-t border-white/[0.04]">
-                  {currentDay.ingredients.map((ing, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] flex items-center justify-between text-xs min-h-[40px] transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        {ing.inStock ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        ) : (
-                          <ShoppingCart className="w-4 h-4 text-amber-400 shrink-0" />
-                        )}
-                        <div className="min-w-0 truncate">
-                          <span className="font-bold text-white">{ing.name}</span>
-                          <span className="text-slate-400 ml-2">({ing.displayAmount})</span>
-                        </div>
-                      </div>
+                <div className="py-1 sm:p-3.5 divide-y divide-white/[0.06]">
+                  {currentDay.ingredients.map((ing, idx) => {
+                    const matchingOffers = findMatchingOffersForIngredientName(ing.name, weeklyOffersState, 1);
+                    const bestOffer = matchingOffers[0];
 
-                      {(() => {
-                        const matchingOffers = findMatchingOffersForIngredientName(ing.name, weeklyOffersState, 1);
-                        const topOffer = matchingOffers[0];
-                        const badgeStyle = topOffer ? getStoreChainBadgeStyle(topOffer.chain) : null;
-
-                        return (
-                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                            {topOffer && badgeStyle ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedFlyerOffer(topOffer);
-                                }}
-                                title={`Trykk for å se side ${topOffer.pageNumber || 1} i kundeavisen for ${badgeStyle.label}`}
-                                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md border flex items-center gap-1 shadow-sm transition-all cursor-pointer hover:scale-105 active:scale-95 ${badgeStyle.badgeClass}`}
-                              >
-                                <span className="text-[11px]">🏷️</span>
-                                <span>{badgeStyle.label}</span>
-                                <span className="opacity-95">{topOffer.offerPrice.toFixed(0)},-</span>
-                                <span className="text-[9px] opacity-80 underline ml-0.5 hidden sm:inline">Side {topOffer.pageNumber || 1}</span>
-                              </button>
-                            ) : (
-                              <span
-                                title="Ingen registrerte tilbud i ukens kundeaviser (ordinær hyllepris)"
-                                className="text-[10px] font-medium px-2 py-0.5 rounded-md border border-white/[0.04] bg-white/[0.01] text-slate-400 flex items-center gap-1 shadow-sm"
-                              >
-                                <span className="text-[10px] opacity-60">🛒</span>
-                                <span>
-                                  <span className="hidden sm:inline">Ingen tilbud · </span>Ordinær pris
-                                </span>
-                              </span>
-                            )}
-
-                            <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                                ing.inStock
-                                  ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/40'
-                                  : 'bg-amber-950/70 text-amber-300 border border-amber-800/40'
-                              }`}
-                            >
-                              {ing.inStock ? 'På lager' : 'Mangler'}
+                    return (
+                      <div
+                        key={idx}
+                        className="py-2.5 px-0 flex items-center justify-between gap-2 text-xs"
+                      >
+                        {/* Venstre: Ikon + Navn + Mengde (INGEN avkapping) */}
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          {ing.inStock ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                          ) : (
+                            <ShoppingCart className="w-4 h-4 text-amber-400 shrink-0" />
+                          )}
+                          <div className="flex items-baseline gap-1.5 min-w-0">
+                            <span className="font-bold text-white truncate sm:overflow-visible">
+                              {ing.name}
+                            </span>
+                            <span className="text-[11px] text-slate-400 shrink-0">
+                              · {ing.amountGrams}g
                             </span>
                           </div>
-                        );
-                      })()}
-                    </div>
-                  ))}
+                        </div>
+
+                        {/* Høyre: Tilbuds-badge + Status (kompakt) */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {bestOffer && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedFlyerOffer(bestOffer)}
+                              className="px-2 py-0.5 rounded-lg text-[10px] font-black border flex items-center gap-1 bg-amber-950/60 text-amber-300 border-amber-700/60 hover:bg-amber-900/60 transition-all cursor-pointer"
+                              title="Vis i kundeavis"
+                            >
+                              <span>🏷️ {bestOffer.chain.replace('_', ' ')} {bestOffer.offerPrice},-</span>
+                            </button>
+                          )}
+
+                          <span
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                              ing.inStock
+                                ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                                : 'bg-amber-950/80 text-amber-400 border border-amber-800/60'
+                            }`}
+                          >
+                            {ing.inStock ? 'På lager' : 'Kjøp'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* Trekkspill 2: Steg-for-steg kokkesteg */}
-            <div className="rounded-2xl overflow-hidden bg-white/[0.02] ring-1 ring-white/[0.04]">
+            {/* Trekkspill 2: Steg-for-steg kokkesteg (flat på mobil) */}
+            <div className="rounded-none sm:rounded-2xl overflow-hidden bg-transparent sm:bg-white/[0.02] ring-0 sm:ring-1 sm:ring-white/[0.04]">
               <button
                 type="button"
                 onClick={() => setIsStepsOpen(!isStepsOpen)}
-                className="w-full p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors min-h-[44px]"
+                className="w-full py-3 sm:p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors border-b border-white/[0.06]"
               >
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-emerald-400" />
+                  <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Steg-for-steg tilberedning ({currentDay.steps.length} steg)</span>
                 </div>
                 {isStepsOpen ? (
@@ -573,11 +652,11 @@ export default function MealPlanView({
               </button>
 
               {isStepsOpen && (
-                <div className="p-3.5 pt-1 space-y-2 border-t border-white/[0.04]">
+                <div className="py-2 sm:p-3.5 space-y-2 divide-y divide-white/[0.04]">
                   {currentDay.steps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-white/[0.02] flex items-start gap-3 text-xs leading-relaxed text-slate-200"
+                      className="pt-2 first:pt-0 flex items-start gap-2.5 text-xs leading-relaxed text-slate-200"
                     >
                       <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 text-[10px] mt-0.5">
                         {idx + 1}

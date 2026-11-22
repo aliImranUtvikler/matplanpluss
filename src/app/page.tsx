@@ -163,6 +163,16 @@ export default function HomePage() {
     };
   }, []);
 
+  // 1a. Automatisk fadeout for status-boblen når oppgaven er fullført (3.5 sekunder)
+  useEffect(() => {
+    if (planStatus.state === 'done') {
+      const timer = setTimeout(() => {
+        setPlanStatus({ state: 'idle', message: '' });
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [planStatus.state, planStatus.message]);
+
   // 1b. Sanntids Live Sync for felles husstand over BroadcastChannel og sky
   useEffect(() => {
     const unsubscribe = subscribeToHouseholdSync((updatedDashboard) => {
@@ -593,32 +603,32 @@ export default function HomePage() {
         onOpenChange={setIsGlobalMapModalOpen}
       />
 
-      {/* 5. GLOBALT FLYTENDE STATUS-BOBLE (Følger deg alltid på tvers av ALLE faner) */}
+      {/* 5. GLOBALT FLYTENDE STATUS-BOBLE (Følger deg på tvers av faner, auto-fadeout etter 3.5s og kollisjonsfri) */}
       {planStatus.state !== 'idle' && (
-        <div className="fixed bottom-20 md:bottom-6 left-4 sm:left-6 z-50 pointer-events-auto">
+        <div className="fixed bottom-20 md:bottom-6 left-3 sm:left-6 max-w-[calc(100vw-6.5rem)] md:max-w-md z-40 pointer-events-auto">
           {planStatus.state === 'working' ? (
-            <div className="flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 backdrop-blur-xl ring-1 ring-amber-400/50 text-amber-300 shadow-xl shadow-amber-950/40 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <span className="relative flex h-2 w-2">
+            <div className="flex items-center gap-2.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 backdrop-blur-xl ring-1 ring-amber-400/50 text-amber-300 shadow-xl shadow-amber-950/40 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
               <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400 shrink-0" />
-              <span>⏳ {planStatus.message}</span>
+              <span className="truncate">⏳ {planStatus.message}</span>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setActiveTab('MEALPLAN')}
-              className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800/95 backdrop-blur-xl ring-1 ring-emerald-400/50 text-emerald-300 shadow-xl shadow-emerald-950/40 text-xs font-bold transition-all hover:scale-105 active:scale-95 animate-in fade-in slide-in-from-bottom-2 duration-300 cursor-pointer"
+              className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800/95 backdrop-blur-xl ring-1 ring-emerald-400/50 text-emerald-300 shadow-xl shadow-emerald-950/40 text-xs font-bold transition-all hover:scale-105 active:scale-95 animate-in fade-in slide-in-from-bottom-2 duration-300 cursor-pointer"
               title="Ukeplanen er oppdatert. Trykk for å gå til Ukemeny"
             >
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
               </span>
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span>{planStatus.message}</span>
+              <span className="truncate">{planStatus.message}</span>
               {activeTab !== 'MEALPLAN' && (
-                <span className="text-[10px] text-emerald-400/90 underline ml-0.5 hidden sm:inline">
+                <span className="text-[10px] text-emerald-400/90 underline ml-0.5 shrink-0 hidden sm:inline">
                   Se meny →
                 </span>
               )}

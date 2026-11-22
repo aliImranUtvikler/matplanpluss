@@ -982,6 +982,52 @@ Slutt på den skrikende hel-oransje banneren over hele bredden. En kompakt, myk 
 
 ---
 
+### 9.9 Mobil-Spesifikk Skjermoptimalisering: Slutt på Boks-i-Boks Klemning, Auto-Fade Statusboble & Ren Profil
+
+Basert på to ferske skjermbilder fra reell iPhone-bruk (november 2026), er følgende tre kritiske mobilproblemer kartlagt og løst:
+
+```mermaid
+flowchart TD
+    subgraph FØR: Klemte marger & Kollisjoner på iPhone
+        A1["4 lag horisontal padding (main + card + accordion + item = 128px tapt)"]
+        A2["Uleselige ingredienser ('Poteter (1...', 'Rotmiks (2...')"]
+        A3["Status-boble kolliderer med Kart-boblen (Spar 65 kr 🗺️) nederst"]
+        A4["Preferanser: 'Aktiv Google-profil' klemt på 3 linjer, 3 store demobokser foran egen konto"]
+        A1 --- A2 --- A3 --- A4
+    end
+
+    subgraph ETTER: Kant-til-kant & Skjermharmoni
+        B1["Mobil: Flat struktur (p-0 på kort, border-b rader, fulle varenavn)"]
+        B2["Ingredienser: 'Poteter · 150g' + '🏷️ JOKER 15,-' + 'På lager' uten kutting"]
+        B3["Status-boble fader ut automatisk etter 3.5 sekunder (ingen kollisjon med kart)"]
+        B4["Preferanser: Ren profilrad på én linje + testprofiler skjult bak diskret dropdown"]
+        B1 --- B2 --- B3 --- B4
+    end
+```
+
+#### 1. Fjerning av Boks-i-Boks Klemning på Mobil (`MealPlanView.tsx`):
+- **Problem:** På en 390px iPhone forsvinner over 128px i marginer når man legger kort inni kort inni trekkspill inni rader. Dette fører til at råvarenavn kuttes til `Poteter (1...` og `Rotmiks (2...`.
+- **Løsning:**
+  - På mobil (`< sm:`): Fjern korthylsen (`p-0 bg-transparent ring-0 shadow-none sm:p-7 sm:bg-slate-900/50 sm:ring-1 sm:ring-white/[0.06]`).
+  - Hver ingrediensrad er en **flat, luftig fullbredde-rad (`py-3 px-0 border-b border-white/[0.06]`)**.
+  - Varenavnet og mengden kuttes **ALDRI**:
+    - Venstre: `Poteter · 150g`, `Hakkede tomater · 200g`, `Hvite bønner · 160g`.
+    - Høyre: Kompakt salgsbadge (`🏷️ JOKER 15,-`) og statuspille (`På lager` / `Mangler`).
+  - Trekkspill-headeren holdes kompakt på én linje: `Ingredienser (8) · 4 kjøpes`.
+
+#### 2. Auto-Fadeout for Status-boblen (`page.tsx`):
+- **Problem:** Den grønne status-boblen (`🟢 ✓ Stil & ukeplan oppdatert...`) er 260px bred og ligger permanent nederst, der den kolliderer rett med Kart-boblen (`Spar 65 kr 🗺️`).
+- **Løsning:**
+  - Når statusen blir `'done'`, skjules den automatisk etter **3.5 sekunder** via en `setTimeout`. Den forsvinner pent fra skjermen slik at kart-boblen har fullt spillerom.
+
+#### 3. Ryddig Profil & Skjulte Demo-kontoer i Preferanser (`PreferencesAdminView.tsx`):
+- **Problem:** 4 elementer på profilraden skapte 3-linjers tekstklemming, og de tre store demokontoene (Alex, Luna, Jonas) lå åpent foran brukerens egen Gmail (`imran.jobb@gmail.com`).
+- **Løsning:**
+  - Profilraden viser kun `[IJ] imran.jobb (imran.jobb@gmail.com)` med en diskret grønn tilstandsprikk, og en kompakt `Logg ut`-knapp til høyre.
+  - De tre testprofilene skjules bak en diskret dropdown-toggle: `Bytt til en test-/demoprofil ▾`, slik at brukerens egen konto fremstår 100 % personlig og ryddig.
+
+---
+
 ## 10. Konklusjon
 
 Ved å implementere denne spesifikasjonen løser vi brukerens frustrasjoner umiddelbart:

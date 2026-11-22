@@ -30,12 +30,9 @@ Ufravikelige regler for matplanen:
 3. 40–50 G PROTEIN PER PERSON I HVERT MÅLTID: UTEN proteinpulver! Bruk rikelige kombinasjoner av fast tofu, soya chunks, TRS soya mince, tempeh, kikertfusilli, røde linser, grønne linser, edamamebønner, kikerter, svarte bønner, quinoa, næringsgjær og tahini.
 4. MAKS 750–800 KCAL PER PERSON: Næringstett, metter godt, men hold oljebruk moderat.
 5. DEFINERT KARBOHYDRATBASE MED EKSPLISITT TØRRVEKT: Hver dag må ha en tydelig karbohydratbase (f.eks. Basmatiris 80g tørrvekt/pers, Kikertfusilli 85g tørrvekt/pers, Quinoa 75g tørrvekt/pers, Glutenrik ris 80g tørrvekt/pers, Søtpotet 250g ferskvekt).
-6. INTERNASJONAL VARIASJON PÅ TVERS AV DE 5 DAGENE:
-   - Dag 1: Koreansk (f.eks. Gochujang Tofu & Edamame Bowl)
-   - Dag 2: Indisk / Sør-Asiatisk (f.eks. Red Lentil & Soya Chunks Dal)
-   - Dag 3: Middelhavs / Italiensk (f.eks. Kremet Tahini- & Soltørket Tomat Kikertfusilli med Soya Mince)
-   - Dag 4: Japansk (f.eks. Miso-Glazed Tempeh & Tofu Quinoa Bowl med Kimchi)
-   - Dag 5: Midtøsten / Levantinsk (f.eks. Shawarma Soya Chunks & Røstet Kikerter med Hvitløks-Tahini)
+6. RETTENS STIL & LANDFOKUS:
+   - Hvis ingen spesifikke land er bedt om (standard / nøytral modus): Lag 100% NØYTRALE, sunne retter optimalisert for makrotall og ukens faktiske butikktilbud (f.eks. Jasminris -50%, Norske poteter, brokkoli, rotmiks, spinat). ALDRI tving inn etniske matkulturer eller landnavn hvis brukeren ikke har bedt om det. Sett cuisine til "Nøytral (Stats & Tilbud)".
+   - Hvis brukeren eksplisitt ber om spesifikke etniske stiler (f.eks. asiatisk, indisk, meksikansk): Tilpass rettene til de ønskede kjøkkenene.
 7. GUT HEALTH & FERMENTERING: Hver rett må ha minst 6-10 unike plantekilder (plantCount >= 6) og fermenterte innslag (miso, gochujang, kimchi, tempeh) eller prebiotiske belgvekster.
 `;
 
@@ -1011,7 +1008,7 @@ Husk de 7 ufravikelige reglene:
 3. ${effectiveTargets.minProteinGrams}–${effectiveTargets.maxProteinGrams}g protein per person per måltid (UTEN proteinpulver)
 4. Maks ${effectiveTargets.maxKcal} kcal per person
 5. Definert karbohydratbase med eksakt tørrvekt (${effectiveTargets.targetCarbDryWeightGrams}g tørrvekt/pers)
-6. Internasjonal variasjon over 5 dager
+6. Retter tilpasset brukerens stilønske (NØYTRAL basert på butikktilbud og stats hvis ingen land er oppgitt)
 7. Gut health & fermentering (plantCount >= ${effectiveTargets.minPlantCount})
 `;
 

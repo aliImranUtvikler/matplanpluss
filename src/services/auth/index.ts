@@ -16,6 +16,7 @@ export {
 
   // Konstanter
   DEMO_GOOGLE_ACCOUNTS,
+  DEMO_USER_IDS,
   STORAGE_AUTH_SESSION_KEY,
 
   // Kjernefunksjoner for sesjon og innlogging
@@ -25,6 +26,8 @@ export {
   switchDemoAccount,
   signOutGoogleSession,
   subscribeToAuthChange,
+  isDemoAccount,
+  formatDisplayNameFromEmail,
 
   // Hjelpefunksjoner for JWT og GSI
   decodeGoogleJwt,
