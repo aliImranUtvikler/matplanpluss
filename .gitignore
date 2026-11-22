@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Mac metadata
+.DS_Store
+**/.DS_Store
+
+# Local agents and tools
+.agents/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# User data and local state
+data/users/
+data/households/

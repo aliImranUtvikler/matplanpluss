@@ -1,0 +1,103 @@
+name: Ukentlig AI Vision Tilbudsskanning & GitHub Pages Deploy
+
+on:
+  # Kjører automatisk hver mandag kl. 06:00 UTC (norske butikker oppdaterer kundeaviser mandag morgen)
+  schedule:
+    - cron: '0 6 * * 1'
+
+  # Tillater manuell kjøring fra GitHub Actions UI med tilpassede makromål
+  workflow_dispatch:
+    inputs:
+      min_protein:
+        description: 'Minimum protein per person per middag (gram)'
+        required: true
+        default: '40'
+        type: string
+      max_protein:
+        description: 'Maksimum/mål protein per person per middag (gram)'
+        required: true
+        default: '50'
+        type: string
+      max_kcal:
+        description: 'Maksimalt antall kalorier per middag'
+        required: true
+        default: '780'
+        type: string
+      carb_dry_weight:
+        description: 'Mål for karbohydratbase tørrvekt (gram)'
+        required: true
+        default: '80'
+        type: string
+      servings:
+        description: 'Antall porsjoner per middag'
+        required: true
+        default: '2'
+        type: string
+
+  # Bygg og deploy automatisk når kode pushes til main
+  push:
+    branches: [main]
+
+# Tillatelser som kreves for å deploye til GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Hindrer samtidige deploy-kollisjoner
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Sjekk ut kildekode
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Sett opp Node.js (v22)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: 📦 Installer avhengigheter
+        run: npm ci || npm install
+
+      - name: 🤖 Kjør 3-trinns AI Vision & Tilbudspipeline
+        # API-nøkler hentes KUN fra GitHub Repository Secrets inn i Actions-runneren.
+        # Ingen av disse nøklene bakes inn i klient-koden eller eksponeres på GitHub Pages!
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          KASSALAPP_API_KEY: ${{ secrets.KASSALAPP_API_KEY }}
+        run: |
+          npm run pipeline -- \
+            --minProtein="${{ inputs.min_protein || '40' }}" \
+            --maxProtein="${{ inputs.max_protein || '50' }}" \
+            --maxKcal="${{ inputs.max_kcal || '780' }}" \
+            --carbGrams="${{ inputs.carb_dry_weight || '80' }}" \
+            --servings="${{ inputs.servings || '2' }}" \
+            --trigger="${{ github.event_name == 'schedule' && 'CRON_SCHEDULE' || 'MANUAL_DISPATCH' }}"
+
+      - name: 🌐 Konfigurer GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 🏗️ Bygg statisk Next.js eksport (uten API-nøkler)
+        env:
+          GITHUB_PAGES: 'true'
+          NEXT_PUBLIC_BASE_PATH: '/matplanpluss'
+        run: npm run build
+
+      - name: 📤 Last opp GitHub Pages-artefakt
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './out'
+
+      - name: 🚀 Deploy til GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

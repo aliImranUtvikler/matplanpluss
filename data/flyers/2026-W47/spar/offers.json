@@ -1,0 +1,183 @@
+{
+  "chain": "SPAR",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.078Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "imageFile": "spar_2026-W47_page-1.webp",
+      "items": [
+        {
+          "rawId": "spar-p1-druer",
+          "productName": "Cevita Druer stenfrie røde og Autumn Crisp 500g 2 FOR 50,-",
+          "offerPrice": 25,
+          "regularPrice": 39.9,
+          "unitDescription": "500g",
+          "unitPrice": 50,
+          "tags": [
+            "druer",
+            "autumn crisp",
+            "cevita",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "spar-p1-brus",
+          "productName": "Coca-Cola / Fanta / Sprite 20-pk (20x0,33L)",
+          "offerPrice": 119,
+          "regularPrice": 198,
+          "unitDescription": "20 pk",
+          "unitPrice": 18.03,
+          "tags": [
+            "coca-cola",
+            "fanta",
+            "sprite",
+            "brus",
+            "drikke"
+          ]
+        },
+        {
+          "rawId": "spar-p1-norvegia-ctrl",
+          "productName": "Norvegia 2-pk TINE ca 1kg",
+          "offerPrice": 109,
+          "regularPrice": 159,
+          "unitDescription": "pr kg",
+          "allergens": [
+            "melk"
+          ],
+          "tags": [
+            "ost",
+            "norvegia"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "imageFile": "spar_2026-W47_page-2.webp",
+      "items": [
+        {
+          "rawId": "spar-p2-brokkoli",
+          "productName": "Norsk Fersk Brokkoli Gartner / Blomkål / Pak Choy 2 FOR 30,-",
+          "offerPrice": 15,
+          "regularPrice": 24.9,
+          "unitDescription": "1 stk",
+          "unitPrice": 30,
+          "tags": [
+            "brokkoli",
+            "norsk brokkoli",
+            "blomkål",
+            "pak choy",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "spar-p2-delikat-gulrot",
+          "productName": "Delikat Gulrot i pose Gartner 2 FOR 30,-",
+          "offerPrice": 15,
+          "regularPrice": 24.9,
+          "unitDescription": "1 pose",
+          "tags": [
+            "gulrot",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "spar-p2-avokado-mango",
+          "productName": "Mango / Modnet Avokado / Tomatmiks 250g 2 FOR 50,-",
+          "offerPrice": 25,
+          "regularPrice": 34.9,
+          "unitDescription": "2 pk/stk",
+          "tags": [
+            "avokado",
+            "mango",
+            "tomater",
+            "tomatmiks",
+            "grønnsaker",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "spar-p2-persimon-kiwi",
+          "productName": "Persimon / Zespri Kiwi grønn og gul 3 FOR 30,-",
+          "offerPrice": 10,
+          "regularPrice": 18.9,
+          "unitDescription": "1 stk",
+          "tags": [
+            "persimon",
+            "kiwi frukt",
+            "zespri",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "spar-p2-lok",
+          "productName": "Norsk Løk 2-pk Gartner (rød/gul) 2 FOR 30,-",
+          "offerPrice": 15,
+          "regularPrice": 24.9,
+          "unitDescription": "2 pk",
+          "tags": [
+            "løk",
+            "rødløk",
+            "gul løk",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "spar-p2-salater",
+          "productName": "Grønn & Frisk Salater 65g (Babyspinat, Ruccula, Feldsalat) 2 FOR 30,-",
+          "offerPrice": 15,
+          "regularPrice": 24.9,
+          "unitDescription": "65g",
+          "unitPrice": 230.77,
+          "tags": [
+            "babyspinat",
+            "spinat",
+            "ruccula",
+            "feldsalat",
+            "salat"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "imageFile": "spar_2026-W47_page-3.webp",
+      "items": [
+        {
+          "rawId": "spar-p3-surkal",
+          "productName": "Nora Surkål 450g 2 FOR 30,-",
+          "offerPrice": 15,
+          "regularPrice": 22.9,
+          "unitDescription": "450g",
+          "unitPrice": 33.33,
+          "tags": [
+            "surkål",
+            "kål",
+            "nora",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "spar-p3-lovbiff-ctrl",
+          "productName": "Grilstad Løvbiff 6-pk 600g",
+          "offerPrice": 119,
+          "regularPrice": 149,
+          "unitDescription": "600g",
+          "allergens": [
+            "storfekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "løvbiff",
+            "kjøtt"
+          ]
+        }
+      ]
+    }
+  ]
+}

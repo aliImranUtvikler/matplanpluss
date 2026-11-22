@@ -1,0 +1,28 @@
+{
+  "name": "matplan-tilbud-norge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fullstack webapp for smart ukentlig vegansk matplanlegging og tilbuds-ruting i Norge",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "pipeline": "node --experimental-strip-types --loader ./scripts/ts-loader.mjs scripts/run-weekly-pipeline.ts"
+  },
+  "dependencies": {
+    "next": "15.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "lucide-react": "0.468.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.14.0",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.47",
+    "tailwindcss": "3.4.13",
+    "typescript": "5.6.3"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "chain": "REMA_1000",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.077Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 2,
+      "imageFile": "rema-1000_2026-W47_page-2.webp",
+      "items": [
+        {
+          "rawId": "rema-p2-pepsi",
+          "productName": "Pepsi Max 10pk bokser 10x330ml med Æ (-50%)",
+          "offerPrice": 51.5,
+          "regularPrice": 103,
+          "unitDescription": "10 pk",
+          "unitPrice": 15.6,
+          "tags": [
+            "pepsi max",
+            "brus",
+            "drikke",
+            "sukkerfri"
+          ]
+        },
+        {
+          "rawId": "rema-p2-solo",
+          "productName": "Solo Super 10pk bokser 10x330ml med Æ (-50%)",
+          "offerPrice": 44.95,
+          "regularPrice": 89.9,
+          "unitDescription": "10 pk",
+          "unitPrice": 13.62,
+          "tags": [
+            "solo super",
+            "brus",
+            "drikke",
+            "sukkerfri"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "imageFile": "rema-1000_2026-W47_page-3.webp",
+      "items": [
+        {
+          "rawId": "rema-p3-solorod",
+          "productName": "Solo Super Rød Appelsin 10pk bokser med Æ (-50%)",
+          "offerPrice": 44.95,
+          "regularPrice": 89.9,
+          "unitDescription": "10 pk",
+          "unitPrice": 13.62,
+          "tags": [
+            "solo super",
+            "brus",
+            "drikke",
+            "sukkerfri"
+          ]
+        },
+        {
+          "rawId": "rema-p3-pepsilime",
+          "productName": "Pepsi Max Lime BX 10pk bokser med Æ (-50%)",
+          "offerPrice": 44.95,
+          "regularPrice": 89.9,
+          "unitDescription": "10 pk",
+          "unitPrice": 13.62,
+          "tags": [
+            "pepsi max lime",
+            "brus",
+            "drikke",
+            "sukkerfri"
+          ]
+        }
+      ]
+    }
+  ]
+}

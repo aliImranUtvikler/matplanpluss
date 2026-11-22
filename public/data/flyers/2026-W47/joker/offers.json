@@ -1,0 +1,191 @@
+{
+  "chain": "JOKER",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.078Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "imageFile": "joker_2026-W47_page-1.webp",
+      "items": [
+        {
+          "rawId": "joker-p1-jasminris",
+          "productName": "Toro Jasminris Boil-in-bag / Hurtigris (-50%)",
+          "offerPrice": 19.95,
+          "regularPrice": 39.9,
+          "unitDescription": "pk",
+          "tags": [
+            "jasminris",
+            "ris",
+            "toro",
+            "karbohydrat",
+            "tørrvarer"
+          ]
+        },
+        {
+          "rawId": "joker-p1-supper",
+          "productName": "Toro Tomatsuppe / Blomkålsuppe / Ertesuppe (-50%)",
+          "offerPrice": 12.45,
+          "regularPrice": 24.9,
+          "unitDescription": "pose",
+          "tags": [
+            "tomatsuppe",
+            "ertesuppe",
+            "toro",
+            "suppe",
+            "tørrvarer"
+          ]
+        },
+        {
+          "rawId": "joker-p1-ost-ctrl",
+          "productName": "Fløtemysost / Gudbrandsdalsost TINE 1kg",
+          "offerPrice": 79.9,
+          "regularPrice": 129.9,
+          "unitDescription": "1 kg",
+          "allergens": [
+            "melk"
+          ],
+          "tags": [
+            "brunost",
+            "meieri"
+          ]
+        },
+        {
+          "rawId": "joker-p1-polser-ctrl",
+          "productName": "Grillpølser / Ostegrill Gilde 600g",
+          "offerPrice": 49.9,
+          "regularPrice": 74.9,
+          "unitDescription": "600g",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "grillpølser",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "imageFile": "joker_2026-W47_page-2.webp",
+      "items": [
+        {
+          "rawId": "joker-p2-battery-gatorade",
+          "productName": "Battery / Gatorade 0,5L 2 FOR 30,- + pant",
+          "offerPrice": 15,
+          "regularPrice": 24.9,
+          "unitDescription": "0,5L",
+          "unitPrice": 30,
+          "tags": [
+            "battery",
+            "gatorade",
+            "energidrikk",
+            "drikke"
+          ]
+        },
+        {
+          "rawId": "joker-p2-smash-ctrl",
+          "productName": "Smash! Nidar 200g",
+          "offerPrice": 39.9,
+          "regularPrice": 59.9,
+          "unitDescription": "200g",
+          "allergens": [
+            "melk"
+          ],
+          "tags": [
+            "smash",
+            "sjokolade"
+          ]
+        },
+        {
+          "rawId": "joker-p2-japp-peanut-ctrl",
+          "productName": "Japp Peanøtt Freia 60g",
+          "offerPrice": 10,
+          "regularPrice": 22.9,
+          "unitDescription": "60g",
+          "allergens": [
+            "peanøtt",
+            "peanut",
+            "melk"
+          ],
+          "tags": [
+            "japp",
+            "sjokolade"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "imageFile": "joker_2026-W47_page-3.webp",
+      "items": [
+        {
+          "rawId": "joker-p3-poteter",
+          "productName": "Norske Poteter løsvekt Ukens Beste",
+          "offerPrice": 14.9,
+          "regularPrice": 24.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 14.9,
+          "tags": [
+            "potet",
+            "poteter",
+            "norske poteter",
+            "karbohydrat",
+            "tørrvarer"
+          ]
+        },
+        {
+          "rawId": "joker-p3-tomater",
+          "productName": "Små Tomater Season 500g",
+          "offerPrice": 39.9,
+          "regularPrice": 49.9,
+          "unitDescription": "500g",
+          "unitPrice": 79.8,
+          "tags": [
+            "tomater",
+            "små tomater",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "joker-p3-isbergsalat",
+          "productName": "Isbergsalat Season",
+          "offerPrice": 19.9,
+          "regularPrice": 29.9,
+          "unitDescription": "pr stk",
+          "tags": [
+            "isbergsalat",
+            "salat",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "joker-p3-mango-avokado",
+          "productName": "Moden Mango og Avokado 2-pk",
+          "offerPrice": 29.9,
+          "regularPrice": 42.9,
+          "unitDescription": "2 pk",
+          "tags": [
+            "mango",
+            "avokado",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "joker-p3-ambrosia",
+          "productName": "Ambrosia Friske & Søte Epler Cevita 6-pk",
+          "offerPrice": 39.9,
+          "regularPrice": 54.9,
+          "unitDescription": "6 pk",
+          "tags": [
+            "ambrosia epler",
+            "epler",
+            "frukt"
+          ]
+        }
+      ]
+    }
+  ]
+}

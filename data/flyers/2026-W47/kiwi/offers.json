@@ -1,0 +1,487 @@
+{
+  "chain": "KIWI",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.076Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "imageFile": "kiwi_2026-W47_page-1.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p1-poteter",
+          "productName": "Små Gule Poteter kokefaste 900g Gartner",
+          "offerPrice": 19.9,
+          "regularPrice": 29.9,
+          "unitDescription": "900g",
+          "unitPrice": 22.11,
+          "tags": [
+            "potet",
+            "poteter",
+            "gartner",
+            "karbohydrat"
+          ]
+        },
+        {
+          "rawId": "kiwi-p1-kalrot",
+          "productName": "Norsk Kålrot Gartner",
+          "offerPrice": 8.9,
+          "regularPrice": 19.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 8.9,
+          "tags": [
+            "kålrot",
+            "gartner",
+            "norsk kålrot",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p1-lutefisk-ctrl",
+          "productName": "Lutefisk Helside Ca. 1,2kg Fiskemannen",
+          "offerPrice": 179,
+          "regularPrice": 219,
+          "unitDescription": "pr kg",
+          "allergens": [
+            "fisk",
+            "lutefisk"
+          ],
+          "tags": [
+            "lutefisk",
+            "fisk"
+          ]
+        },
+        {
+          "rawId": "kiwi-p1-pinnekjott-ctrl",
+          "productName": "Pinnekjøtt Røkt/Urøkt kappet Gilde",
+          "offerPrice": 359,
+          "regularPrice": 419,
+          "unitDescription": "pr kg",
+          "allergens": [
+            "lam",
+            "kjøtt"
+          ],
+          "tags": [
+            "pinnekjøtt",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "imageFile": "kiwi_2026-W47_page-2.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p2-pinner",
+          "productName": "Pinnekjøttpinner 20 stk Unik",
+          "offerPrice": 19.9,
+          "unitDescription": "20 stk",
+          "unitPrice": 0.99,
+          "tags": [
+            "pinnekjøttpinner",
+            "kjøkken"
+          ]
+        },
+        {
+          "rawId": "kiwi-p2-pinnekjott-folkets-ctrl",
+          "productName": "Pinnekjøtt fra Oppdal urøkt Folkets",
+          "offerPrice": 299,
+          "regularPrice": 359,
+          "unitDescription": "pr kg",
+          "allergens": [
+            "lam",
+            "kjøtt"
+          ],
+          "tags": [
+            "pinnekjøtt",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 5,
+      "imageFile": "kiwi_2026-W47_page-5.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p5-grot-snarkokt",
+          "productName": "Risgrøt Snarkokt 148g Toro",
+          "offerPrice": 24.9,
+          "regularPrice": 31.5,
+          "unitDescription": "148g",
+          "unitPrice": 168.24,
+          "tags": [
+            "risgrøt",
+            "grøt",
+            "karbohydrat",
+            "toro"
+          ]
+        },
+        {
+          "rawId": "kiwi-p5-grot-original",
+          "productName": "Risgrøt Original 258g Toro",
+          "offerPrice": 27.9,
+          "regularPrice": 32.9,
+          "unitDescription": "258g",
+          "unitPrice": 108.14,
+          "tags": [
+            "risgrøt",
+            "grøt",
+            "karbohydrat",
+            "toro"
+          ]
+        },
+        {
+          "rawId": "kiwi-p5-kalkun-ctrl",
+          "productName": "Kalkunfilet Salt og Pepper 1kg Prior",
+          "offerPrice": 259,
+          "regularPrice": 299,
+          "unitDescription": "1 kg",
+          "allergens": [
+            "kalkun",
+            "kjøtt"
+          ],
+          "tags": [
+            "kalkun",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 6,
+      "imageFile": "kiwi_2026-W47_page-6.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p6-surkal",
+          "productName": "Hjemmelaget Surkål 450g Nora",
+          "offerPrice": 17.9,
+          "regularPrice": 22.9,
+          "unitDescription": "450g",
+          "unitPrice": 39.78,
+          "tags": [
+            "surkål",
+            "kål",
+            "grønnsaker",
+            "nora"
+          ]
+        },
+        {
+          "rawId": "kiwi-p6-rodkal",
+          "productName": "Hjemmelaget Rødkål 450g Nora",
+          "offerPrice": 17.9,
+          "regularPrice": 23.4,
+          "unitDescription": "450g",
+          "unitPrice": 39.78,
+          "tags": [
+            "rødkål",
+            "kål",
+            "grønnsaker",
+            "nora"
+          ]
+        },
+        {
+          "rawId": "kiwi-p6-pariseragurker",
+          "productName": "Pariseragurker Skivede 580g Nora",
+          "offerPrice": 29.9,
+          "regularPrice": 36.6,
+          "unitDescription": "580g",
+          "unitPrice": 51.55,
+          "tags": [
+            "pariseragurk",
+            "agurk",
+            "sylteagurk",
+            "grønnsaker",
+            "nora"
+          ]
+        },
+        {
+          "rawId": "kiwi-p6-grovsennep",
+          "productName": "Grov Sennep 275g Idun",
+          "offerPrice": 19.9,
+          "regularPrice": 27.5,
+          "unitDescription": "275g",
+          "unitPrice": 72.36,
+          "tags": [
+            "sennep",
+            "grov sennep",
+            "krydder",
+            "idun"
+          ]
+        },
+        {
+          "rawId": "kiwi-p6-julepolse-ctrl",
+          "productName": "Julepølse kokt 400g Gilde",
+          "offerPrice": 47.9,
+          "regularPrice": 54.9,
+          "unitDescription": "400g",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "julepølse",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 8,
+      "imageFile": "kiwi_2026-W47_page-8.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p8-julebrus-unil",
+          "productName": "Julebrus Uten Sukker 1,5L Unil",
+          "offerPrice": 17.9,
+          "regularPrice": 24.9,
+          "unitDescription": "1,5L",
+          "unitPrice": 11.93,
+          "tags": [
+            "julebrus",
+            "brus",
+            "drikke",
+            "sukkerfri"
+          ]
+        },
+        {
+          "rawId": "kiwi-p8-julebrus-sylte",
+          "productName": "Rudolf & Nissens Julebrus Uten Sukker 1,5L Oskar Sylte",
+          "offerPrice": 21.9,
+          "regularPrice": 28.9,
+          "unitDescription": "1,5L",
+          "unitPrice": 14.6,
+          "tags": [
+            "julebrus",
+            "oskar sylte",
+            "brus",
+            "drikke"
+          ]
+        },
+        {
+          "rawId": "kiwi-p8-julebrus-hamar",
+          "productName": "Hamar Julebrus Uten Sukker 1,5L",
+          "offerPrice": 38.9,
+          "regularPrice": 44.9,
+          "unitDescription": "1,5L",
+          "unitPrice": 25.93,
+          "tags": [
+            "julebrus",
+            "hamar julebrus",
+            "brus",
+            "drikke"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 10,
+      "imageFile": "kiwi_2026-W47_page-10.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p10-spisskal",
+          "productName": "Rød og Grønn Spisskål Gartner",
+          "offerPrice": 16.9,
+          "regularPrice": 19.9,
+          "unitDescription": "pr stk",
+          "tags": [
+            "spisskål",
+            "kål",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p10-kalrot",
+          "productName": "Norsk Kålrot Gartner",
+          "offerPrice": 8.9,
+          "regularPrice": 19.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 8.9,
+          "tags": [
+            "kålrot",
+            "gartner",
+            "norsk kålrot",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p10-kinakal",
+          "productName": "Norsk Kinakål Gartner",
+          "offerPrice": 19.9,
+          "regularPrice": 34.9,
+          "unitDescription": "pr stk",
+          "tags": [
+            "kinakål",
+            "kål",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p10-purre",
+          "productName": "Fersk Purre Gartner",
+          "offerPrice": 27.9,
+          "regularPrice": 29.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 27.9,
+          "tags": [
+            "purre",
+            "løk",
+            "gartner",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p10-gulrot",
+          "productName": "Norske Gulrøtter 750g Gartner",
+          "offerPrice": 19.9,
+          "regularPrice": 34.9,
+          "unitDescription": "750g",
+          "unitPrice": 26.53,
+          "tags": [
+            "gulrot",
+            "norske gulrøtter",
+            "gartner",
+            "grønnsaker"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 11,
+      "imageFile": "kiwi_2026-W47_page-11.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p11-mandelpoteter",
+          "productName": "Mandelpoteter 2kg Gartner",
+          "offerPrice": 39.9,
+          "regularPrice": 59.9,
+          "unitDescription": "2 kg",
+          "unitPrice": 19.95,
+          "tags": [
+            "mandelpotet",
+            "potet",
+            "gartner",
+            "karbohydrat"
+          ]
+        },
+        {
+          "rawId": "kiwi-p11-poteter",
+          "productName": "Små Gule Poteter 900g Gartner",
+          "offerPrice": 19.9,
+          "regularPrice": 29.9,
+          "unitDescription": "900g",
+          "unitPrice": 22.11,
+          "tags": [
+            "potet",
+            "poteter",
+            "gartner",
+            "karbohydrat"
+          ]
+        },
+        {
+          "rawId": "kiwi-p11-rodbeter",
+          "productName": "Norske Rødbeter 500g Gartner",
+          "offerPrice": 27.9,
+          "regularPrice": 29.9,
+          "unitDescription": "500g",
+          "unitPrice": 55.8,
+          "tags": [
+            "rødbeter",
+            "gartner",
+            "rotgrønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p11-betemiks",
+          "productName": "Betemiks pose 550g Gartner",
+          "offerPrice": 27.9,
+          "regularPrice": 39.9,
+          "unitDescription": "550g",
+          "unitPrice": 50.73,
+          "tags": [
+            "betemiks",
+            "beter",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p11-rotmiks",
+          "productName": "Rotmiks 1kg Gartner (Beter, sellerirot, pastinakk)",
+          "offerPrice": 27.9,
+          "regularPrice": 29.9,
+          "unitDescription": "1 kg",
+          "unitPrice": 27.9,
+          "tags": [
+            "rotmiks",
+            "rotgrønnsaker",
+            "beter",
+            "sellerirot"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 12,
+      "imageFile": "kiwi_2026-W47_page-12.webp",
+      "items": [
+        {
+          "rawId": "kiwi-p12-salatmix",
+          "productName": "Ruccula, Babyleaf, Feldsalat & Baby Spinat 65g Grønn & Frisk",
+          "offerPrice": 16.9,
+          "regularPrice": 24.9,
+          "unitDescription": "65g",
+          "unitPrice": 260,
+          "tags": [
+            "babyspinat",
+            "spinat",
+            "ruccula",
+            "feldsalat",
+            "salat"
+          ]
+        },
+        {
+          "rawId": "kiwi-p12-sprosalat",
+          "productName": "Sprø Salat og Blanding 80g Bjærtnes & Hoel",
+          "offerPrice": 29.9,
+          "regularPrice": 39.9,
+          "unitDescription": "80g",
+          "unitPrice": 373.75,
+          "tags": [
+            "salat",
+            "sprø salat",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p12-ruccola",
+          "productName": "Ruccola Salat 30g Bjærtnes & Hoel",
+          "offerPrice": 19.9,
+          "regularPrice": 26.9,
+          "unitDescription": "30g",
+          "tags": [
+            "ruccula",
+            "salat",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "kiwi-p12-urter",
+          "productName": "Ferske Urter i minipotte Gartner (Persille, dill, gressløk)",
+          "offerPrice": 19.9,
+          "regularPrice": 26.9,
+          "unitDescription": "pr stk",
+          "tags": [
+            "urter",
+            "persille",
+            "dill",
+            "gressløk",
+            "krydder"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "chain": "MENY",
+  "slug": "meny",
+  "weekKey": "2026-W47",
+  "chainId": "4333pm",
+  "publicationId": "Og-MGv8x",
+  "title": "Kundeavis",
+  "validFrom": "2026-11-15T23:00:00+0000",
+  "validUntil": "2026-11-21T22:59:59+0000",
+  "totalPagesInFlyer": 13,
+  "hotspotsCount": 57,
+  "downloadedAt": "2026-11-16T20:53:29.195Z",
+  "downloadedFiles": [
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 1,
+      "fileName": "meny_2026-W47_page-1.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-1.webp",
+      "sizeBytes": 105338
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 2,
+      "fileName": "meny_2026-W47_page-2.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-2.webp",
+      "sizeBytes": 77820
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 3,
+      "fileName": "meny_2026-W47_page-3.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-3.webp",
+      "sizeBytes": 107026
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 4,
+      "fileName": "meny_2026-W47_page-4.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-4.webp",
+      "sizeBytes": 106828
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 5,
+      "fileName": "meny_2026-W47_page-5.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-5.webp",
+      "sizeBytes": 113546
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 6,
+      "fileName": "meny_2026-W47_page-6.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-6.webp",
+      "sizeBytes": 101332
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 7,
+      "fileName": "meny_2026-W47_page-7.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-7.webp",
+      "sizeBytes": 99556
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 8,
+      "fileName": "meny_2026-W47_page-8.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-8.webp",
+      "sizeBytes": 102616
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 9,
+      "fileName": "meny_2026-W47_page-9.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-9.webp",
+      "sizeBytes": 123820
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 10,
+      "fileName": "meny_2026-W47_page-10.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-10.webp",
+      "sizeBytes": 114216
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 11,
+      "fileName": "meny_2026-W47_page-11.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-11.webp",
+      "sizeBytes": 88382
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 12,
+      "fileName": "meny_2026-W47_page-12.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-12.webp",
+      "sizeBytes": 137620
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 13,
+      "fileName": "meny_2026-W47_page-13.webp",
+      "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-13.webp",
+      "sizeBytes": 84394
+    }
+  ]
+}

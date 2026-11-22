@@ -1,0 +1,162 @@
+{
+  "chain": "SPAR",
+  "slug": "spar",
+  "weekKey": "2026-W47",
+  "chainId": "c062vm",
+  "publicationId": "-kXXIz7F",
+  "title": "Kundeavis",
+  "validFrom": "2026-11-15T23:00:00+0000",
+  "validUntil": "2026-11-22T22:59:59+0000",
+  "totalPagesInFlyer": 21,
+  "hotspotsCount": 55,
+  "downloadedAt": "2026-11-16T20:53:33.006Z",
+  "downloadedFiles": [
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 1,
+      "fileName": "spar_2026-W47_page-1.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-1.webp",
+      "sizeBytes": 95572
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 2,
+      "fileName": "spar_2026-W47_page-2.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-2.webp",
+      "sizeBytes": 105134
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 3,
+      "fileName": "spar_2026-W47_page-3.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-3.webp",
+      "sizeBytes": 106728
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 4,
+      "fileName": "spar_2026-W47_page-4.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-4.webp",
+      "sizeBytes": 96806
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 5,
+      "fileName": "spar_2026-W47_page-5.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-5.webp",
+      "sizeBytes": 108964
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 6,
+      "fileName": "spar_2026-W47_page-6.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-6.webp",
+      "sizeBytes": 88476
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 7,
+      "fileName": "spar_2026-W47_page-7.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-7.webp",
+      "sizeBytes": 99174
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 8,
+      "fileName": "spar_2026-W47_page-8.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-8.webp",
+      "sizeBytes": 102522
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 9,
+      "fileName": "spar_2026-W47_page-9.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-9.webp",
+      "sizeBytes": 83546
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 10,
+      "fileName": "spar_2026-W47_page-10.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-10.webp",
+      "sizeBytes": 95726
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 11,
+      "fileName": "spar_2026-W47_page-11.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-11.webp",
+      "sizeBytes": 85734
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 12,
+      "fileName": "spar_2026-W47_page-12.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-12.webp",
+      "sizeBytes": 72310
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 13,
+      "fileName": "spar_2026-W47_page-13.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-13.webp",
+      "sizeBytes": 69870
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 14,
+      "fileName": "spar_2026-W47_page-14.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-14.webp",
+      "sizeBytes": 87218
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 15,
+      "fileName": "spar_2026-W47_page-15.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-15.webp",
+      "sizeBytes": 53614
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 16,
+      "fileName": "spar_2026-W47_page-16.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-16.webp",
+      "sizeBytes": 52344
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 17,
+      "fileName": "spar_2026-W47_page-17.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-17.webp",
+      "sizeBytes": 84446
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 18,
+      "fileName": "spar_2026-W47_page-18.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-18.webp",
+      "sizeBytes": 65366
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 19,
+      "fileName": "spar_2026-W47_page-19.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-19.webp",
+      "sizeBytes": 67390
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 20,
+      "fileName": "spar_2026-W47_page-20.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-20.webp",
+      "sizeBytes": 61192
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 21,
+      "fileName": "spar_2026-W47_page-21.webp",
+      "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-21.webp",
+      "sizeBytes": 45356
+    }
+  ]
+}

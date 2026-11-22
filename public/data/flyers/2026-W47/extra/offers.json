@@ -1,0 +1,345 @@
+{
+  "chain": "COOP_EXTRA",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.077Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "imageFile": "extra_2026-W47_page-1.webp",
+      "items": [
+        {
+          "rawId": "extra-p1-klementiner",
+          "productName": "Klementiner løsvekt",
+          "offerPrice": 19.9,
+          "regularPrice": 39.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 19.9,
+          "tags": [
+            "klementiner",
+            "sitrus",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "extra-p1-cocacola",
+          "productName": "Coca-Cola Zero Sugar / Fanta / Sprite 15x0,33L bokser Coop Medlemskupp",
+          "offerPrice": 79,
+          "regularPrice": 119,
+          "unitDescription": "15 pk",
+          "unitPrice": 15.96,
+          "tags": [
+            "coca-cola zero",
+            "fanta",
+            "sprite",
+            "brus",
+            "drikke"
+          ]
+        },
+        {
+          "rawId": "extra-p1-sjokolade-ctrl",
+          "productName": "Sjokoladeplater Freia og Nidar 150-200g",
+          "offerPrice": 29.9,
+          "regularPrice": 49.9,
+          "unitDescription": "pr stk",
+          "allergens": [
+            "melk"
+          ],
+          "tags": [
+            "sjokolade",
+            "godteri"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "imageFile": "extra_2026-W47_page-2.webp",
+      "items": [
+        {
+          "rawId": "extra-p2-alkoholfritt",
+          "productName": "Munkholm og Clausthaler Radler Lemon Alkoholfritt Øl 4/6x0,33L (-20%)",
+          "offerPrice": 44.9,
+          "regularPrice": 56,
+          "unitDescription": "pk",
+          "tags": [
+            "munkholm",
+            "clausthaler",
+            "alkoholfritt øl",
+            "drikke"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "imageFile": "extra_2026-W47_page-3.webp",
+      "items": [
+        {
+          "rawId": "extra-p3-oliven",
+          "productName": "Gaea Olive Snack og Ybarra Oliven (-30% Tapas)",
+          "offerPrice": 24.9,
+          "regularPrice": 35.9,
+          "unitDescription": "pose/glass",
+          "tags": [
+            "oliven",
+            "gaea",
+            "tapas",
+            "snacks"
+          ]
+        },
+        {
+          "rawId": "extra-p3-serrano-ctrl",
+          "productName": "Serranoskinke Coop 100g (-30%)",
+          "offerPrice": 39.9,
+          "regularPrice": 57,
+          "unitDescription": "100g",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "serranoskinke",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 4,
+      "imageFile": "extra_2026-W47_page-4.webp",
+      "items": [
+        {
+          "rawId": "extra-p4-blabaer",
+          "productName": "Coop Blåbær 400g Stor Pakke Medlemskupp",
+          "offerPrice": 59.9,
+          "regularPrice": 79.9,
+          "unitDescription": "400g",
+          "unitPrice": 149.75,
+          "tags": [
+            "blåbær",
+            "bær",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "extra-p4-hvetemel",
+          "productName": "Regal Siktet Hvetemel 2kg",
+          "offerPrice": 19.9,
+          "regularPrice": 29.9,
+          "unitDescription": "2 kg",
+          "unitPrice": 9.95,
+          "tags": [
+            "hvetemel",
+            "mel",
+            "baking",
+            "korn",
+            "tørrvarer"
+          ]
+        },
+        {
+          "rawId": "extra-p4-palegg-ctrl",
+          "productName": "Coop Julesylte og Ribberull 100g 3 for 2",
+          "offerPrice": 39.9,
+          "regularPrice": 59.9,
+          "unitDescription": "3 pk",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "kjøttpålegg",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 5,
+      "imageFile": "extra_2026-W47_page-5.webp",
+      "items": [
+        {
+          "rawId": "extra-p5-druer",
+          "productName": "Coop Autumn Crisp Druer Stenfrie 500g",
+          "offerPrice": 34.9,
+          "regularPrice": 49.9,
+          "unitDescription": "500g",
+          "unitPrice": 69.8,
+          "tags": [
+            "druer",
+            "autumn crisp",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "extra-p5-tomater",
+          "productName": "Coop Hverdagstomater 400g",
+          "offerPrice": 39.9,
+          "regularPrice": 49.9,
+          "unitDescription": "400g",
+          "unitPrice": 99.75,
+          "tags": [
+            "tomater",
+            "hverdagstomater",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p5-kaki",
+          "productName": "Kaki / Persimon import",
+          "offerPrice": 34.9,
+          "regularPrice": 49.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 34.9,
+          "tags": [
+            "kaki",
+            "persimon",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "extra-p5-kiwi",
+          "productName": "Spisemoden Kiwi 3-pk",
+          "offerPrice": 29.9,
+          "regularPrice": 39.9,
+          "unitDescription": "3 pk",
+          "tags": [
+            "kiwi frukt",
+            "frukt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 6,
+      "imageFile": "extra_2026-W47_page-6.webp",
+      "items": [
+        {
+          "rawId": "extra-p6-mango",
+          "productName": "Coop Spisemoden Mango",
+          "offerPrice": 24.9,
+          "regularPrice": 34.9,
+          "unitDescription": "pr stk",
+          "tags": [
+            "mango",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "extra-p6-lok",
+          "productName": "Coop Løk Rød og Gul strømpe 600-700g",
+          "offerPrice": 19.9,
+          "regularPrice": 28.9,
+          "unitDescription": "700g",
+          "unitPrice": 28.43,
+          "tags": [
+            "løk",
+            "rødløk",
+            "gul løk",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p6-wokmiks",
+          "productName": "Coop Salat Wokmiks Red Curry 300-350g",
+          "offerPrice": 29.9,
+          "regularPrice": 39.9,
+          "unitDescription": "350g",
+          "unitPrice": 85.43,
+          "tags": [
+            "wokmiks",
+            "salat",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p6-gulrot",
+          "productName": "Coop Norske Gulrøtter 400g",
+          "offerPrice": 12.9,
+          "regularPrice": 19.9,
+          "unitDescription": "400g",
+          "unitPrice": 32.25,
+          "tags": [
+            "gulrot",
+            "norske gulrøtter",
+            "grønnsaker"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 15,
+      "imageFile": "extra_2026-W47_page-15.webp",
+      "items": [
+        {
+          "rawId": "extra-p15-surkal",
+          "productName": "Xtra Surkål og Rødkål 450g",
+          "offerPrice": 13.9,
+          "regularPrice": 18.9,
+          "unitDescription": "450g",
+          "unitPrice": 30.89,
+          "tags": [
+            "surkål",
+            "rødkål",
+            "kål",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p15-syltetoy",
+          "productName": "Xtra Tyttebærsyltetøy 940g",
+          "offerPrice": 39.1,
+          "regularPrice": 49.9,
+          "unitDescription": "940g",
+          "unitPrice": 41.6,
+          "tags": [
+            "tyttebærsyltetøy",
+            "syltetøy",
+            "bær"
+          ]
+        },
+        {
+          "rawId": "extra-p15-rodbeter",
+          "productName": "Xtra Rødbeter i skiver 490g",
+          "offerPrice": 17.9,
+          "regularPrice": 24.9,
+          "unitDescription": "490g",
+          "unitPrice": 36.53,
+          "tags": [
+            "rødbeter",
+            "syltede rødbeter",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p15-agurker",
+          "productName": "Xtra Agurker i skiver 490g",
+          "offerPrice": 17.9,
+          "regularPrice": 24.9,
+          "unitDescription": "490g",
+          "unitPrice": 36.53,
+          "tags": [
+            "agurk",
+            "sylteagurk",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "extra-p15-laks-ctrl",
+          "productName": "Xtra Røkt Laks Helside",
+          "offerPrice": 229,
+          "regularPrice": 269,
+          "unitDescription": "pr kg",
+          "allergens": [
+            "fisk",
+            "laks"
+          ],
+          "tags": [
+            "laks",
+            "fisk"
+          ]
+        }
+      ]
+    }
+  ]
+}

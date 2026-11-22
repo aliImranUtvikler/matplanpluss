@@ -1,0 +1,965 @@
+{
+  "weekKey": "2026-W47",
+  "year": 2026,
+  "weekNumber": 47,
+  "validFrom": "2026-11-16",
+  "validUntil": "2026-11-22",
+  "executedAt": "2026-11-16T20:53:37.720Z",
+  "chains": [
+    {
+      "chain": "KIWI",
+      "slug": "kiwi",
+      "status": "OK",
+      "publicationId": "2XOv2FlP",
+      "totalPages": 32,
+      "hotspotsCount": 126,
+      "filesCount": 32,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "kiwi_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-1.webp",
+          "sizeBytes": 93134
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "kiwi_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-2.webp",
+          "sizeBytes": 116094
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "kiwi_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-3.webp",
+          "sizeBytes": 87976
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "kiwi_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-4.webp",
+          "sizeBytes": 94160
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 5,
+          "fileName": "kiwi_2026-W47_page-5.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-5.webp",
+          "sizeBytes": 108048
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 6,
+          "fileName": "kiwi_2026-W47_page-6.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-6.webp",
+          "sizeBytes": 106982
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 7,
+          "fileName": "kiwi_2026-W47_page-7.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-7.webp",
+          "sizeBytes": 81036
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 8,
+          "fileName": "kiwi_2026-W47_page-8.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-8.webp",
+          "sizeBytes": 77142
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 9,
+          "fileName": "kiwi_2026-W47_page-9.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-9.webp",
+          "sizeBytes": 104600
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 10,
+          "fileName": "kiwi_2026-W47_page-10.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-10.webp",
+          "sizeBytes": 90306
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 11,
+          "fileName": "kiwi_2026-W47_page-11.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-11.webp",
+          "sizeBytes": 94064
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 12,
+          "fileName": "kiwi_2026-W47_page-12.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-12.webp",
+          "sizeBytes": 100452
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 13,
+          "fileName": "kiwi_2026-W47_page-13.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-13.webp",
+          "sizeBytes": 67750
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 14,
+          "fileName": "kiwi_2026-W47_page-14.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-14.webp",
+          "sizeBytes": 67968
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 15,
+          "fileName": "kiwi_2026-W47_page-15.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-15.webp",
+          "sizeBytes": 91826
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 16,
+          "fileName": "kiwi_2026-W47_page-16.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-16.webp",
+          "sizeBytes": 89650
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 17,
+          "fileName": "kiwi_2026-W47_page-17.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-17.webp",
+          "sizeBytes": 97208
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 18,
+          "fileName": "kiwi_2026-W47_page-18.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-18.webp",
+          "sizeBytes": 91110
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 19,
+          "fileName": "kiwi_2026-W47_page-19.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-19.webp",
+          "sizeBytes": 84268
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 20,
+          "fileName": "kiwi_2026-W47_page-20.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-20.webp",
+          "sizeBytes": 80628
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 21,
+          "fileName": "kiwi_2026-W47_page-21.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-21.webp",
+          "sizeBytes": 79046
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 22,
+          "fileName": "kiwi_2026-W47_page-22.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-22.webp",
+          "sizeBytes": 70814
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 23,
+          "fileName": "kiwi_2026-W47_page-23.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-23.webp",
+          "sizeBytes": 85768
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 24,
+          "fileName": "kiwi_2026-W47_page-24.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-24.webp",
+          "sizeBytes": 88178
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 25,
+          "fileName": "kiwi_2026-W47_page-25.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-25.webp",
+          "sizeBytes": 89246
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 26,
+          "fileName": "kiwi_2026-W47_page-26.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-26.webp",
+          "sizeBytes": 109156
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 27,
+          "fileName": "kiwi_2026-W47_page-27.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-27.webp",
+          "sizeBytes": 86920
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 28,
+          "fileName": "kiwi_2026-W47_page-28.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-28.webp",
+          "sizeBytes": 87010
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 29,
+          "fileName": "kiwi_2026-W47_page-29.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-29.webp",
+          "sizeBytes": 92846
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 30,
+          "fileName": "kiwi_2026-W47_page-30.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-30.webp",
+          "sizeBytes": 47746
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 31,
+          "fileName": "kiwi_2026-W47_page-31.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-31.webp",
+          "sizeBytes": 96508
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 32,
+          "fileName": "kiwi_2026-W47_page-32.webp",
+          "localPath": "data/flyers/2026-W47/kiwi/kiwi_2026-W47_page-32.webp",
+          "sizeBytes": 84238
+        }
+      ]
+    },
+    {
+      "chain": "REMA 1000",
+      "slug": "rema-1000",
+      "status": "OK",
+      "publicationId": "Hpxm4IbL",
+      "totalPages": 4,
+      "hotspotsCount": 4,
+      "filesCount": 4,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "rema-1000_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-1.webp",
+          "sizeBytes": 96924
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "rema-1000_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-2.webp",
+          "sizeBytes": 88352
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "rema-1000_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-3.webp",
+          "sizeBytes": 85484
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "rema-1000_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-4.webp",
+          "sizeBytes": 96162
+        }
+      ]
+    },
+    {
+      "chain": "Extra",
+      "slug": "extra",
+      "status": "OK",
+      "publicationId": "xoETC3S4",
+      "totalPages": 30,
+      "hotspotsCount": 125,
+      "filesCount": 30,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "extra_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-1.webp",
+          "sizeBytes": 109318
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "extra_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-2.webp",
+          "sizeBytes": 90844
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "extra_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-3.webp",
+          "sizeBytes": 94478
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "extra_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-4.webp",
+          "sizeBytes": 81706
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 5,
+          "fileName": "extra_2026-W47_page-5.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-5.webp",
+          "sizeBytes": 58920
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 6,
+          "fileName": "extra_2026-W47_page-6.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-6.webp",
+          "sizeBytes": 68438
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 7,
+          "fileName": "extra_2026-W47_page-7.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-7.webp",
+          "sizeBytes": 81102
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 8,
+          "fileName": "extra_2026-W47_page-8.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-8.webp",
+          "sizeBytes": 73440
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 9,
+          "fileName": "extra_2026-W47_page-9.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-9.webp",
+          "sizeBytes": 56676
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 10,
+          "fileName": "extra_2026-W47_page-10.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-10.webp",
+          "sizeBytes": 68840
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 11,
+          "fileName": "extra_2026-W47_page-11.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-11.webp",
+          "sizeBytes": 73264
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 12,
+          "fileName": "extra_2026-W47_page-12.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-12.webp",
+          "sizeBytes": 89054
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 13,
+          "fileName": "extra_2026-W47_page-13.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-13.webp",
+          "sizeBytes": 93864
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 14,
+          "fileName": "extra_2026-W47_page-14.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-14.webp",
+          "sizeBytes": 60212
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 15,
+          "fileName": "extra_2026-W47_page-15.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-15.webp",
+          "sizeBytes": 72092
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 16,
+          "fileName": "extra_2026-W47_page-16.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-16.webp",
+          "sizeBytes": 100902
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 17,
+          "fileName": "extra_2026-W47_page-17.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-17.webp",
+          "sizeBytes": 97192
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 18,
+          "fileName": "extra_2026-W47_page-18.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-18.webp",
+          "sizeBytes": 66496
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 19,
+          "fileName": "extra_2026-W47_page-19.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-19.webp",
+          "sizeBytes": 91560
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 20,
+          "fileName": "extra_2026-W47_page-20.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-20.webp",
+          "sizeBytes": 89850
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 21,
+          "fileName": "extra_2026-W47_page-21.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-21.webp",
+          "sizeBytes": 53984
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 22,
+          "fileName": "extra_2026-W47_page-22.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-22.webp",
+          "sizeBytes": 81066
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 23,
+          "fileName": "extra_2026-W47_page-23.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-23.webp",
+          "sizeBytes": 58556
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 24,
+          "fileName": "extra_2026-W47_page-24.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-24.webp",
+          "sizeBytes": 93094
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 25,
+          "fileName": "extra_2026-W47_page-25.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-25.webp",
+          "sizeBytes": 83368
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 26,
+          "fileName": "extra_2026-W47_page-26.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-26.webp",
+          "sizeBytes": 101948
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 27,
+          "fileName": "extra_2026-W47_page-27.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-27.webp",
+          "sizeBytes": 62898
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 28,
+          "fileName": "extra_2026-W47_page-28.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-28.webp",
+          "sizeBytes": 78646
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 29,
+          "fileName": "extra_2026-W47_page-29.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-29.webp",
+          "sizeBytes": 81012
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 30,
+          "fileName": "extra_2026-W47_page-30.webp",
+          "localPath": "data/flyers/2026-W47/extra/extra_2026-W47_page-30.webp",
+          "sizeBytes": 94938
+        }
+      ]
+    },
+    {
+      "chain": "MENY",
+      "slug": "meny",
+      "status": "OK",
+      "publicationId": "Og-MGv8x",
+      "totalPages": 13,
+      "hotspotsCount": 57,
+      "filesCount": 13,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "meny_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-1.webp",
+          "sizeBytes": 105338
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "meny_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-2.webp",
+          "sizeBytes": 77820
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "meny_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-3.webp",
+          "sizeBytes": 107026
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "meny_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-4.webp",
+          "sizeBytes": 106828
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 5,
+          "fileName": "meny_2026-W47_page-5.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-5.webp",
+          "sizeBytes": 113546
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 6,
+          "fileName": "meny_2026-W47_page-6.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-6.webp",
+          "sizeBytes": 101332
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 7,
+          "fileName": "meny_2026-W47_page-7.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-7.webp",
+          "sizeBytes": 99556
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 8,
+          "fileName": "meny_2026-W47_page-8.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-8.webp",
+          "sizeBytes": 102616
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 9,
+          "fileName": "meny_2026-W47_page-9.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-9.webp",
+          "sizeBytes": 123820
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 10,
+          "fileName": "meny_2026-W47_page-10.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-10.webp",
+          "sizeBytes": 114216
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 11,
+          "fileName": "meny_2026-W47_page-11.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-11.webp",
+          "sizeBytes": 88382
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 12,
+          "fileName": "meny_2026-W47_page-12.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-12.webp",
+          "sizeBytes": 137620
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 13,
+          "fileName": "meny_2026-W47_page-13.webp",
+          "localPath": "data/flyers/2026-W47/meny/meny_2026-W47_page-13.webp",
+          "sizeBytes": 84394
+        }
+      ]
+    },
+    {
+      "chain": "SPAR",
+      "slug": "spar",
+      "status": "OK",
+      "publicationId": "-kXXIz7F",
+      "totalPages": 21,
+      "hotspotsCount": 55,
+      "filesCount": 21,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "spar_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-1.webp",
+          "sizeBytes": 95572
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "spar_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-2.webp",
+          "sizeBytes": 105134
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "spar_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-3.webp",
+          "sizeBytes": 106728
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "spar_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-4.webp",
+          "sizeBytes": 96806
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 5,
+          "fileName": "spar_2026-W47_page-5.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-5.webp",
+          "sizeBytes": 108964
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 6,
+          "fileName": "spar_2026-W47_page-6.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-6.webp",
+          "sizeBytes": 88476
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 7,
+          "fileName": "spar_2026-W47_page-7.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-7.webp",
+          "sizeBytes": 99174
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 8,
+          "fileName": "spar_2026-W47_page-8.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-8.webp",
+          "sizeBytes": 102522
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 9,
+          "fileName": "spar_2026-W47_page-9.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-9.webp",
+          "sizeBytes": 83546
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 10,
+          "fileName": "spar_2026-W47_page-10.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-10.webp",
+          "sizeBytes": 95726
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 11,
+          "fileName": "spar_2026-W47_page-11.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-11.webp",
+          "sizeBytes": 85734
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 12,
+          "fileName": "spar_2026-W47_page-12.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-12.webp",
+          "sizeBytes": 72310
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 13,
+          "fileName": "spar_2026-W47_page-13.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-13.webp",
+          "sizeBytes": 69870
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 14,
+          "fileName": "spar_2026-W47_page-14.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-14.webp",
+          "sizeBytes": 87218
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 15,
+          "fileName": "spar_2026-W47_page-15.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-15.webp",
+          "sizeBytes": 53614
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 16,
+          "fileName": "spar_2026-W47_page-16.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-16.webp",
+          "sizeBytes": 52344
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 17,
+          "fileName": "spar_2026-W47_page-17.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-17.webp",
+          "sizeBytes": 84446
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 18,
+          "fileName": "spar_2026-W47_page-18.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-18.webp",
+          "sizeBytes": 65366
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 19,
+          "fileName": "spar_2026-W47_page-19.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-19.webp",
+          "sizeBytes": 67390
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 20,
+          "fileName": "spar_2026-W47_page-20.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-20.webp",
+          "sizeBytes": 61192
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 21,
+          "fileName": "spar_2026-W47_page-21.webp",
+          "localPath": "data/flyers/2026-W47/spar/spar_2026-W47_page-21.webp",
+          "sizeBytes": 45356
+        }
+      ]
+    },
+    {
+      "chain": "Joker",
+      "slug": "joker",
+      "status": "OK",
+      "publicationId": "kNwR7EI9",
+      "totalPages": 27,
+      "hotspotsCount": 34,
+      "filesCount": 27,
+      "downloadedFiles": [
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 1,
+          "fileName": "joker_2026-W47_page-1.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-1.webp",
+          "sizeBytes": 107886
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 2,
+          "fileName": "joker_2026-W47_page-2.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-2.webp",
+          "sizeBytes": 71186
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 3,
+          "fileName": "joker_2026-W47_page-3.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-3.webp",
+          "sizeBytes": 87672
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 4,
+          "fileName": "joker_2026-W47_page-4.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-4.webp",
+          "sizeBytes": 71910
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 5,
+          "fileName": "joker_2026-W47_page-5.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-5.webp",
+          "sizeBytes": 94736
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 6,
+          "fileName": "joker_2026-W47_page-6.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-6.webp",
+          "sizeBytes": 118166
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 7,
+          "fileName": "joker_2026-W47_page-7.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-7.webp",
+          "sizeBytes": 92058
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 8,
+          "fileName": "joker_2026-W47_page-8.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-8.webp",
+          "sizeBytes": 80318
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 9,
+          "fileName": "joker_2026-W47_page-9.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-9.webp",
+          "sizeBytes": 64576
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 10,
+          "fileName": "joker_2026-W47_page-10.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-10.webp",
+          "sizeBytes": 64406
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 11,
+          "fileName": "joker_2026-W47_page-11.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-11.webp",
+          "sizeBytes": 65332
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 12,
+          "fileName": "joker_2026-W47_page-12.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-12.webp",
+          "sizeBytes": 78598
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 13,
+          "fileName": "joker_2026-W47_page-13.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-13.webp",
+          "sizeBytes": 153370
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 14,
+          "fileName": "joker_2026-W47_page-14.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-14.webp",
+          "sizeBytes": 72540
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 15,
+          "fileName": "joker_2026-W47_page-15.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-15.webp",
+          "sizeBytes": 75846
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 16,
+          "fileName": "joker_2026-W47_page-16.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-16.webp",
+          "sizeBytes": 94844
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 17,
+          "fileName": "joker_2026-W47_page-17.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-17.webp",
+          "sizeBytes": 85034
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 18,
+          "fileName": "joker_2026-W47_page-18.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-18.webp",
+          "sizeBytes": 114982
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 19,
+          "fileName": "joker_2026-W47_page-19.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-19.webp",
+          "sizeBytes": 99220
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 20,
+          "fileName": "joker_2026-W47_page-20.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-20.webp",
+          "sizeBytes": 44830
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 21,
+          "fileName": "joker_2026-W47_page-21.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-21.webp",
+          "sizeBytes": 38498
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 22,
+          "fileName": "joker_2026-W47_page-22.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-22.webp",
+          "sizeBytes": 47294
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 23,
+          "fileName": "joker_2026-W47_page-23.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-23.webp",
+          "sizeBytes": 43752
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 24,
+          "fileName": "joker_2026-W47_page-24.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-24.webp",
+          "sizeBytes": 92066
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 25,
+          "fileName": "joker_2026-W47_page-25.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-25.webp",
+          "sizeBytes": 66434
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 26,
+          "fileName": "joker_2026-W47_page-26.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-26.webp",
+          "sizeBytes": 53742
+        },
+        {
+          "type": "PAGE_IMAGE",
+          "pageNumber": 27,
+          "fileName": "joker_2026-W47_page-27.webp",
+          "localPath": "data/flyers/2026-W47/joker/joker_2026-W47_page-27.webp",
+          "sizeBytes": 51270
+        }
+      ]
+    }
+  ]
+}

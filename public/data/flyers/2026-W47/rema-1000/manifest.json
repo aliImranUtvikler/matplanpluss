@@ -1,0 +1,43 @@
+{
+  "chain": "REMA 1000",
+  "slug": "rema-1000",
+  "weekKey": "2026-W47",
+  "chainId": "faa0Ym",
+  "publicationId": "Hpxm4IbL",
+  "title": "Kundeavis",
+  "validFrom": "2026-11-15T23:00:00+0000",
+  "validUntil": "2026-11-18T22:59:59+0000",
+  "totalPagesInFlyer": 4,
+  "hotspotsCount": 4,
+  "downloadedAt": "2026-11-16T20:53:21.909Z",
+  "downloadedFiles": [
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 1,
+      "fileName": "rema-1000_2026-W47_page-1.webp",
+      "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-1.webp",
+      "sizeBytes": 96924
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 2,
+      "fileName": "rema-1000_2026-W47_page-2.webp",
+      "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-2.webp",
+      "sizeBytes": 88352
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 3,
+      "fileName": "rema-1000_2026-W47_page-3.webp",
+      "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-3.webp",
+      "sizeBytes": 85484
+    },
+    {
+      "type": "PAGE_IMAGE",
+      "pageNumber": 4,
+      "fileName": "rema-1000_2026-W47_page-4.webp",
+      "localPath": "data/flyers/2026-W47/rema-1000/rema-1000_2026-W47_page-4.webp",
+      "sizeBytes": 96162
+    }
+  ]
+}

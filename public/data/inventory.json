@@ -1,0 +1,658 @@
+[
+  {
+    "id": "rode-linser-torre",
+    "name": "Røde linser (tørre)",
+    "proteinPer100g": 25,
+    "kcalPer100g": 340,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "røde linser",
+      "linser",
+      "belgfrukter",
+      "red lentils"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "gronne-linser-torre",
+    "name": "Grønne linser (tørre)",
+    "proteinPer100g": 24,
+    "kcalPer100g": 330,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "grønne linser",
+      "linser",
+      "belgfrukter",
+      "green lentils",
+      "puylinser"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "fast-tofu",
+    "name": "Fast tofu",
+    "proteinPer100g": 15,
+    "kcalPer100g": 135,
+    "inStock": false,
+    "category": "Kjøl/Tofu",
+    "searchKeywords": [
+      "tofu",
+      "fast tofu",
+      "eldorado tofu",
+      "naturell tofu",
+      "soya"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "myk-tofu-silken",
+    "name": "Myk tofu (silken)",
+    "proteinPer100g": 7,
+    "kcalPer100g": 58,
+    "inStock": false,
+    "category": "Kjøl/Tofu",
+    "searchKeywords": [
+      "silken tofu",
+      "myk tofu",
+      "bløt tofu",
+      "tofu"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "soya-chunks-torre",
+    "name": "Soya chunks (tørre)",
+    "proteinPer100g": 52,
+    "kcalPer100g": 345,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "soya chunks",
+      "soyabiter",
+      "tvp",
+      "textured vegetable protein",
+      "soya"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "trs-soya-mince-torr",
+    "name": "TRS Soya mince (tørr)",
+    "proteinPer100g": 52,
+    "kcalPer100g": 345,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "trs soya mince",
+      "soya mince",
+      "soyagranulat",
+      "soyafarse",
+      "soya"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "kikertfusilli",
+    "name": "Kikertfusilli",
+    "proteinPer100g": 20,
+    "kcalPer100g": 350,
+    "inStock": false,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "kikertfusilli",
+      "kikertpasta",
+      "fusilli",
+      "pasta",
+      "glutenfri pasta"
+    ],
+    "isCarbBase": true,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "basmatiris",
+    "name": "Basmatiris",
+    "proteinPer100g": 8,
+    "kcalPer100g": 350,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "basmatiris",
+      "ris",
+      "basmati",
+      "langkornet ris"
+    ],
+    "isCarbBase": true,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "glutenrik-ris",
+    "name": "Glutenrik ris",
+    "proteinPer100g": 7,
+    "kcalPer100g": 350,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "glutenrik ris",
+      "sushiris",
+      "sticky rice",
+      "rundkornet ris"
+    ],
+    "isCarbBase": true,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "quinoa",
+    "name": "Quinoa",
+    "proteinPer100g": 14,
+    "kcalPer100g": 370,
+    "inStock": false,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "quinoa",
+      "hvit quinoa",
+      "rød quinoa",
+      "quinoafrø"
+    ],
+    "isCarbBase": true,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "naeringsgjaer",
+    "name": "Næringsgjær",
+    "proteinPer100g": 50,
+    "kcalPer100g": 380,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "næringsgjær",
+      "nooch",
+      "nutritional yeast",
+      "gjærflak"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "miso-paste",
+    "name": "Miso paste",
+    "proteinPer100g": 12,
+    "kcalPer100g": 190,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "miso paste",
+      "miso",
+      "hvit miso",
+      "fermentert soyapaste"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "gochujang",
+    "name": "Gochujang",
+    "proteinPer100g": 5,
+    "kcalPer100g": 210,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "gochujang",
+      "koreansk chilipaste",
+      "chilipaste"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "tahini",
+    "name": "Tahini",
+    "proteinPer100g": 18,
+    "kcalPer100g": 620,
+    "inStock": false,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "tahini",
+      "sesampaste",
+      "sesamsmør",
+      "sesam"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "rod-curry-paste",
+    "name": "Rød Curry paste",
+    "proteinPer100g": 3,
+    "kcalPer100g": 120,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "rød curry paste",
+      "red curry",
+      "curry paste"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "gronn-curry-paste",
+    "name": "Grønn Curry paste",
+    "proteinPer100g": 3,
+    "kcalPer100g": 120,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "grønn curry paste",
+      "green curry",
+      "curry paste"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "brokkoli",
+    "name": "Brokkoli",
+    "proteinPer100g": 3,
+    "kcalPer100g": 35,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "brokkoli",
+      "kålvekster",
+      "fersk brokkoli"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "edamamebonner",
+    "name": "Edamamebønner",
+    "proteinPer100g": 12,
+    "kcalPer100g": 130,
+    "inStock": false,
+    "category": "Kjøl/Tofu",
+    "searchKeywords": [
+      "edamame",
+      "edamamebønner",
+      "soyabønner",
+      "fryst edamame"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "sotpotet",
+    "name": "Søtpotet",
+    "proteinPer100g": 2,
+    "kcalPer100g": 86,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "søtpotet",
+      "sweet potato",
+      "rotgrønnsak"
+    ],
+    "isCarbBase": true,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "spinat",
+    "name": "Spinat",
+    "proteinPer100g": 3,
+    "kcalPer100g": 23,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "spinat",
+      "babyspinat",
+      "fersk spinat",
+      "bladgrønnsak"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "avokado",
+    "name": "Avokado",
+    "proteinPer100g": 2,
+    "kcalPer100g": 160,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "avokado",
+      "hass avokado",
+      "avocado"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "svarte-bonner",
+    "name": "Svarte bønner",
+    "proteinPer100g": 9,
+    "kcalPer100g": 120,
+    "inStock": false,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "svarte bønner",
+      "black beans",
+      "bønner hermetisk"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "kikerter",
+    "name": "Kikerter",
+    "proteinPer100g": 9,
+    "kcalPer100g": 140,
+    "inStock": false,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "kikerter",
+      "chickpeas",
+      "hermetiske kikerter",
+      "garbanzo"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "kokosmelk",
+    "name": "Kokosmelk",
+    "proteinPer100g": 2,
+    "kcalPer100g": 190,
+    "inStock": false,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "kokosmelk",
+      "coconut milk",
+      "creamy coconut milk",
+      "kokos"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "hakkede-tomater",
+    "name": "Hakkede tomater",
+    "proteinPer100g": 1.2,
+    "kcalPer100g": 22,
+    "inStock": false,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "hakkede tomater",
+      "tomater hermetisk",
+      "knuste tomater",
+      "mutti tomater"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "hvitlok-og-ingefaer",
+    "name": "Hvitløk & Ingefær",
+    "proteinPer100g": 3,
+    "kcalPer100g": 65,
+    "inStock": true,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "hvitløk",
+      "ingefær",
+      "garlic",
+      "ginger"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "kimchi",
+    "name": "Kimchi",
+    "proteinPer100g": 2,
+    "kcalPer100g": 25,
+    "inStock": false,
+    "category": "Kjøl/Tofu",
+    "searchKeywords": [
+      "kimchi",
+      "fermentert kål",
+      "koreansk kimchi"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "tempeh",
+    "name": "Tempeh",
+    "proteinPer100g": 19,
+    "kcalPer100g": 195,
+    "inStock": false,
+    "category": "Kjøl/Tofu",
+    "searchKeywords": [
+      "tempeh",
+      "fermentert soya",
+      "økologisk tempeh"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "cashewnotter",
+    "name": "Cashewnøtter",
+    "proteinPer100g": 18,
+    "kcalPer100g": 550,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "cashewnøtter",
+      "cashews",
+      "usaltede cashewnøtter",
+      "nøtter"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "solsikkekjerner",
+    "name": "Solsikkekjerner",
+    "proteinPer100g": 21,
+    "kcalPer100g": 580,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "solsikkekjerner",
+      "solsikkefrø",
+      "sunflower seeds"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "champignon-sopp",
+    "name": "Champignon sopp",
+    "proteinPer100g": 3,
+    "kcalPer100g": 22,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "sopp",
+      "champignon",
+      "aromasopp",
+      "fersk sopp"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "paprika-rod",
+    "name": "Paprika rød",
+    "proteinPer100g": 1,
+    "kcalPer100g": 30,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "paprika",
+      "rød paprika",
+      "snackpaprika"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "gulerotter",
+    "name": "Gulerøtter",
+    "proteinPer100g": 1,
+    "kcalPer100g": 36,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "gulerøtter",
+      "gulrot",
+      "norske gulerøtter"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "agurk",
+    "name": "Agurk",
+    "proteinPer100g": 1,
+    "kcalPer100g": 15,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "agurk",
+      "norsk agurk",
+      "slangeagurk"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "varlok",
+    "name": "Vårløk",
+    "proteinPer100g": 2,
+    "kcalPer100g": 32,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "vårløk",
+      "scallions",
+      "green onion"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "fersk-koriander",
+    "name": "Fersk koriander",
+    "proteinPer100g": 2,
+    "kcalPer100g": 23,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "koriander",
+      "fersk koriander",
+      "cilantro"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": true
+  },
+  {
+    "id": "lime",
+    "name": "Lime",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 30,
+    "inStock": false,
+    "category": "Frukt & Grønt",
+    "searchKeywords": [
+      "lime",
+      "fersk lime",
+      "limesaft"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "sesamfro",
+    "name": "Sesamfrø",
+    "proteinPer100g": 18,
+    "kcalPer100g": 573,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "sesamfrø",
+      "hvite sesamfrø",
+      "ristede sesamfrø"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "soyasaus-tamari",
+    "name": "Soyasaus / Tamari",
+    "proteinPer100g": 8,
+    "kcalPer100g": 60,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "soyasaus",
+      "tamari",
+      "kikkoman",
+      "soya saus"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "riseddik",
+    "name": "Riseddik",
+    "proteinPer100g": 0,
+    "kcalPer100g": 18,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "riseddik",
+      "rice vinegar",
+      "sushieddik"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "sesamolje",
+    "name": "Sesamolje",
+    "proteinPer100g": 0,
+    "kcalPer100g": 884,
+    "inStock": true,
+    "category": "Krydder/Sauser",
+    "searchKeywords": [
+      "sesamolje",
+      "toasted sesame oil"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  },
+  {
+    "id": "dette-er-test",
+    "name": "Dette er test",
+    "proteinPer100g": 15,
+    "kcalPer100g": 120,
+    "inStock": true,
+    "category": "Tørrvarer/Belgvekster",
+    "searchKeywords": [
+      "dette er test",
+      "dette",
+      "test"
+    ],
+    "isCarbBase": false,
+    "isGutHealthBooster": false
+  }
+]

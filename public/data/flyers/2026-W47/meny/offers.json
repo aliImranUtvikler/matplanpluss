@@ -1,0 +1,180 @@
+{
+  "chain": "MENY",
+  "weekKey": "2026-W47",
+  "updatedAt": "2026-11-16T21:13:51.077Z",
+  "description": "Redigerbare tilbudsfunn fra ukens kundeavis. Legg til, fjern eller endre varer her. Kjører du `npm run pipeline`, oppdateres matplanen umiddelbart.",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "imageFile": "meny_2026-W47_page-1.webp",
+      "items": [
+        {
+          "rawId": "meny-p1-klementiner",
+          "productName": "Klementiner import løsvekt",
+          "offerPrice": 19.9,
+          "regularPrice": 34.9,
+          "unitDescription": "pr kg",
+          "unitPrice": 19.9,
+          "tags": [
+            "klementiner",
+            "sitrus",
+            "frukt"
+          ]
+        },
+        {
+          "rawId": "meny-p1-cocacola",
+          "productName": "Coca-Cola Zero Sugar 8x1,5L",
+          "offerPrice": 119,
+          "regularPrice": 155,
+          "unitDescription": "8 pk",
+          "unitPrice": 9.92,
+          "tags": [
+            "coca-cola zero",
+            "brus",
+            "drikke"
+          ]
+        },
+        {
+          "rawId": "meny-p1-kylling-ctrl",
+          "productName": "Fersk Kyllingfilet 700g Prior",
+          "offerPrice": 109,
+          "regularPrice": 139,
+          "unitDescription": "700g",
+          "allergens": [
+            "kylling",
+            "kjøtt"
+          ],
+          "tags": [
+            "kylling",
+            "kjøtt"
+          ]
+        },
+        {
+          "rawId": "meny-p1-julepolse-ctrl",
+          "productName": "Gilde Julepølse 400g",
+          "offerPrice": 34.9,
+          "regularPrice": 54.9,
+          "unitDescription": "400g",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "julepølse",
+            "kjøtt"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 3,
+      "imageFile": "meny_2026-W47_page-3.webp",
+      "items": [
+        {
+          "rawId": "meny-p3-ribbe-ctrl",
+          "productName": "Nystekt Ribbe fra Menys Kjøkken",
+          "offerPrice": 29.9,
+          "regularPrice": 33.9,
+          "unitDescription": "pr hg",
+          "allergens": [
+            "svinekjøtt",
+            "kjøtt"
+          ],
+          "tags": [
+            "ribbe",
+            "kjøtt"
+          ]
+        },
+        {
+          "rawId": "meny-p3-flotepoteter-ctrl",
+          "productName": "Fløtepoteter Meny",
+          "offerPrice": 14.9,
+          "regularPrice": 20.9,
+          "unitDescription": "pr hg",
+          "allergens": [
+            "fløte",
+            "melk"
+          ],
+          "tags": [
+            "fløtepoteter",
+            "meieri"
+          ]
+        }
+      ]
+    },
+    {
+      "pageNumber": 4,
+      "imageFile": "meny_2026-W47_page-4.webp",
+      "items": [
+        {
+          "rawId": "meny-p4-olivenolje",
+          "productName": "Jacobs Kalamata PDO Extra Virgin Olivenolje 500ml 3 for 2",
+          "offerPrice": 99.83,
+          "regularPrice": 149,
+          "unitDescription": "500ml",
+          "unitPrice": 199.66,
+          "tags": [
+            "olivenolje",
+            "extra virgin",
+            "jacobs utvalgte",
+            "olje"
+          ]
+        },
+        {
+          "rawId": "meny-p4-antipasti",
+          "productName": "Jacobs Utvalgte Antipasti Grillede Artisjokker 3 for 2",
+          "offerPrice": 39.46,
+          "regularPrice": 58.9,
+          "unitDescription": "280g",
+          "tags": [
+            "antipasti",
+            "artisjokk",
+            "jacobs utvalgte",
+            "grønnsaker"
+          ]
+        },
+        {
+          "rawId": "meny-p4-varruller",
+          "productName": "Jacobs Utvalgte Vårruller med steinsopp og shiitake 3 for 2",
+          "offerPrice": 34.9,
+          "regularPrice": 52.9,
+          "unitDescription": "200g",
+          "unitPrice": 174.5,
+          "tags": [
+            "vårruller",
+            "sopp",
+            "shiitake",
+            "jacobs utvalgte"
+          ]
+        },
+        {
+          "rawId": "meny-p4-limonade",
+          "productName": "Jacobs Utvalgte Eple- og Bringebærlimonade 0,75L 3 for 2",
+          "offerPrice": 34.9,
+          "regularPrice": 52.9,
+          "unitDescription": "0,75L",
+          "tags": [
+            "limonade",
+            "drikke",
+            "jacobs utvalgte"
+          ]
+        },
+        {
+          "rawId": "meny-p4-gyoza-ctrl",
+          "productName": "Jacobs Utvalgte Gyoza Kylling 250g",
+          "offerPrice": 49.9,
+          "regularPrice": 69.9,
+          "unitDescription": "250g",
+          "allergens": [
+            "kylling",
+            "kjøtt"
+          ],
+          "tags": [
+            "gyoza",
+            "kjøtt"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://matplan-tilbud-norge.local/schemas/mealplan.schema.json",
+  "title": "WeeklyMealPlanResponse",
+  "description": "JSON Schema for en 5-dagers vegansk, peanøttfri matplan med 40-50g protein per måltid, definert karbohydratbase og optimalisert handleliste.",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "servingsPerMeal",
+    "days",
+    "shoppingList",
+    "pantryItemsUsed"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601-tidsstempel for når matplanen ble kalkulert"
+    },
+    "servingsPerMeal": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "default": 2,
+      "description": "Antall porsjoner per middag"
+    },
+    "days": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "description": "De 5 middagsdagene fra Mandag til Fredag",
+      "items": {
+        "$ref": "#/$defs/MealPlanDay"
+      }
+    },
+    "shoppingList": {
+      "type": "array",
+      "description": "Varer som må handles inn fordi På lager === false",
+      "items": {
+        "$ref": "#/$defs/ShoppingListItem"
+      }
+    },
+    "pantryItemsUsed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unike råvarer som benyttes i planen og som allerede er på lager"
+    }
+  },
+  "$defs": {
+    "OfferCategory": {
+      "type": "string",
+      "enum": [
+        "Frukt & Grønt",
+        "Tørrvarer/Belgvekster",
+        "Kjøl/Tofu",
+        "Krydder/Sauser",
+        "Annet"
+      ]
+    },
+    "CarbBase": {
+      "type": "object",
+      "required": ["name", "dryWeightGramsPerPerson"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Navn på karbohydratbase (f.eks. Basmatiris, Quinoa, Kikertfusilli, Søtpotet)"
+        },
+        "dryWeightGramsPerPerson": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 150,
+          "description": "Eksplisitt tørrvekt i gram per person (f.eks. 75-85g)"
+        }
+      }
+    },
+    "NutritionMacros": {
+      "type": "object",
+      "required": [
+        "proteinGramsPerPerson",
+        "kcalPerPerson",
+        "carbsGramsPerPerson",
+        "fatGramsPerPerson",
+        "plantCount"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "proteinGramsPerPerson": {
+          "type": "number",
+          "minimum": 35,
+          "maximum": 65,
+          "description": "Protein i gram per person (KRAV: 40-50 g uten proteinpulver)"
+        },
+        "kcalPerPerson": {
+          "type": "number",
+          "minimum": 500,
+          "maximum": 850,
+          "description": "Kalorier per person (KRAV: maks 750-800 kcal)"
+        },
+        "carbsGramsPerPerson": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 140,
+          "description": "Karbohydrater i gram per person"
+        },
+        "fatGramsPerPerson": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 40,
+          "description": "Fett i gram per person"
+        },
+        "plantCount": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 25,
+          "description": "Antall unike plantekilder for optimal tarmhelse"
+        }
+      }
+    },
+    "RecipeIngredient": {
+      "type": "object",
+      "required": [
+        "name",
+        "amountGrams",
+        "displayAmount",
+        "inStock",
+        "category"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "amountGrams": {
+          "type": "number",
+          "minimum": 0
+        },
+        "displayAmount": {
+          "type": "string",
+          "description": "F.eks. '300g fast tofu' eller '80g tørrvekt'"
+        },
+        "inStock": {
+          "type": "boolean",
+          "description": "Hentet direkte fra inventarets På lager status"
+        },
+        "category": {
+          "$ref": "#/$defs/OfferCategory"
+        }
+      }
+    },
+    "AllergenSafety": {
+      "type": "object",
+      "required": ["isVegan", "isPeanutFree"],
+      "additionalProperties": false,
+      "properties": {
+        "isVegan": {
+          "type": "boolean",
+          "const": true
+        },
+        "isPeanutFree": {
+          "type": "boolean",
+          "const": true
+        },
+        "nutFreeAlternativeUsed": {
+          "type": "string",
+          "description": "Tahini, Cashewnøtter eller Solsikkekjerner brukt for kremethet/fett"
+        }
+      }
+    },
+    "MealPlanDay": {
+      "type": "object",
+      "required": [
+        "dayNumber",
+        "dayName",
+        "title",
+        "cuisine",
+        "carbBase",
+        "proteinSources",
+        "gutHealthHighlights",
+        "allergenSafety",
+        "macros",
+        "ingredients",
+        "steps",
+        "prepTimeMinutes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dayNumber": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        },
+        "dayName": {
+          "type": "string",
+          "enum": ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "cuisine": {
+          "type": "string"
+        },
+        "carbBase": {
+          "$ref": "#/$defs/CarbBase"
+        },
+        "proteinSources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "gutHealthHighlights": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allergenSafety": {
+          "$ref": "#/$defs/AllergenSafety"
+        },
+        "macros": {
+          "$ref": "#/$defs/NutritionMacros"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/RecipeIngredient" },
+          "minItems": 3
+        },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3
+        },
+        "prepTimeMinutes": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 90
+        }
+      }
+    },
+    "ShoppingListItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "ingredientName",
+        "totalAmountGrams",
+        "displayAmount",
+        "category",
+        "usedOnDays"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ingredientName": {
+          "type": "string"
+        },
+        "totalAmountGrams": {
+          "type": "number",
+          "minimum": 0
+        },
+        "displayAmount": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/OfferCategory"
+        },
+        "usedOnDays": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "matchedOffers": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    }
+  }
+}
