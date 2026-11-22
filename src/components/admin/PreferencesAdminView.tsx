@@ -42,7 +42,8 @@ import {
   Check,
   UserPlus,
   Users2,
-  Unlink
+  Unlink,
+  Clock
 } from 'lucide-react';
 import type {
   GoogleUserProfile
@@ -125,6 +126,23 @@ export default function PreferencesAdminView({
   );
   const [chefSaving, setChefSaving] = useState<boolean>(false);
   const [chefMessage, setChefMessage] = useState<string | null>(null);
+  const [lastChefModesSavedAt, setLastChefModesSavedAt] = useState<string | null>(null);
+  const [lastMacroSavedAt, setLastMacroSavedAt] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedChef = localStorage.getItem('matplan_chef_modes_saved_at');
+      if (savedChef) setLastChefModesSavedAt(savedChef);
+      const savedMacro = localStorage.getItem('matplan_macro_saved_at');
+      if (savedMacro) setLastMacroSavedAt(savedMacro);
+    } else if (dashboard?.updatedAt) {
+      try {
+        const d = new Date(dashboard.updatedAt);
+        const t = d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setLastChefModesSavedAt(`I dag kl. ${t}`);
+      } catch {}
+    }
+  }, [dashboard?.updatedAt]);
 
   // Felles husstand state
   const [partnerInput, setPartnerInput] = useState<string>('');
@@ -154,6 +172,14 @@ export default function PreferencesAdminView({
   ) => {
     setSaving(true);
     setSaveMessage(null);
+    const startTime = Date.now();
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('matplan_plan_status', {
+        detail: { state: 'working', message: 'Jobber med nye makromål & porsjoner...' }
+      }));
+    }
+
     try {
       const updatedData: UserDashboardData = {
         ...dashboard,
@@ -164,9 +190,39 @@ export default function PreferencesAdminView({
       };
 
       const result = await saveUserDashboard(dashboard.userId, updatedData);
+
+      // Minst 1100ms slik at brukeren rekker å se den oransje/gule spinner-boblen
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1100) {
+        await new Promise((resolve) => setTimeout(resolve, 1100 - elapsed));
+      }
+
+      const now = new Date();
+      const formattedTime = now.toLocaleTimeString('nb-NO', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      const stamp = `I dag kl. ${formattedTime}`;
+      setLastMacroSavedAt(stamp);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('matplan_macro_saved_at', stamp);
+      }
+
       onDashboardUpdated(result);
-      setSaveMessage('Preferanser og makromål er lagret i din profil!');
-      setTimeout(() => setSaveMessage(null), 3000);
+      setSaveMessage(`Preferanser og makromål er lagret! (kl. ${formattedTime})`);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('matplan_plan_status', {
+          detail: {
+            state: 'done',
+            message: `Makromål oppdatert · kl. ${formattedTime}`,
+            timestamp: formattedTime
+          }
+        }));
+      }
+
+      setTimeout(() => setSaveMessage(null), 3500);
     } catch (err) {
       setSaveMessage('Feil ved lagring: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
@@ -178,6 +234,14 @@ export default function PreferencesAdminView({
   const handleSaveChefModes = async (newModes = chefModes) => {
     setChefSaving(true);
     setChefMessage(null);
+    const startTime = Date.now();
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('matplan_plan_status', {
+        detail: { state: 'working', message: 'Jobber med ny ukeplan & stil...' }
+      }));
+    }
+
     try {
       const updatedData: UserDashboardData = {
         ...dashboard,
@@ -192,9 +256,39 @@ export default function PreferencesAdminView({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('user_mealplan');
       }
+
+      // Minst 1100ms slik at brukeren rekker å se den oransje/gule spinner-boblen
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1100) {
+        await new Promise((resolve) => setTimeout(resolve, 1100 - elapsed));
+      }
+
+      const now = new Date();
+      const formattedTime = now.toLocaleTimeString('nb-NO', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      const stamp = `I dag kl. ${formattedTime}`;
+      setLastChefModesSavedAt(stamp);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('matplan_chef_modes_saved_at', stamp);
+      }
+
       onDashboardUpdated(result);
-      setChefMessage('Kokkens modus og oppskriftsstil er oppdatert! Ukeplanen rekalkuleres.');
-      setTimeout(() => setChefMessage(null), 3500);
+      setChefMessage(`Kokkens modus og oppskriftsstil er oppdatert! (kl. ${formattedTime})`);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('matplan_plan_status', {
+          detail: {
+            state: 'done',
+            message: `Stil & ukeplan oppdatert · kl. ${formattedTime}`,
+            timestamp: formattedTime
+          }
+        }));
+      }
+
+      setTimeout(() => setChefMessage(null), 4000);
     } catch (err) {
       setChefMessage('Feil ved lagring: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
@@ -1014,14 +1108,21 @@ export default function PreferencesAdminView({
         </div>
 
         {/* Handlingsknapp for Kokkens Modus */}
-        <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80">
-          <div className="text-xs text-slate-400">
-            {chefMessage ? (
-              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+        <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-slate-400">
+            {lastChefModesSavedAt && (
+              <span className="flex items-center gap-1.5 text-slate-300">
+                <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span>Sist endret: <strong className="text-white font-semibold">{lastChefModesSavedAt}</strong></span>
+              </span>
+            )}
+            {chefMessage && (
+              <span className="text-emerald-400 font-bold flex items-center gap-1.5 sm:ml-2">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 {chefMessage}
               </span>
-            ) : (
+            )}
+            {!lastChefModesSavedAt && !chefMessage && (
               <span>Ukeplanen tilpasser seg umiddelbart når du lagrer.</span>
             )}
           </div>
@@ -1030,14 +1131,23 @@ export default function PreferencesAdminView({
             type="button"
             onClick={() => handleSaveChefModes()}
             disabled={chefSaving}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all min-h-[48px] disabled:opacity-50"
+            className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-xs font-bold transition-all min-h-[48px] disabled:opacity-80 ${
+              chefSaving
+                ? 'bg-amber-600/90 text-white shadow-lg shadow-amber-600/30 ring-1 ring-amber-400'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/30'
+            }`}
           >
             {chefSaving ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                <span>⏳ Oppdaterer oppskrifter & rute...</span>
+              </>
             ) : (
-              <Sparkles className="w-4 h-4" />
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Lagre Stil & Oppdater Ukeplan</span>
+              </>
             )}
-            <span>Lagre Stil & Oppdater Ukeplan</span>
           </button>
         </div>
       </div>
@@ -1179,10 +1289,16 @@ export default function PreferencesAdminView({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-          <div className="text-xs text-slate-400">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-slate-400">
+            {lastMacroSavedAt && (
+              <span className="flex items-center gap-1.5 text-slate-300">
+                <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span>Sist endret: <strong className="text-white font-semibold">{lastMacroSavedAt}</strong></span>
+              </span>
+            )}
             {saveMessage && (
-              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+              <span className="text-emerald-400 font-bold flex items-center gap-1.5 sm:ml-2">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 {saveMessage}
               </span>
@@ -1193,10 +1309,20 @@ export default function PreferencesAdminView({
             type="button"
             onClick={() => handleSavePreferences()}
             disabled={saving}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all min-h-[48px] disabled:opacity-50"
+            className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[48px] disabled:opacity-80 ${
+              saving
+                ? 'bg-amber-600/90 text-white shadow-lg shadow-amber-600/30 ring-1 ring-amber-400'
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30'
+            }`}
           >
-            {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
-            <span>Lagre Makromål & Oppdater</span>
+            {saving ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
+                <span>⏳ Oppdaterer makromål & rute...</span>
+              </>
+            ) : (
+              <span>Lagre Makromål & Oppdater</span>
+            )}
           </button>
         </div>
       </div>

@@ -86,10 +86,60 @@ export default function HomePage() {
   const [globalRouteData, setGlobalRouteData] = useState<RouteOptimizationResponse | null>(null);
   const [isGlobalMapModalOpen, setIsGlobalMapModalOpen] = useState<boolean>(false);
 
+  // Global flytende status-boble som følger brukeren på tvers av alle faner
+  const [planStatus, setPlanStatus] = useState<{
+    state: 'idle' | 'working' | 'done';
+    message: string;
+    timestamp?: string;
+  }>({
+    state: 'idle',
+    message: ''
+  });
+
   const googleButtonContainerRef = useRef<HTMLDivElement>(null);
 
-  // 1. Initialiser autentisering ved oppstart
+  // 1. Initialiser autentisering og global status ved oppstart
   useEffect(() => {
+    // Sjekk om det finnes et lagret tidsstempel fra sist
+    if (typeof window !== 'undefined') {
+      const savedStamp = localStorage.getItem('matplan_chef_modes_saved_at');
+      if (savedStamp) {
+        setPlanStatus({
+          state: 'done',
+          message: `Stil & ukeplan oppdatert · ${savedStamp}`,
+          timestamp: savedStamp
+        });
+      }
+    }
+
+    const handleStatusEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ state: 'working' | 'done'; message?: string; timestamp?: string }>;
+      if (!customEvent.detail) return;
+      const { state, message, timestamp } = customEvent.detail;
+
+      if (state === 'working') {
+        setPlanStatus({
+          state: 'working',
+          message: message || 'Jobber med ny ukeplan & stil...'
+        });
+      } else if (state === 'done') {
+        const nowFormatted = timestamp || new Date().toLocaleTimeString('nb-NO', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        setPlanStatus({
+          state: 'done',
+          message: message || `Stil & ukeplan oppdatert · kl. ${nowFormatted}`,
+          timestamp: nowFormatted
+        });
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('matplan_plan_status', handleStatusEvent);
+    }
+
     const session = getCurrentAuthSession();
     if (session?.user) {
       setCurrentUser(session.user);
@@ -105,7 +155,12 @@ export default function HomePage() {
       setCurrentUser(newSession?.user || null);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('matplan_plan_status', handleStatusEvent);
+      }
+    };
   }, []);
 
   // 1b. Sanntids Live Sync for felles husstand over BroadcastChannel og sky
@@ -537,6 +592,40 @@ export default function HomePage() {
         isOpen={isGlobalMapModalOpen}
         onOpenChange={setIsGlobalMapModalOpen}
       />
+
+      {/* 5. GLOBALT FLYTENDE STATUS-BOBLE (Følger deg alltid på tvers av ALLE faner) */}
+      {planStatus.state !== 'idle' && (
+        <div className="fixed bottom-20 md:bottom-6 left-4 sm:left-6 z-50 pointer-events-auto">
+          {planStatus.state === 'working' ? (
+            <div className="flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 backdrop-blur-xl ring-1 ring-amber-400/50 text-amber-300 shadow-xl shadow-amber-950/40 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400 shrink-0" />
+              <span>⏳ {planStatus.message}</span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setActiveTab('MEALPLAN')}
+              className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800/95 backdrop-blur-xl ring-1 ring-emerald-400/50 text-emerald-300 shadow-xl shadow-emerald-950/40 text-xs font-bold transition-all hover:scale-105 active:scale-95 animate-in fade-in slide-in-from-bottom-2 duration-300 cursor-pointer"
+              title="Ukeplanen er oppdatert. Trykk for å gå til Ukemeny"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+              </span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>{planStatus.message}</span>
+              {activeTab !== 'MEALPLAN' && (
+                <span className="text-[10px] text-emerald-400/90 underline ml-0.5 hidden sm:inline">
+                  Se meny →
+                </span>
+              )}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
