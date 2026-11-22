@@ -10,7 +10,10 @@ import type {
   UserMacroTargets,
   WeeklyMealPlanResponse
 } from '../../types/contracts';
-import { matchOffersToShoppingList } from '../offers/offerMatcher';
+import {
+  matchOffersToShoppingList,
+  findMatchingOffersForIngredientName
+} from '../offers/offerMatcher';
 
 /**
  * Standard makromål for en aktiv, helsebevisst voksen (2 porsjoner som standard)
@@ -57,11 +60,15 @@ const INGREDIENT_MACROS: Record<
   edamamebønner: { protein: 12, kcal: 130, carbs: 8, fat: 5, isProteinCore: true },
   kikerter: { protein: 9, kcal: 140, carbs: 20, fat: 2.5, isProteinCore: true },
   'svarte bønner': { protein: 9, kcal: 120, carbs: 18, fat: 1, isProteinCore: true },
+  'hvite bønner': { protein: 9, kcal: 125, carbs: 19, fat: 1, isProteinCore: true },
+  'kidneybønner': { protein: 9, kcal: 125, carbs: 18, fat: 1, isProteinCore: true },
   kikertfusilli: { protein: 20, kcal: 350, carbs: 53, fat: 6, isProteinCore: true },
   quinoa: { protein: 14, kcal: 370, carbs: 64, fat: 6, isProteinCore: true },
   næringsgjær: { protein: 50, kcal: 380, carbs: 30, fat: 5, isProteinCore: true },
   basmatiris: { protein: 8, kcal: 350, carbs: 77, fat: 0.6 },
+  jasminris: { protein: 7, kcal: 350, carbs: 78, fat: 0.6 },
   'glutenrik ris': { protein: 7, kcal: 350, carbs: 78, fat: 0.5 },
+  poteter: { protein: 2, kcal: 80, carbs: 17, fat: 0.1 },
   søtpotet: { protein: 2, kcal: 86, carbs: 20, fat: 0.1 },
   tahini: { protein: 18, kcal: 620, carbs: 12, fat: 54 },
   cashewnøtter: { protein: 18, kcal: 550, carbs: 30, fat: 44 },
@@ -107,7 +114,7 @@ export function getIngredientNutritionPer100g(
   );
 
   if (invMatch) {
-    const isProteinCore = invMatch.proteinPer100g >= 12 || /tofu|tempeh|soya|linser|kikert/i.test(invMatch.name);
+    const isProteinCore = invMatch.proteinPer100g >= 12 || /tofu|tempeh|soya|linser|kikert|bønner|bonner/i.test(invMatch.name);
     return {
       protein: invMatch.proteinPer100g,
       kcal: invMatch.kcalPer100g,
@@ -229,6 +236,34 @@ export const CHEF_CATALOG_RECIPES: Record<CuisineStyle, MealPlanDay[]> = {
         'Bland sammen og server rykende varmt på 15 minutter flat!'
       ],
       prepTimeMinutes: 15
+    },
+    {
+      dayNumber: 1,
+      dayName: 'Mandag',
+      title: 'Kundeavis-Kupp: Sprø Tofu & Wokket Brokkoli i Jasminris Bowl med Spinat',
+      cuisine: 'Asiatisk Kupp',
+      carbBase: { name: 'Jasminris', dryWeightGramsPerPerson: 80 },
+      proteinSources: ['Fast tofu (200g)', 'Edamamebønner (70g)', 'Næringsgjær (10g)'],
+      gutHealthHighlights: ['Dampet fersk brokkoli', 'Babyspinat', 'Hvitløk og ingefær', 'Gochujang'],
+      allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Sesamfrø og tamari' },
+      macros: { proteinGramsPerPerson: 47, kcalPerPerson: 740, carbsGramsPerPerson: 85, fatGramsPerPerson: 20, plantCount: 9 },
+      ingredients: [
+        { name: 'Jasminris', amountGrams: 160, displayAmount: '160g tørrvekt (Toro boil-in-bag)', inStock: true, category: 'Tørrvarer/Belgvekster' },
+        { name: 'Fast tofu', amountGrams: 400, displayAmount: '400g tofu i terninger', inStock: false, category: 'Kjøl/Tofu' },
+        { name: 'Brokkoli', amountGrams: 300, displayAmount: '300g buketter', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Spinat', amountGrams: 130, displayAmount: '130g fersk babyspinat', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Løk', amountGrams: 100, displayAmount: '100g hakket gul løk', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Soyasaus / Tamari', amountGrams: 30, displayAmount: '2 ss soyasaus', inStock: true, category: 'Krydder/Sauser' },
+        { name: 'Næringsgjær', amountGrams: 20, displayAmount: '20g', inStock: true, category: 'Krydder/Sauser' }
+      ],
+      steps: [
+        'Kok Toro Jasminris i lettsaltet vann i 12 minutter.',
+        'Brun tofuterninger i panne sammen med løk og soyasaus til sprø og gyllen.',
+        'Damp brokkolibuketter i 3 minutter til knasende møre.',
+        'Vend inn fersk babyspinat de siste 60 sekundene så den faller lett sammen.',
+        'Server rykende varmt toppet med næringsgjær for en umamirrik middag.'
+      ],
+      prepTimeMinutes: 18
     }
   ],
 
@@ -346,6 +381,35 @@ export const CHEF_CATALOG_RECIPES: Record<CuisineStyle, MealPlanDay[]> = {
         'Vend inn den kokte pastaen og spinaten i 2 minutter og server!'
       ],
       prepTimeMinutes: 18
+    },
+    {
+      dayNumber: 3,
+      dayName: 'Onsdag',
+      title: 'Rustikk Rotgrønnsaks- & Norsk Potetgryte med Hvite Bønner og Babyspinat',
+      cuisine: 'Nordisk / Middelhavs Rustikk',
+      carbBase: { name: 'Poteter', dryWeightGramsPerPerson: 75 },
+      proteinSources: ['Hvite bønner (150g)', 'Næringsgjær (15g)', 'Solsikkekjerner (20g)'],
+      gutHealthHighlights: ['Rotmiks og kålrot', 'Norske poteter med skall', 'Hvite bønner rike på prebiotika'],
+      allergenSafety: { isVegan: true, isPeanutFree: true, nutFreeAlternativeUsed: 'Olivenolje og solsikkekjerner' },
+      macros: { proteinGramsPerPerson: 46, kcalPerPerson: 735, carbsGramsPerPerson: 88, fatGramsPerPerson: 18, plantCount: 11 },
+      ingredients: [
+        { name: 'Poteter', amountGrams: 500, displayAmount: '500g norske poteter', inStock: true, category: 'Tørrvarer/Belgvekster' },
+        { name: 'Rotmiks', amountGrams: 250, displayAmount: '250g rotmiks/gulrøtter', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Hvite bønner', amountGrams: 300, displayAmount: '300g kokte hvite bønner', inStock: true, category: 'Tørrvarer/Belgvekster' },
+        { name: 'Hakkede tomater', amountGrams: 240, displayAmount: '240g tomater', inStock: false, category: 'Krydder/Sauser' },
+        { name: 'Spinat', amountGrams: 120, displayAmount: '120g fersk babyspinat', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Løk', amountGrams: 100, displayAmount: '100g hakket løk', inStock: false, category: 'Frukt & Grønt' },
+        { name: 'Olivenolje', amountGrams: 15, displayAmount: '1 ss olivenolje', inStock: true, category: 'Krydder/Sauser' },
+        { name: 'Næringsgjær', amountGrams: 25, displayAmount: '25g næringsgjær', inStock: true, category: 'Krydder/Sauser' }
+      ],
+      steps: [
+        'Kutt poteter og rotmiks i munnfullstore biter, kok i lettsaltet vann i 12 minutter.',
+        'Fres hakket løk i olivenolje i en vid gryte til gyllen og myk.',
+        'Tilsett tomater, hvite bønner og urter, og la småputre i 6 minutter.',
+        'Vend inn de møre potetene og fersk babyspinat rett før servering.',
+        'Topp med næringsgjær for fyldig umami og mettende plantenæring.'
+      ],
+      prepTimeMinutes: 20
     }
   ],
 
@@ -467,35 +531,61 @@ export const CHEF_CATALOG_RECIPES: Record<CuisineStyle, MealPlanDay[]> = {
 };
 
 /**
- * Velger og tilpasser 5 dager ut fra brukerens Kokkens Modus-innstillinger.
+ * Velger og tilpasser 5 dager ut fra brukerens Kokkens Modus-innstillinger og ukens kundeavistilbud.
+ * 
+ * - Hvis `enableCuisineFilter` er false (NØYTRAL / INGEN LANDFOKUS):
+ *   Menyen velges 100 % nøytralt basert på makrostats, næringsverdi, lagerstatus og ukens tilbud.
+ *   Ingen tvungen rotasjon mellom land!
+ * - Hvis `focusOffers` er true:
+ *   Oppskrifter som matcher ukens faktiske tilbudsvarer (f.eks. Jasminris -50%, brokkoli 2 for 30,-,
+ *   poteter, tomater, rotmiks, spinat) prioriteres massivt og danner kjernen i ukemenyen.
  */
 export function selectAndAdjustDaysForChefModes(
   baseDays: MealPlanDay[],
   chefModes?: ChefModePreferences,
-  inventory: InventoryItem[] = []
+  inventory: InventoryItem[] = [],
+  offers: NormalizedOffer[] = []
 ): MealPlanDay[] {
   if (!chefModes) {
     return baseDays;
   }
 
   const DAY_NAMES = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag'] as const;
-  const isCuisineFilterActive = chefModes.enableCuisineFilter && chefModes.selectedCuisines && chefModes.selectedCuisines.length > 0;
-  const targetCuisines: CuisineStyle[] = isCuisineFilterActive
-    ? chefModes.selectedCuisines
-    : ['ASIATISK', 'INDISK', 'MIDDELHAVS', 'MIDTOSTEN', 'LATIN_AMERIKANSK'];
+  const isCuisineFilterActive = Boolean(
+    chefModes.enableCuisineFilter &&
+    chefModes.selectedCuisines &&
+    chefModes.selectedCuisines.length > 0
+  );
 
-  // Samle kandidater fra katalogen og baseDays som matcher
+  // Samle kandidater
   const candidatePool: MealPlanDay[] = [];
 
-  for (const cuisine of targetCuisines) {
-    const catalogOptions = CHEF_CATALOG_RECIPES[cuisine] || [];
-    candidatePool.push(...catalogOptions);
-  }
-
-  // Legg også til baseDays hvis de matcher de valgte stilene
-  for (const bDay of baseDays) {
-    const style = detectCuisineStyle(bDay.cuisine, bDay.title);
-    if (targetCuisines.includes(style)) {
+  if (isCuisineFilterActive) {
+    // 🌏 EKSPLISITTE VERDENSDELER: Kun de valgte stilene
+    for (const cuisine of chefModes.selectedCuisines) {
+      const catalogOptions = CHEF_CATALOG_RECIPES[cuisine] || [];
+      candidatePool.push(...catalogOptions);
+    }
+    // Legg til baseDays hvis de matcher de valgte stilene
+    for (const bDay of baseDays) {
+      const style = detectCuisineStyle(bDay.cuisine, bDay.title);
+      if (chefModes.selectedCuisines.includes(style)) {
+        if (!candidatePool.some(c => cleanSlug(c.title) === cleanSlug(bDay.title))) {
+          candidatePool.push(bDay);
+        }
+      }
+    }
+  } else {
+    // 🌍 NØYTRAL / STATS-BASERT MODUS (Ingen landbegrensning):
+    // Hele katalogen og alle dager er tilgjengelige for objektiv rangering
+    for (const cuisineList of Object.values(CHEF_CATALOG_RECIPES)) {
+      for (const recipe of cuisineList) {
+        if (!candidatePool.some(c => cleanSlug(c.title) === cleanSlug(recipe.title))) {
+          candidatePool.push(recipe);
+        }
+      }
+    }
+    for (const bDay of baseDays) {
       if (!candidatePool.some(c => cleanSlug(c.title) === cleanSlug(bDay.title))) {
         candidatePool.push(bDay);
       }
@@ -507,62 +597,146 @@ export function selectAndAdjustDaysForChefModes(
     return baseDays;
   }
 
-  // Ranger og filtrer kandidater basert på chefModes
+  // Ranger og score kandidater basert på tilbud, skap, tid og makrostats
   const scoredCandidates = candidatePool.map((recipe) => {
-    let score = 0;
+    let score = 100; // Grunnscore
     const prepTime = recipe.prepTimeMinutes || 25;
 
-    // 1. Rask hverdag (Maks 20 min)
-    if (chefModes.quickMealsOnly) {
-      if (prepTime <= 20) score += 50;
-      else score -= 30;
+    // 1. TILBUDS-FOKUS: Nøyaktig matching mot ukens kundeaviser
+    let matchingOffersCount = 0;
+    let totalOfferSavingsNok = 0;
+    for (const ing of recipe.ingredients) {
+      const matches = findMatchingOffersForIngredientName(ing.name, offers, 1);
+      if (matches.length > 0) {
+        matchingOffersCount++;
+        totalOfferSavingsNok += matches[0].discountAmountNok || 0;
+      }
+    }
+    const offerCoverageRatio = recipe.ingredients.length > 0
+      ? matchingOffersCount / recipe.ingredients.length
+      : 0;
+
+    if (chefModes.focusOffers) {
+      // Massiv prioritering av oppskrifter bygget på ukens tilbud:
+      // +40 poeng per tilbudsvare
+      // + opptil 80 poeng for høy tilbudsdekning (andel råvarer på tilbud)
+      // + opptil 50 poeng for sum rabattkroner
+      score += matchingOffersCount * 40;
+      score += Math.round(offerCoverageRatio * 80);
+      score += Math.min(50, Math.round(totalOfferSavingsNok * 0.5));
+    } else {
+      score += matchingOffersCount * 8;
     }
 
-    // 2. Tøm skapet først (prioriter råvarer som er på lager)
+    // 2. TØM SKAPET FØRST (prioriter råvarer som allerede er på lager)
     if (chefModes.prioritizePantry && inventory.length > 0) {
       const inStockCount = recipe.ingredients.filter(ing => {
         const slug = cleanSlug(ing.name);
         return inventory.some(inv => inv.inStock && (cleanSlug(inv.name) === slug || inv.searchKeywords.some(k => cleanSlug(k) === slug)));
       }).length;
-      score += inStockCount * 5;
+      score += inStockCount * 15;
     }
 
-    return { recipe, score };
+    // 3. RASK HVERDAG (Maks 20 min)
+    if (chefModes.quickMealsOnly) {
+      if (prepTime <= 20) score += 60;
+      else score -= 50;
+    }
+
+    // 4. NØYTRAL STATS & NÆRINGS-KVALITET:
+    // Proteineffektivitet (protein i forhold til kalorier) og rikt plantemangfold for tarmhelse
+    const kcalVal = Math.max(400, recipe.macros.kcalPerPerson);
+    const proteinRatio = (recipe.macros.proteinGramsPerPerson / kcalVal) * 100;
+    score += Math.round(proteinRatio * 20); // 10–18 poeng
+    score += (recipe.macros.plantCount || 6) * 2; // 12–22 poeng
+
+    // 5. KOKKENS EGET ØNSKE (Fritekst)
+    if (chefModes.enableCustomNotes && chefModes.customNotes.trim()) {
+      const keywords = chefModes.customNotes.toLowerCase().split(/[\s,]+/);
+      const recipeText = `${recipe.title} ${recipe.cuisine} ${recipe.ingredients.map(i => i.name).join(' ')}`.toLowerCase();
+      for (const kw of keywords) {
+        if (kw.length >= 3 && recipeText.includes(kw)) {
+          score += 40;
+        }
+      }
+    }
+
+    return {
+      recipe,
+      score,
+      matchingOffersCount,
+      offerCoverageRatio
+    };
   });
 
-  // Sorter kandidatene etter score
+  // Sorter kandidatene etter score fallende
   scoredCandidates.sort((a, b) => b.score - a.score);
 
-  // Velg 5 unike dager med variasjon på tvers av valgte stiler
+  // Velg 5 unike dager
   const selected: MealPlanDay[] = [];
   const usedTitles = new Set<string>();
 
-  // Roter mellom målkategoriene for å sikre bredde
-  for (let i = 0; i < 5; i++) {
-    const desiredCuisine = targetCuisines[i % targetCuisines.length];
-    
-    // Finn beste match for denne stilen
-    const match = scoredCandidates.find(
-      c => detectCuisineStyle(c.recipe.cuisine, c.recipe.title) === desiredCuisine && !usedTitles.has(cleanSlug(c.recipe.title))
-    );
+  if (!isCuisineFilterActive) {
+    // 🌍 NØYTRAL MODUS UTEN LANDBEGRENSNING:
+    // Ingen round-robin på verdensdeler! Plukk de 5 beste oppskriftene direkte etter score.
+    const usedCarbs = new Map<string, number>();
 
-    if (match) {
-      selected.push({ ...match.recipe });
-      usedTitles.add(cleanSlug(match.recipe.title));
-    } else {
-      // Finn en hvilken som helst ubrukt kandidat
-      const fallback = scoredCandidates.find(c => !usedTitles.has(cleanSlug(c.recipe.title)));
-      if (fallback) {
-        selected.push({ ...fallback.recipe });
-        usedTitles.add(cleanSlug(fallback.recipe.title));
-      } else if (candidatePool[i % candidatePool.length]) {
-        selected.push({ ...candidatePool[i % candidatePool.length] });
+    for (const item of scoredCandidates) {
+      if (selected.length >= 5) break;
+      const titleSlug = cleanSlug(item.recipe.title);
+      if (usedTitles.has(titleSlug)) continue;
+
+      const carbName = cleanSlug(item.recipe.carbBase?.name || 'carb');
+      const carbCount = usedCarbs.get(carbName) || 0;
+
+      // Unngå mer enn 2 måltider med nøyaktig samme karbobase (f.eks. maks 2 ris, maks 2 pasta)
+      if (carbCount >= 2 && scoredCandidates.length >= 8) {
+        continue;
+      }
+
+      selected.push({ ...item.recipe });
+      usedTitles.add(titleSlug);
+      usedCarbs.set(carbName, carbCount + 1);
+    }
+
+    // Fyll opp hvis nødvendig
+    if (selected.length < 5) {
+      for (const item of scoredCandidates) {
+        if (selected.length >= 5) break;
+        const titleSlug = cleanSlug(item.recipe.title);
+        if (!usedTitles.has(titleSlug)) {
+          selected.push({ ...item.recipe });
+          usedTitles.add(titleSlug);
+        }
+      }
+    }
+  } else {
+    // 🌏 EKSPLISITTE VERDENSDELER VALGT:
+    // Roter mellom brukerens spesifiserte stiler
+    const targetCuisines = chefModes.selectedCuisines;
+    for (let i = 0; i < 5; i++) {
+      const desiredCuisine = targetCuisines[i % targetCuisines.length];
+      const match = scoredCandidates.find(
+        c => detectCuisineStyle(c.recipe.cuisine, c.recipe.title) === desiredCuisine && !usedTitles.has(cleanSlug(c.recipe.title))
+      );
+
+      if (match) {
+        selected.push({ ...match.recipe });
+        usedTitles.add(cleanSlug(match.recipe.title));
+      } else {
+        const fallback = scoredCandidates.find(c => !usedTitles.has(cleanSlug(c.recipe.title)));
+        if (fallback) {
+          selected.push({ ...fallback.recipe });
+          usedTitles.add(cleanSlug(fallback.recipe.title));
+        } else if (candidatePool[i % candidatePool.length]) {
+          selected.push({ ...candidatePool[i % candidatePool.length] });
+        }
       }
     }
   }
 
   // Tildel dagnummer og dagsnavn 1..5
-  return selected.map((day, idx) => {
+  return selected.slice(0, 5).map((day, idx) => {
     const dayNumber = (idx + 1) as 1 | 2 | 3 | 4 | 5;
     const dayName = DAY_NAMES[idx];
     let finalTitle = day.title;
@@ -608,8 +782,8 @@ export function scaleMealPlanToMacroTargets(
   const targetCarbDryGrams = Math.max(40, targets.targetCarbDryWeightGrams);
   const maxKcal = Math.max(500, targets.maxKcal);
 
-  // Velg og juster oppskrifter hvis kokkens modus er oppgitt
-  const activeDays = selectAndAdjustDaysForChefModes(baseDays, chefModes, inventory);
+  // Velg og juster oppskrifter hvis kokkens modus er oppgitt (inkludert ukens kundeavistilbud!)
+  const activeDays = selectAndAdjustDaysForChefModes(baseDays, chefModes, inventory, offers);
 
   // Inventar-oppslag for inStock-status
   const inStockMap = new Map<string, boolean>();
@@ -636,7 +810,7 @@ export function scaleMealPlanToMacroTargets(
         cleanSlug(ing.name).includes(cleanSlug(baseDay.carbBase.name)) ||
         (isSweetPotatoCarb && cleanSlug(ing.name).includes('sotpotet'));
       const nutrition = getIngredientNutritionPer100g(ing.name, inventory);
-      const isProteinCore = !isCarb && (nutrition.isProteinCore || /tofu|tempeh|soya|linser|kikert/i.test(ing.name));
+      const isProteinCore = !isCarb && (nutrition.isProteinCore || /tofu|tempeh|soya|linser|kikert|bønner|bonner/i.test(ing.name));
 
       return {
         ...ing,

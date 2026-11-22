@@ -245,11 +245,19 @@ export default function MealPlanView({
     return currentDay.ingredients.filter((i) => !i.inStock).length;
   }, [currentDay]);
 
+  // Antall varer som matcher ukens kundeaviser i dagens rett
+  const currentDayOfferCount = useMemo(() => {
+    if (!currentDay || weeklyOffersState.length === 0) return 0;
+    return currentDay.ingredients.filter(
+      (ing) => findMatchingOffersForIngredientName(ing.name, weeklyOffersState, 1).length > 0
+    ).length;
+  }, [currentDay, weeklyOffersState]);
+
   // Tekstlig oppsummering for den diskrete statuspillen for Kokkens Modus
   const chefModeSummaryText = useMemo(() => {
     if (!chefModes) return 'Standard kokk';
     const parts: string[] = [];
-    if (chefModes.focusOffers) parts.push('🏷️ Tilbud');
+    if (chefModes.focusOffers) parts.push('🏷️ 100% Tilbud');
     if (chefModes.prioritizePantry) parts.push('🥫 Tøm skap');
     if (chefModes.quickMealsOnly) parts.push('⚡ Rask (20m)');
     if (chefModes.enableCuisineFilter && chefModes.selectedCuisines?.length > 0) {
@@ -266,6 +274,8 @@ export default function MealPlanView({
         });
         parts.push(`🌏 ${styleNames.join(', ')}`);
       }
+    } else {
+      parts.push('🌍 Nøytral meny');
     }
     if (chefModes.enableCustomNotes && chefModes.customNotes) {
       parts.push('✍️ Eget ønske');
@@ -386,6 +396,12 @@ export default function MealPlanView({
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
                 {currentDay.prepTimeMinutes} min
               </span>
+              {currentDayOfferCount > 0 && (
+                <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-950/70 text-amber-300 border border-amber-800/60 flex items-center gap-1">
+                  <span>🏷️</span>
+                  <span>{currentDayOfferCount} på tilbud</span>
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2 text-xs">

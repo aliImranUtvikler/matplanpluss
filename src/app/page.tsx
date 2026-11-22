@@ -26,9 +26,11 @@ import {
 import InventoryView from '../components/inventory/InventoryView';
 import MealPlanView from '../components/mealplan/MealPlanView';
 import OffersRadarView from '../components/radar/OffersRadarView';
+import FloatingRouteMapButton from '../components/radar/FloatingRouteMapButton';
 import PreferencesAdminView from '../components/admin/PreferencesAdminView';
 import type {
   InventoryItem,
+  RouteOptimizationResponse,
   ShoppingListItem,
   WeeklyMealPlanResponse
 } from '../types/contracts';
@@ -79,6 +81,10 @@ export default function HomePage() {
 
   // Aktiv handleliste på tvers av Ukeplan og Radar
   const [activeShoppingList, setActiveShoppingList] = useState<ShoppingListItem[]>([]);
+
+  // Global rutedata og kart-modal (tilgjengelig på tvers av ALLE faner)
+  const [globalRouteData, setGlobalRouteData] = useState<RouteOptimizationResponse | null>(null);
+  const [isGlobalMapModalOpen, setIsGlobalMapModalOpen] = useState<boolean>(false);
 
   const googleButtonContainerRef = useRef<HTMLDivElement>(null);
 
@@ -448,6 +454,8 @@ export default function HomePage() {
             dashboard={userDashboard || undefined}
             onDashboardUpdated={handleDashboardUpdated}
             initialShoppingList={activeShoppingList}
+            onRouteCalculated={(route) => setGlobalRouteData(route)}
+            onOpenMapModal={() => setIsGlobalMapModalOpen(true)}
           />
         )}
 
@@ -521,6 +529,14 @@ export default function HomePage() {
           <span className="text-[10px]">Preferanser</span>
         </button>
       </nav>
+
+      {/* 4. GLOBALT FLYTENDE KART-BOBLE (Synlig på ALLE faner: Ukemeny, Handleliste, Kjøkkenskap, Preferanser!) */}
+      <FloatingRouteMapButton
+        routeData={globalRouteData}
+        estimatedSavingsNok={estimatedSavingsNok}
+        isOpen={isGlobalMapModalOpen}
+        onOpenChange={setIsGlobalMapModalOpen}
+      />
     </div>
   );
 }

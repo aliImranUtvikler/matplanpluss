@@ -188,6 +188,10 @@ export default function PreferencesAdminView({
       };
 
       const result = await saveUserDashboard(dashboard.userId, updatedData);
+      // Tøm gammel ukeplan-cache slik at MealPlanView rekalkulerer umiddelbart med de nye preferansene
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user_mealplan');
+      }
       onDashboardUpdated(result);
       setChefMessage('Kokkens modus og oppskriftsstil er oppdatert! Ukeplanen rekalkuleres.');
       setTimeout(() => setChefMessage(null), 3500);
@@ -654,7 +658,7 @@ export default function PreferencesAdminView({
 
         {/* Flervalg: Modus-sjekkbokser (48pt touch targets for iPhone) */}
         <div className="space-y-2.5">
-          {/* 1. Tilbuds-fokus */}
+          {/* 1. Tilbuds-fokus (Maksimal kundeavis-sparing) */}
           <button
             type="button"
             onClick={() => {
@@ -670,9 +674,16 @@ export default function PreferencesAdminView({
             <div className="flex items-center gap-3">
               <div className="text-xl">🏷️</div>
               <div>
-                <span className="text-xs sm:text-sm font-bold block">Tilbuds-fokus</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-bold block">100% Tilbuds-fokus (Kundeavis-kupp)</span>
+                  {chefModes.focusOffers && (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-700 text-[10px] font-bold text-emerald-300">
+                      Maksimal sparing
+                    </span>
+                  )}
+                </div>
                 <span className="text-[11px] text-slate-400 block">
-                  Bygg menyen rundt ukens beste tilbud i kundeavisene (REMA, KIWI, Coop, Meny)
+                  Bygger oppskriftene utelukkende (eller så godt det lar seg gjøre) av råvarer som er på tilbud denne uken!
                 </span>
               </div>
             </div>
@@ -747,45 +758,103 @@ export default function PreferencesAdminView({
             </div>
           </button>
 
-          {/* 4. Stil / Verdensdel (Trekkspill med 5 flervalg) */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/70 overflow-hidden">
-            <button
-              type="button"
-              onClick={() => {
-                const nextOpen = !isCuisineAccordionOpen;
-                setIsCuisineAccordionOpen(nextOpen);
-                setChefModes(prev => ({ ...prev, enableCuisineFilter: nextOpen }));
-              }}
-              className="w-full p-3.5 text-left transition-all min-h-[48px] flex items-center justify-between gap-3 hover:bg-slate-800/30"
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-xl">🌏</div>
-                <div>
+          {/* 4. Oppskriftsstil & Landfokus: Valg mellom 100% Nøytral (Stats & Tilbud) og Spesifikke Verdensdeler */}
+          <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3.5 space-y-3">
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                <span>🌍</span>
+                <span>Oppskriftsstil & Landfokus</span>
+              </h4>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Velg om menyen skal settes sammen nøytralt basert på stats og tilbud, eller låses til bestemte land.
+              </p>
+            </div>
+
+            {/* To primærvalg: Nøytral vs Spesifiserte land */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {/* Valg 1: NØYTRAL (Ingen landfokus) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setChefModes(prev => ({
+                    ...prev,
+                    enableCuisineFilter: false
+                  }));
+                }}
+                className={`p-3 rounded-xl border text-left transition-all min-h-[56px] flex flex-col justify-between gap-1.5 ${
+                  !chefModes.enableCuisineFilter
+                    ? 'bg-emerald-950/70 border-emerald-500 text-white shadow-md shadow-emerald-950/40'
+                    : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs sm:text-sm font-bold text-white">Stil / Verdensdel</span>
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-bold text-slate-300">
-                      {chefModes.selectedCuisines.length} av 5 valgt
+                    <span className="text-base">🌍</span>
+                    <span className="text-xs sm:text-sm font-bold text-white">
+                      Nøytral (Stats & Tilbud)
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 block">
-                    Velg ett eller flere favorittkjøkken for ukens retter
+                  <div className="shrink-0 text-emerald-400">
+                    {!chefModes.enableCuisineFilter ? (
+                      <CheckSquare className="w-5 h-5 text-emerald-400" />
+                    ) : (
+                      <Square className="w-5 h-5 text-slate-600" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-300 leading-relaxed">
+                  Ingen landfokus. Menyen velges 100 % nøytralt basert på makrostats, næring, skapstatus og ukens tilbud.
+                </p>
+              </button>
+
+              {/* Valg 2: SPESIFISERTE VERDENSDELER */}
+              <button
+                type="button"
+                onClick={() => {
+                  setChefModes(prev => ({
+                    ...prev,
+                    enableCuisineFilter: true,
+                    selectedCuisines: prev.selectedCuisines.length > 0 ? prev.selectedCuisines : ['ASIATISK', 'INDISK']
+                  }));
+                }}
+                className={`p-3 rounded-xl border text-left transition-all min-h-[56px] flex flex-col justify-between gap-1.5 ${
+                  chefModes.enableCuisineFilter
+                    ? 'bg-emerald-950/70 border-emerald-500 text-white shadow-md shadow-emerald-950/40'
+                    : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🌏</span>
+                    <span className="text-xs sm:text-sm font-bold text-white">
+                      Spesifiser Verdensdel
+                    </span>
+                  </div>
+                  <div className="shrink-0 text-emerald-400">
+                    {chefModes.enableCuisineFilter ? (
+                      <CheckSquare className="w-5 h-5 text-emerald-400" />
+                    ) : (
+                      <Square className="w-5 h-5 text-slate-600" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-300 leading-relaxed">
+                  Valgfritt. Begrens menyen til kun utvalgte kjøkken (f.eks. kun Asiatisk og Indisk).
+                </p>
+              </button>
+            </div>
+
+            {/* Hvis Spesifiser Verdensdel er valgt: Vis flervalgsboksene */}
+            {chefModes.enableCuisineFilter && (
+              <div className="pt-2.5 border-t border-slate-800/80 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400">
+                    Kryss av for de verdensdelene du vil inkludere i menyen:
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-emerald-300">
+                    {chefModes.selectedCuisines.length} av 5 valgt
                   </span>
                 </div>
-              </div>
-              <div className="shrink-0 text-slate-400 p-1">
-                {isCuisineAccordionOpen ? (
-                  <ChevronUp className="w-5 h-5 text-emerald-400" />
-                ) : (
-                  <ChevronDown className="w-5 h-5" />
-                )}
-              </div>
-            </button>
-
-            {isCuisineAccordionOpen && (
-              <div className="p-3.5 pt-0 border-t border-slate-800/80 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                <p className="text-[11px] text-slate-400 py-1">
-                  Kryss av for de verdensdelene du ønsker at ukemenyen skal hente inspirasjon fra:
-                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {CUISINE_OPTIONS.map((style) => {
                     const isSelected = chefModes.selectedCuisines.includes(style.id);
@@ -796,9 +865,16 @@ export default function PreferencesAdminView({
                         onClick={() => {
                           let updatedList: CuisineStyle[];
                           if (isSelected) {
-                            updatedList = chefModes.selectedCuisines.length > 1
-                              ? chefModes.selectedCuisines.filter(c => c !== style.id)
-                              : chefModes.selectedCuisines;
+                            // Hvis brukeren fjerner den siste, gå automatisk over til Nøytral uten feil
+                            updatedList = chefModes.selectedCuisines.filter(c => c !== style.id);
+                            if (updatedList.length === 0) {
+                              setChefModes(prev => ({
+                                ...prev,
+                                enableCuisineFilter: false,
+                                selectedCuisines: []
+                              }));
+                              return;
+                            }
                           } else {
                             updatedList = [...chefModes.selectedCuisines, style.id];
                           }

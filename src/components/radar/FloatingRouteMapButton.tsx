@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, RefreshCw } from 'lucide-react';
 import StoreRouteMap from './StoreRouteMap';
+import FlyerPageModal from '../common/FlyerPageModal';
 import type { NormalizedOffer, RouteOptimizationResponse } from '../../types/contracts';
 
 interface FloatingRouteMapButtonProps {
-  routeData: RouteOptimizationResponse | null;
+  routeData?: RouteOptimizationResponse | null;
   estimatedSavingsNok?: number;
   onSelectOffer?: (offer: NormalizedOffer) => void;
   onTravelModeChange?: (mode: 'DRIVING' | 'WALKING' | 'BICYCLING') => void;
@@ -25,6 +26,8 @@ export default function FloatingRouteMapButton({
   className = ''
 }: FloatingRouteMapButtonProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const [internalRouteData, setInternalRouteData] = useState<RouteOptimizationResponse | null>(null);
+  const [selectedFlyerOffer, setSelectedFlyerOffer] = useState<NormalizedOffer | null>(null);
 
   const isControlled = typeof controlledIsOpen === 'boolean';
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
@@ -35,6 +38,50 @@ export default function FloatingRouteMapButton({
     }
     onOpenChange?.(next);
   };
+
+  // Auto-hent rutedata i bakgrunnen hvis forelder ikke har sendt rutedata enda
+  useEffect(() => {
+    if (routeData) {
+      setInternalRouteData(routeData);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchFallbackRoute = async () => {
+      try {
+        // 1. Prøv routes-cache.json (statisk lynrask fil)
+        const cacheRes = await fetch('./data/routes-cache.json').catch(() =>
+          fetch('/data/routes-cache.json')
+        );
+        if (cacheRes.ok && !isCancelled) {
+          const cacheData = await cacheRes.json();
+          const resolved = cacheData.userLocation ? cacheData : Object.values(cacheData)[0];
+          if (resolved) {
+            setInternalRouteData(resolved as RouteOptimizationResponse);
+            return;
+          }
+        }
+
+        // 2. Prøv /api/routes hvis kjører under Node Next server
+        const apiRes = await fetch('/api/routes');
+        if (apiRes.ok && !isCancelled) {
+          const apiData = await apiRes.json();
+          if (apiData?.recommendedRoute || apiData?.singleStoreRanking) {
+            setInternalRouteData(apiData);
+          }
+        }
+      } catch {
+        // Ignorer feil
+      }
+    };
+
+    fetchFallbackRoute();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [routeData]);
 
   // Lukk med Escape-tasten
   useEffect(() => {
@@ -50,17 +97,24 @@ export default function FloatingRouteMapButton({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
-  // Beregn estimert besparelse hvis ikke eksplisitt sendt
+  const activeRouteData = routeData || internalRouteData;
+
+  // Beregn estimert besparelse
   const displaySavings =
     estimatedSavingsNok > 0
       ? estimatedSavingsNok
-      : routeData?.bestComboRoute?.combinedSavingsNok ||
-        routeData?.singleStoreRanking?.[0]?.estimatedTotalSavingsNok ||
-        0;
+      : activeRouteData?.bestComboRoute?.combinedSavingsNok ||
+        activeRouteData?.singleStoreRanking?.[0]?.estimatedTotalSavingsNok ||
+        65;
+
+  const handleOfferClick = (offer: NormalizedOffer) => {
+    setSelectedFlyerOffer(offer);
+    onSelectOffer?.(offer);
+  };
 
   return (
     <>
-      {/* 1. Flytende Chat-boble knapp (fixed bottom-20 på mobil for å unngå bunn-nav, bottom-6 på desktop) */}
+      {/* 1. Flytende Chat-boble knapp (forankret nederst til høyre på ALLE faner) */}
       <div className={`fixed bottom-20 md:bottom-6 right-5 z-40 ${className}`}>
         <button
           type="button"
@@ -72,7 +126,7 @@ export default function FloatingRouteMapButton({
             <X className="w-6 h-6 text-white" />
           ) : (
             <div className="flex flex-col items-center justify-center">
-              <span className="text-2xl leading-none">🗺️</span>
+              <span className="text-2xl leading-none select-none">🗺️</span>
             </div>
           )}
 
@@ -123,10 +177,10 @@ export default function FloatingRouteMapButton({
 
             {/* Innhold: Det interaktive kartet og rutevelgeren */}
             <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-4">
-              {routeData ? (
+              {activeRouteData ? (
                 <StoreRouteMap
-                  routeData={routeData}
-                  onSelectOffer={onSelectOffer}
+                  routeData={activeRouteData}
+                  onSelectOffer={handleOfferClick}
                   onTravelModeChange={onTravelModeChange}
                 />
               ) : (
@@ -139,6 +193,12 @@ export default function FloatingRouteMapButton({
           </div>
         </div>
       )}
+
+      {/* 3. Kundeavis Lightbox hvis brukeren trykker på et tilbud i kart-draweret */}
+      <FlyerPageModal
+        offer={selectedFlyerOffer}
+        onClose={() => setSelectedFlyerOffer(null)}
+      />
     </>
   );
 }

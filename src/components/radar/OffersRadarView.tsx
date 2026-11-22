@@ -46,6 +46,8 @@ interface OffersRadarViewProps {
   dashboard?: UserDashboardData;
   onDashboardUpdated?: (updated: UserDashboardData) => void;
   initialShoppingList?: ShoppingListItem[];
+  onOpenMapModal?: () => void;
+  onRouteCalculated?: (route: RouteOptimizationResponse) => void;
   className?: string;
 }
 
@@ -76,6 +78,8 @@ export default function OffersRadarView({
   dashboard,
   onDashboardUpdated,
   initialShoppingList,
+  onOpenMapModal,
+  onRouteCalculated,
   className = ''
 }: OffersRadarViewProps) {
   // Lokasjon og reisemodus initialiseres fra dashboard hvis tilgjengelig
@@ -227,6 +231,7 @@ export default function OffersRadarView({
       if (res.ok) {
         const data: RouteOptimizationResponse = await res.json();
         setRouteData(data);
+        onRouteCalculated?.(data);
         return;
       }
       throw new Error('Fallback til lokal ruteoptimalisering');
@@ -241,6 +246,7 @@ export default function OffersRadarView({
           offers: offers.length > 0 ? offers : allOffers
         });
         setRouteData(localOptimized);
+        onRouteCalculated?.(localOptimized);
         return;
       } catch (err) {
         // 3. Ekstra fallback: routes-cache.json
@@ -251,8 +257,10 @@ export default function OffersRadarView({
           if (cacheRes.ok) {
             const cacheData = await cacheRes.json();
             const firstKey = Object.keys(cacheData)[0];
-            if (firstKey && cacheData[firstKey]) {
-              setRouteData(cacheData[firstKey]);
+            const resolved = cacheData.userLocation ? cacheData : (firstKey ? cacheData[firstKey] : null);
+            if (resolved) {
+              setRouteData(resolved);
+              onRouteCalculated?.(resolved);
               return;
             }
           }
@@ -430,7 +438,7 @@ export default function OffersRadarView({
             {/* Hurtigknapp for å åpne kartet */}
             <button
               type="button"
-              onClick={() => setIsMapModalOpen(true)}
+              onClick={() => (onOpenMapModal ? onOpenMapModal() : setIsMapModalOpen(true))}
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 min-h-[40px]"
             >
               <span>🗺️</span>
@@ -649,14 +657,16 @@ export default function OffersRadarView({
         )}
       </div>
 
-      {/* 4. Flytende Chat-boble Kart-knapp nederst til høyre (🗺️) */}
-      <FloatingRouteMapButton
-        routeData={routeData}
-        isOpen={isMapModalOpen}
-        onOpenChange={setIsMapModalOpen}
-        onSelectOffer={(off) => setSelectedFlyerOffer(off)}
-        onTravelModeChange={handleModeChange}
-      />
+      {/* 4. Flytende Chat-boble Kart-knapp nederst til høyre hvis ikke styrt av global layout */}
+      {!onOpenMapModal && (
+        <FloatingRouteMapButton
+          routeData={routeData}
+          isOpen={isMapModalOpen}
+          onOpenChange={setIsMapModalOpen}
+          onSelectOffer={(off) => setSelectedFlyerOffer(off)}
+          onTravelModeChange={handleModeChange}
+        />
+      )}
 
       {/* 5. Kundeavis-side Modal (Lightbox for å validere at tilbudet faktisk finnes) */}
       <FlyerPageModal
