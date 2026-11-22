@@ -86,12 +86,16 @@ jobs:
 
       - name: 🌐 Konfigurer GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: 🏗️ Bygg statisk Next.js eksport (uten API-nøkler)
         env:
           GITHUB_PAGES: 'true'
           NEXT_PUBLIC_BASE_PATH: '/matplanpluss'
-        run: npm run build
+        run: |
+          rm -rf src/app/api
+          npm run build
 
       - name: 📤 Last opp GitHub Pages-artefakt
         uses: actions/upload-pages-artifact@v3
