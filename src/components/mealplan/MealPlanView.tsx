@@ -43,29 +43,20 @@ import type { GoogleUserProfile } from '../../services/auth/googleSsoService';
 export function getShortDishName(title: string): string {
   const lower = title.toLowerCase();
 
-  // 1. Spesifikke mønstre for kjente retter
-  if (lower.includes('gochujang') || (lower.includes('tofu') && lower.includes('bowl'))) {
-    return 'Koreansk Tofu Bowl';
-  }
-  if (lower.includes('dal') || lower.includes('lentil') || lower.includes('linse')) {
-    return 'Indisk Linse-Dal';
-  }
-  if (lower.includes('fusilli') || lower.includes('pasta')) {
-    return 'Kremet Kikertpasta';
-  }
-  if (lower.includes('tempeh') || lower.includes('miso')) {
-    return 'Miso Tempeh Bowl';
-  }
-  if (lower.includes('tikka') || (lower.includes('kikerter') && lower.includes('spinat'))) {
-    return 'Kikerter Tikka';
-  }
+  // 1. Spesifikke mønstre
+  if (lower.includes('rotgrønnsak') || lower.includes('potetgryte')) return 'Rotgrønnsaksgryte';
+  if (lower.includes('gochujang') || (lower.includes('tofu') && lower.includes('bowl'))) return 'Koreansk Tofu Bowl';
+  if (lower.includes('dal') || lower.includes('lentil') || lower.includes('linse')) return 'Indisk Linse-Dal';
+  if (lower.includes('fusilli') || lower.includes('pasta')) return 'Kremet Kikertpasta';
+  if (lower.includes('tempeh') || lower.includes('miso')) return 'Miso Tempeh Bowl';
+  if (lower.includes('tikka') || (lower.includes('kikerter') && lower.includes('spinat'))) return 'Kikerter Tikka';
   if (lower.includes('ramen')) return 'Kremet Ramen';
   if (lower.includes('burrito') || lower.includes('fajita')) return 'Burrito Bowl';
   if (lower.includes('shawarma')) return 'Shawarma Bowl';
   if (lower.includes('curry')) return 'Thai Curry';
 
   // 2. Generell rensing for vilkårlige retter:
-  const cleaned = title
+  let cleaned = title
     .replace(/med\s+.*$/i, '')
     .replace(/High-Protein\s+/gi, '')
     .replace(/Duftende\s+/gi, '')
@@ -73,14 +64,23 @@ export function getShortDishName(title: string): string {
     .replace(/Sprøstekt\s+/gi, '')
     .replace(/Crispy\s+/gi, '')
     .replace(/Power\s+Bowl/gi, 'Bowl')
+    .replace(/Rustikk\s+/gi, '')
     .replace(/&amp;/g, '&')
+    .replace(/[&–—\-]\s*$/g, '')
     .trim();
 
-  const words = cleaned.split(' ').filter(Boolean);
-  if (words.length > 3) {
-    return words.slice(0, 3).join(' ');
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  while (words.length > 0 && /^[&–—\-og]+$/i.test(words[words.length - 1])) {
+    words.pop();
   }
-  return cleaned || title;
+
+  if (words.length > 3) {
+    cleaned = words.slice(0, 3).join(' ');
+  } else {
+    cleaned = words.join(' ');
+  }
+
+  return cleaned.replace(/[-&–—]\s*$/, '').trim() || title;
 }
 
 interface MealPlanViewProps {
@@ -287,217 +287,193 @@ export default function MealPlanView({
 
   return (
     <div className={`space-y-4 max-w-4xl mx-auto ${className}`}>
-      {/* 1. ROLIG VELKOMSTHILSEN & AKTIV MAKROMÅL-PIL (UU: Lav kognitiv støy) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Hei {firstName} 👋
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-            Her er dagens middag og ukens 5 plantebaserte retter.
-          </p>
-        </div>
+      {/* 1. ROLIG VELKOMSTHILSEN MED KOMPAKT MAKRO & MODUS-STATUS PÅ VENSTRE SIDE */}
+      <div className="pb-1">
+        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+          Hei {firstName} 👋
+        </h2>
 
-        {/* Diskret pille for aktive makromål med lenke til Preferanser */}
-        <button
-          type="button"
-          onClick={onNavigateToPreferences}
-          className="self-start sm:self-auto flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition-colors min-h-[44px]"
-          title="Klikk for å endre makromål i Preferanser"
-        >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-          <span className="font-semibold">
-            {macroTargets.minProteinGrams}–{macroTargets.maxProteinGrams}g prot • Maks {macroTargets.maxKcal} kcal • {macroTargets.servings} pers
+        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 mt-1">
+          <span className="font-semibold text-slate-300">
+            {macroTargets.minProteinGrams}–{macroTargets.maxProteinGrams}g prot
           </span>
-          <span className="text-[11px] text-emerald-400 flex items-center font-bold">
-            Endre <ChevronRight className="w-3 h-3 ml-0.5" />
-          </span>
-        </button>
+          <span className="text-slate-600">·</span>
+          <span>Maks {macroTargets.maxKcal} kcal</span>
+          <span className="text-slate-600">·</span>
+          <span>{macroTargets.servings} pers</span>
+          <span className="text-slate-600">·</span>
+          <span className="text-emerald-400 font-medium">{chefModeSummaryText}</span>
+          <button
+            type="button"
+            onClick={onNavigateToPreferences}
+            className="p-1 text-slate-400 hover:text-white transition-colors ml-0.5 inline-flex items-center"
+            title="Endre makromål og kokkens modus i Preferanser"
+          >
+            <span className="text-xs">⚙️</span>
+          </button>
+        </div>
       </div>
 
-      {/* 2. HORISONTAL 5-DAGERS UKEVELGER MED RETTENS NAVN (iPhone 48pt touch, full ukeoversikt) */}
+      {/* 2. HORISONTAL UKEVELGER: TITTEL I BOKS, UKEDAG DISKRET UNDER */}
       {mealPlanData && (
-        <div className="flex items-stretch gap-2 overflow-x-auto pb-1.5 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-start gap-2.5 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 pt-2">
           {mealPlanData.days.map((day) => {
             const isSelected = selectedDayNumber === day.dayNumber;
             return (
-              <button
-                key={day.dayNumber}
-                type="button"
-                onClick={() => {
-                  setSelectedDayNumber(day.dayNumber);
-                  setIsIngredientsOpen(false);
-                  setIsStepsOpen(false);
-                }}
-                className={`flex-1 min-w-[96px] sm:min-w-[120px] p-2.5 sm:p-3 rounded-2xl border text-center transition-all min-h-[64px] sm:min-h-[72px] flex flex-col justify-between items-center ${
-                  isSelected
-                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30 scale-[1.02] ring-2 ring-emerald-400'
-                    : 'bg-slate-900/90 text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
-                }`}
-                title={day.title}
-              >
-                <span
-                  className={`text-[10px] font-black uppercase tracking-wider block ${
-                    isSelected ? 'text-emerald-100' : 'text-slate-400'
-                  }`}
-                >
-                  {day.dayName.substring(0, 3)}
-                </span>
-                <span
-                  className={`text-xs font-bold block leading-tight truncate mt-0.5 ${
-                    isSelected ? 'text-white' : 'text-slate-200'
+              <div key={day.dayNumber} className="flex-1 min-w-[100px] sm:min-w-[125px] flex flex-col items-center">
+                {/* Myk boks: Kun rettens tittel */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDayNumber(day.dayNumber);
+                    setIsIngredientsOpen(false);
+                    setIsStepsOpen(false);
+                  }}
+                  className={`w-full p-3 rounded-2xl text-center transition-all min-h-[58px] flex items-center justify-center ${
+                    isSelected
+                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/40 ring-1 ring-emerald-400/50'
+                      : 'bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 ring-1 ring-white/[0.05]'
                   }`}
                   title={day.title}
                 >
-                  {getShortDishName(day.title)}
-                </span>
-              </button>
+                  <span className="text-xs font-bold leading-snug line-clamp-2">
+                    {getShortDishName(day.title)}
+                  </span>
+                </button>
+
+                {/* Diskret ukedag UNDER boksen på utsiden */}
+                <div className="mt-1.5 flex flex-col items-center">
+                  <span
+                    className={`text-[11px] tracking-wide transition-colors ${
+                      isSelected ? 'text-emerald-400 font-bold' : 'text-slate-500 font-medium'
+                    }`}
+                  >
+                    {day.dayName}
+                  </span>
+                  {isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-emerald-400 mt-0.5" />
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>
       )}
 
-      {/* 2b. DISKRET STATUSPILLE FOR KOKKENS MODUS (iOS HIG & WCAG 2.1 AA) */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs shadow-sm">
-        <div className="flex items-center gap-2 overflow-hidden text-slate-300">
-          <ChefHat className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span className="truncate font-medium">
-            Modus: <span className="text-white font-semibold">{chefModeSummaryText}</span>
-          </span>
-        </div>
-        <button
-          type="button"
-          onClick={onNavigateToPreferences}
-          className="text-emerald-400 hover:text-emerald-300 font-bold shrink-0 text-xs ml-2 flex items-center gap-0.5 min-h-[44px] px-2.5 py-1 rounded-xl hover:bg-slate-800 transition-colors"
-          title="Endre kokkens modus og oppskriftsstil i Preferanser"
-        >
-          Endre ⚙️
-        </button>
-      </div>
-
-      {/* 3. HERO-KORT FOR DAGENS MIDDAG (Rent blikkfang, ingen duplisert tittel) */}
+      {/* 3. HERO-KORT FOR DAGENS MIDDAG (Soft & Borderless) */}
       {loading ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center min-h-[280px]">
-          <RefreshCw className="w-8 h-8 animate-spin text-emerald-500 mb-3" />
-          <p className="text-sm">Laster oppskrift...</p>
+        <div className="bg-white/[0.02] ring-1 ring-white/[0.05] rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center min-h-[260px]">
+          <RefreshCw className="w-7 h-7 animate-spin text-emerald-500 mb-2" />
+          <p className="text-xs">Laster meny...</p>
         </div>
       ) : currentDay ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4">
-          {/* Slank metadata-linje: Dagsnavn, kjøkken, tid, karbobase og trygghetsbadge */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-800/80">
-                {currentDay.dayName}
-              </span>
-              <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300">
-                {currentDay.cuisine}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-slate-400">
-                <Clock className="w-3.5 h-3.5 text-slate-400" />
-                {currentDay.prepTimeMinutes} min
-              </span>
-              {currentDayOfferCount > 0 && (
-                <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-950/70 text-amber-300 border border-amber-800/60 flex items-center gap-1">
-                  <span>🏷️</span>
-                  <span>{currentDayOfferCount} på tilbud</span>
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-slate-400 hidden sm:inline">Karbobase:</span>
-              <span className="font-semibold text-slate-200 flex items-center gap-1">
-                <Wheat className="w-3.5 h-3.5 text-amber-400" />
+        <div className="bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/[0.06] shadow-xl shadow-black/25 rounded-3xl p-5 sm:p-7 space-y-4">
+          {/* Slank metadata-linje med prikker (ingen harde piller) */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 pb-3 border-b border-white/[0.06]">
+            <span className="font-semibold text-slate-200">{currentDay.cuisine}</span>
+            <span className="text-slate-600">·</span>
+            <span className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              {currentDay.prepTimeMinutes} min
+            </span>
+            <span className="text-slate-600">·</span>
+            <span className="text-slate-300">
+              Karbobase:{' '}
+              <span className="text-amber-300 font-medium">
                 {currentDay.carbBase.name} ({currentDay.carbBase.dryWeightGramsPerPerson}g)
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                100% Peanøttfri
-              </span>
+            </span>
+            {currentDayOfferCount > 0 && (
+              <>
+                <span className="text-slate-600">·</span>
+                <span className="text-amber-400 font-medium">🏷️ {currentDayOfferCount} på tilbud</span>
+              </>
+            )}
+            <span className="text-slate-600">·</span>
+            <span className="text-emerald-400 font-medium">Peanøttfri</span>
+          </div>
+
+          {/* Rettens fulle tittel */}
+          <h3 className="text-lg sm:text-xl font-black text-white tracking-tight leading-snug">
+            {currentDay.title}
+          </h3>
+
+          {/* ÅPEN TYPOGRAFISK MAKRORAD (Slutt på 3 inngjerdede bokser!) */}
+          <div className="flex items-center gap-4 sm:gap-6 py-1">
+            <div className="text-left">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Protein</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  {currentDay.macros.proteinGramsPerPerson}g
+                </span>
+                <span className="text-[11px] text-emerald-400 font-medium">per pers</span>
+              </div>
+            </div>
+
+            <div className="h-8 w-px bg-white/[0.08]" />
+
+            <div className="text-left">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Kalorier</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  {currentDay.macros.kcalPerPerson}
+                </span>
+                <span className="text-[11px] text-slate-400">kcal</span>
+              </div>
+            </div>
+
+            <div className="h-8 w-px bg-white/[0.08]" />
+
+            <div className="text-left">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Planter</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  {currentDay.macros.plantCount}
+                </span>
+                <span className="text-[11px] text-teal-400 font-medium">gut points</span>
+              </div>
             </div>
           </div>
 
-          {/* Rettens fulle tittel (rent og diskret) */}
-          <div>
-            <h3 className="text-base sm:text-lg font-black text-white tracking-tight leading-snug">
-              {currentDay.title}
-            </h3>
-          </div>
-
-          {/* 3 Fremhevede Nøkkeltall (UU: Maks 3 for å unngå overbelastning) */}
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
-            <div className="bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-emerald-900/50 text-center">
-              <span className="text-[10px] sm:text-xs font-bold text-emerald-400 uppercase tracking-wider block">
-                Protein
-              </span>
-              <span className="text-xl sm:text-2xl font-black text-white block mt-0.5">
-                {currentDay.macros.proteinGramsPerPerson}g
-              </span>
-              <span className="text-[10px] text-emerald-500 font-bold block">per person</span>
-            </div>
-
-            <div className="bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-slate-800 text-center">
-              <span className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider block">
-                Kalorier
-              </span>
-              <span className="text-xl sm:text-2xl font-black text-white block mt-0.5">
-                {currentDay.macros.kcalPerPerson}
-              </span>
-              <span className="text-[10px] text-slate-400 block">kcal / pers</span>
-            </div>
-
-            <div className="bg-slate-950/80 p-3 sm:p-4 rounded-2xl border border-slate-800 text-center">
-              <span className="text-[10px] sm:text-xs font-bold text-teal-400 uppercase tracking-wider block">
-                Planter
-              </span>
-              <span className="text-xl sm:text-2xl font-black text-white block mt-0.5">
-                {currentDay.macros.plantCount}
-              </span>
-              <span className="text-[10px] text-teal-500 font-bold block">Gut points</span>
-            </div>
-          </div>
-
-          {/* PRIMÆRKNAPP: Gå direkte til Handleliste hvis varer mangler */}
+          {/* KOMPAKT VENSTRESTILT HANDLELISTE-KNAPP (Slutt på den skrikende hel-oransje banneren!) */}
           {missingCount > 0 ? (
-            <button
-              type="button"
-              onClick={onNavigateToShopping}
-              className="w-full flex items-center justify-between p-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 min-h-[52px]"
-            >
-              <div className="flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-slate-950" />
-                <span>{missingCount} varer mangler til denne retten</span>
-              </div>
-              <span className="flex items-center text-xs font-black uppercase tracking-wider">
-                Se rute på kartet <ArrowRight className="w-4 h-4 ml-1" />
-              </span>
-            </button>
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={onNavigateToShopping}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/25 transition-all text-xs font-bold active:scale-[0.98]"
+              >
+                <ShoppingCart className="w-4 h-4 text-amber-400" />
+                <span>{missingCount} varer mangler</span>
+                <span className="text-amber-500">·</span>
+                <span className="flex items-center text-amber-200">
+                  Se rute <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </span>
+              </button>
+            </div>
           ) : (
-            <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800/80 flex items-center justify-between text-xs text-emerald-200">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span className="font-bold">Alt du trenger er allerede på lager i kjøkkenskapet!</span>
-              </div>
+            <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium pt-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>Alt du trenger er på lager i kjøkkenskapet</span>
             </div>
           )}
 
-          {/* 4. PROGRESSIVE DISCLOSURE: Trekkspill for Ingredienser og Kokkesteg */}
-          <div className="space-y-2 pt-1 border-t border-slate-800/80">
+          {/* Progressive disclosure: Myke trekkspill med ring-1 ring-white/[0.04] */}
+          <div className="space-y-2 pt-2 border-t border-white/[0.06]">
             {/* Trekkspill 1: Ingredienser */}
-            <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/40">
+            <div className="rounded-2xl overflow-hidden bg-white/[0.02] ring-1 ring-white/[0.04]">
               <button
                 type="button"
                 onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
-                className="w-full p-4 flex items-center justify-between text-left text-xs sm:text-sm font-bold text-white hover:bg-slate-800/40 transition-colors min-h-[48px]"
+                className="w-full p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2">
                   <ChefHat className="w-4 h-4 text-emerald-400" />
-                  <span>
-                    Ingredienser ({currentDay.ingredients.length} råvarer)
-                  </span>
+                  <span>Ingredienser ({currentDay.ingredients.length} råvarer)</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400 font-normal">
-                    {currentDay.ingredients.filter((i) => i.inStock).length} i skapet • {missingCount} kjøpes
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-normal">
+                  <span>
+                    {currentDay.ingredients.filter((i) => i.inStock).length} i skapet · {missingCount} kjøpes
                   </span>
                   {isIngredientsOpen ? (
                     <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -508,19 +484,19 @@ export default function MealPlanView({
               </button>
 
               {isIngredientsOpen && (
-                <div className="p-4 pt-1 space-y-2 border-t border-slate-800/60">
+                <div className="p-3.5 pt-1 space-y-1.5 border-t border-white/[0.04]">
                   {currentDay.ingredients.map((ing, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-slate-900 border border-slate-800/80 flex items-center justify-between text-xs min-h-[44px]"
+                      className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] flex items-center justify-between text-xs min-h-[40px] transition-colors"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         {ing.inStock ? (
                           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                         ) : (
                           <ShoppingCart className="w-4 h-4 text-amber-400 shrink-0" />
                         )}
-                        <div>
+                        <div className="min-w-0 truncate">
                           <span className="font-bold text-white">{ing.name}</span>
                           <span className="text-slate-400 ml-2">({ing.displayAmount})</span>
                         </div>
@@ -532,7 +508,7 @@ export default function MealPlanView({
                         const badgeStyle = topOffer ? getStoreChainBadgeStyle(topOffer.chain) : null;
 
                         return (
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
                             {topOffer && badgeStyle ? (
                               <button
                                 type="button"
@@ -551,11 +527,11 @@ export default function MealPlanView({
                             ) : (
                               <span
                                 title="Ingen registrerte tilbud i ukens kundeaviser (ordinær hyllepris)"
-                                className="text-[10px] font-medium px-2 py-0.5 rounded-md border border-slate-800 bg-slate-950 text-slate-400 flex items-center gap-1 shadow-sm"
+                                className="text-[10px] font-medium px-2 py-0.5 rounded-md border border-white/[0.04] bg-white/[0.01] text-slate-400 flex items-center gap-1 shadow-sm"
                               >
                                 <span className="text-[10px] opacity-60">🛒</span>
                                 <span>
-                                  <span className="hidden sm:inline">Ingen tilbud • </span>Ordinær pris
+                                  <span className="hidden sm:inline">Ingen tilbud · </span>Ordinær pris
                                 </span>
                               </span>
                             )}
@@ -563,8 +539,8 @@ export default function MealPlanView({
                             <span
                               className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                                 ing.inStock
-                                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/60'
-                                  : 'bg-amber-950 text-amber-300 border border-amber-800/60'
+                                  ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/40'
+                                  : 'bg-amber-950/70 text-amber-300 border border-amber-800/40'
                               }`}
                             >
                               {ing.inStock ? 'På lager' : 'Mangler'}
@@ -579,11 +555,11 @@ export default function MealPlanView({
             </div>
 
             {/* Trekkspill 2: Steg-for-steg kokkesteg */}
-            <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/40">
+            <div className="rounded-2xl overflow-hidden bg-white/[0.02] ring-1 ring-white/[0.04]">
               <button
                 type="button"
                 onClick={() => setIsStepsOpen(!isStepsOpen)}
-                className="w-full p-4 flex items-center justify-between text-left text-xs sm:text-sm font-bold text-white hover:bg-slate-800/40 transition-colors min-h-[48px]"
+                className="w-full p-3.5 flex items-center justify-between text-left text-xs font-bold text-white hover:bg-white/[0.02] transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-emerald-400" />
@@ -597,13 +573,13 @@ export default function MealPlanView({
               </button>
 
               {isStepsOpen && (
-                <div className="p-4 pt-1 space-y-3 border-t border-slate-800/60">
+                <div className="p-3.5 pt-1 space-y-2 border-t border-white/[0.04]">
                   {currentDay.steps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="p-3.5 rounded-xl bg-slate-900 border border-slate-800/80 flex items-start gap-3 text-xs leading-relaxed text-slate-200"
+                      className="p-3 rounded-xl bg-white/[0.02] flex items-start gap-3 text-xs leading-relaxed text-slate-200"
                     >
-                      <span className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 text-xs mt-0.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 text-[10px] mt-0.5">
                         {idx + 1}
                       </span>
                       <span>{step}</span>

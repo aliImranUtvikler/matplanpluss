@@ -880,6 +880,108 @@ flowchart TD
 
 ---
 
+### 9.8 Soft, Borderless & Subtle Hairline Design (Linear / Apple Minimalisme)
+
+Basert på brukerens konkrete designkritikk (november 2026) gjøres et helhetlig oppgjør med «harde div-bokser inni div-bokser» og «venstre-til-høyre kant-ping-pong»:
+
+```mermaid
+flowchart TD
+    subgraph FØR: Harde inngjerdinger & Kant-ping-pong
+        A1["Tunge 'border border-slate-800 rounded-2xl' rundt absolutt alt"]
+        A2["Modus: Stor fullbredde-boks med innhold strukket ut til kantene"]
+        A3["Makrotall: 3 separate inngjerdede bokser med egne rammer"]
+        A4["Dagsknapp: MAN øverst og 'Rustikk Rotgrønnsaks- &' under"]
+        A5["Skrikende oransje fullbredde-banner for manglende varer"]
+        A1 --- A2 --- A3 --- A4 --- A5
+    end
+
+    subgraph ETTER: Soft, Borderless & Venstre-kompakt
+        B1["Myke overflater med 'ring-1 ring-white/[0.05]' og diskre 'border-b border-white/[0.06]'"]
+        B2["Kompakt venstre-linje under hilsen: Makro · Modus · Tannhjul ⚙️ (Ingen fullbredde-boks!)"]
+        B3["Makrotall: Åpen typografisk rad på venstre side med tynne 'h-8 w-px bg-white/[0.08]'"]
+        B4["Dagskort: KUN matnavn i myk boks ('Rotgrønnsaksgryte'). Ukedag diskret UNDER boksen!"]
+        B5["Kompakt, myk venstrestilt pille: '🛒 4 varer mangler · Se rute →'"]
+        B1 --- B2 --- B3 --- B4 --- B5
+    end
+```
+
+#### 1. Slutt på «Kant-Ping-Pong» → Kompakt Venstre-linje:
+I stedet for å dytte makropillen helt til høyre og ha en massiv fullbredde-boks for Modus under, samles all kontekst kompakt på venstre side under `Hei Alex 👋`:
+```tsx
+<div>
+  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Hei {firstName} 👋</h2>
+  <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 mt-1">
+    <span className="font-medium text-slate-300">{macroTargets.minProteinGrams}–{macroTargets.maxProteinGrams}g prot</span>
+    <span className="text-slate-600">·</span>
+    <span>Maks {macroTargets.maxKcal} kcal</span>
+    <span className="text-slate-600">·</span>
+    <span>{macroTargets.servings} pers</span>
+    <span className="text-slate-600">·</span>
+    <span className="text-emerald-400 font-medium">{chefModeSummaryText}</span>
+    <button
+      type="button"
+      onClick={onNavigateToPreferences}
+      className="p-1 text-slate-400 hover:text-white transition-colors ml-0.5 inline-flex items-center"
+      title="Endre makromål og kokkens modus i Preferanser"
+    >
+      <span className="text-xs">⚙️</span>
+    </button>
+  </div>
+</div>
+```
+
+#### 2. Dagskortene: Navnet i den myke boksen, Ukedagen diskret UNDER:
+- Hver boks inneholder **KUN navnet på retten** (med forbedret `getShortDishName` som aldri slutter på bindestrek eller `&` – f.eks. `Rotgrønnsaksgryte`).
+- **UNDER hver boks** (på utsiden) står ukedagen (`Mandag`, `Tirsdag`...) i liten, dempet skrift (`text-[11px] text-slate-500 font-medium`) med en subtil grønn prikk under aktiv dag.
+- Den grønne `[Mandag]`-boksen i oppskriften under fjernes, da den er helt overflødig.
+
+#### 3. Makrotallene: Åpen typografisk rad:
+I stedet for tre separate inngjerdede bokser for Protein, Kalorier og Planter, vises tallene som en åpen, typografisk rad på venstre side med tynne, delikate skillelinjer:
+```tsx
+<div className="flex items-center gap-4 sm:gap-6 py-2">
+  <div className="text-left">
+    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Protein</span>
+    <div className="flex items-baseline gap-1 mt-0.5">
+      <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">{currentDay.macros.proteinGramsPerPerson}g</span>
+      <span className="text-[11px] text-emerald-400 font-medium">per pers</span>
+    </div>
+  </div>
+  <div className="h-8 w-px bg-white/[0.08]" />
+  <div className="text-left">
+    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Kalorier</span>
+    <div className="flex items-baseline gap-1 mt-0.5">
+      <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">{currentDay.macros.kcalPerPerson}</span>
+      <span className="text-[11px] text-slate-400">kcal</span>
+    </div>
+  </div>
+  <div className="h-8 w-px bg-white/[0.08]" />
+  <div className="text-left">
+    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Planter</span>
+    <div className="flex items-baseline gap-1 mt-0.5">
+      <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">{currentDay.macros.plantCount}</span>
+      <span className="text-[11px] text-teal-400 font-medium">gut points</span>
+    </div>
+  </div>
+</div>
+```
+
+#### 4. Kompakt Handleliste-pille:
+Slutt på den skrikende hel-oransje banneren over hele bredden. En kompakt, myk knapp på venstre side:
+```tsx
+<button
+  type="button"
+  onClick={onNavigateToShopping}
+  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/25 transition-all text-xs font-bold active:scale-[0.98]"
+>
+  <ShoppingCart className="w-4 h-4 text-amber-400" />
+  <span>{missingCount} varer mangler</span>
+  <span className="text-amber-500">·</span>
+  <span className="flex items-center text-amber-200">Se rute <ArrowRight className="w-3.5 h-3.5 ml-1" /></span>
+</button>
+```
+
+---
+
 ## 10. Konklusjon
 
 Ved å implementere denne spesifikasjonen løser vi brukerens frustrasjoner umiddelbart:
