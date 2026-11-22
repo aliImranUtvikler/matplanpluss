@@ -821,6 +821,65 @@ Skjermen glir opp fra bunnen som en ekte iOS-sheet med dra-håndtak og avrundede
 
 ---
 
+### 9.7 Ultra-Minimalistisk UX: Korte Dagsnavn, Flytende Kart-boble & Ren Header
+
+For å oppnå maksimal visuell ro, eliminere teksttunge flater og optimalisere skjermplassen på både mobil og desktop (november 2026), innføres følgende 4 ultra-minimalistiske designstandarder:
+
+```mermaid
+flowchart TD
+    subgraph FØR: Teksttung & Kart-lås
+        A1["Dagsknapper: 4–5 linjer med lang tittel inne i hver boks"]
+        A2["Fane 2: 2. Handle & Kart (Stort kart låser halve skjermen)"]
+        A3["Topplinje: 100% Vegansk... • Rute-radar for 7 kjeder • 1. Ukemeny"]
+        A1 --- A2 --- A3
+    end
+
+    subgraph ETTER: Ultra-Minimalistisk & Flytende Kart
+        B1["Dagsknapper: Korte 2–3 ord (Koreansk Tofu Bowl / Indisk Linse-Dal)"]
+        B2["Fane 2: Handleliste (Hyper-ren, lynrask butikksjekkliste)"]
+        B3["Flytende Kart-boble (🗺️): Svevende chat-widget i hjørnet, åpnes on-demand"]
+        B4["Header: Ren logo 'Matplan' og rene faner (Ukemeny / Handleliste / osv.)"]
+        B1 --- B2 --- B3 --- B4
+    end
+```
+
+#### 1. Korte Dagsnavn i Ukevelgeren (`getShortDishName`):
+- **Problem:** Lange AI-titler som *"Indisk Red Lentil & High-Protein Soya Chunks Dal med Duftende Basmatiris"* tar 4–5 linjer i små knapper og skaper massiv visuell støy.
+- **Løsning:** Funksjonen `getShortDishName(title)` kutter bort støyord (*High-Protein, Duftende, Sprøstekt TRS, med Basmatiris*) og etterlater en ren, delikat 2–3 ords tittel:
+  - `MAN`: **Koreansk Tofu Bowl**
+  - `TIR`: **Indisk Linse-Dal**
+  - `ONS`: **Kremet Kikertpasta**
+  - `TOR`: **Miso Tempeh Bowl**
+  - `FRE`: **Kikerter Tikka**
+- Full tittel vises som en diskret undertittel inne i det valgte middagskortet under.
+
+#### 2. Flytende Kart-boble nederst til høyre (`🗺️` Floating Route Widget):
+- **Problem:** Kartet krever ikke fast plass midt i handlelisten. Brukeren i butikken trenger først og fremst en lynrask sjekkliste.
+- **Løsning:**
+  - Fane 2 omdøpes fra `Handle & Kart` til bare **`Handleliste`**.
+  - Det store kartet tas ut av den faste listen og legges bak et **flytende boble-ikon** nederst i høyre hjørne (`fixed bottom-20 md:bottom-6 right-5 z-40`).
+  - Boblen er formet som en moderne chat-boble: `w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-2xl flex items-center justify-center text-white ring-4 ring-slate-950 hover:scale-105 active:scale-95 transition-all`.
+  - Klikk på boblen åpner et flytende sidepanel (desktop) eller bunn-skuff (mobil) med rute, butikkvalg og Google Maps-navigasjon. Ett trykk for å lukke.
+
+#### 3. Bilde-URL Fiks i `FlyerPageModal.tsx`:
+- URL-resolver som tar hensyn til `NEXT_PUBLIC_BASE_PATH` (f.eks. `/matplanpluss` på GitHub Pages) og relative filstier:
+  ```typescript
+  export const resolveFlyerImageUrl = (url?: string): string | null => {
+    if (!url) return null;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+    const cleanPath = url.replace(/^\.?\//, '');
+    return `${basePath}/${cleanPath}`;
+  };
+  ```
+
+#### 4. Forenklet Header & Fane-navigasjon:
+- Fjern overflødige numre foran faner: `Ukemeny`, `Handleliste`, `Kjøkkenskap`, `Preferanser`.
+- Fjern den lange underteksten under logoen (`100% Vegansk & Peanøttfri • Rute-radar for 7 kjeder`).
+- Rensk opp hilsenen over ukeplanen for et rolig, nordisk uttrykk.
+
+---
+
 ## 10. Konklusjon
 
 Ved å implementere denne spesifikasjonen løser vi brukerens frustrasjoner umiddelbart:

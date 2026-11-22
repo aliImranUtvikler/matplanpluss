@@ -24,6 +24,7 @@ import {
   Store
 } from 'lucide-react';
 import StoreRouteMap from './StoreRouteMap';
+import FloatingRouteMapButton from './FloatingRouteMapButton';
 import FlyerPageModal from '../common/FlyerPageModal';
 import { optimizeRoute } from '../../services/maps/routeOptimizer';
 import type {
@@ -119,6 +120,7 @@ export default function OffersRadarView({
   const [offerSearch, setOfferSearch] = useState<string>('');
   const [selectedChainFilter, setSelectedChainFilter] = useState<'ALL' | StoreChain>('ALL');
   const [selectedFlyerOffer, setSelectedFlyerOffer] = useState<NormalizedOffer | null>(null);
+  const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
 
   // Hent handleliste og ukens tilbud
   const loadInitialData = async () => {
@@ -407,43 +409,40 @@ export default function OffersRadarView({
         </div>
       </div>
 
-      {/* 2. BUTIKKRUTE & INTERAKTIVT KART (StoreRouteMap.tsx) */}
-      {loadingRoute ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-16 text-center text-slate-400 flex flex-col items-center justify-center shadow-xl min-h-[360px]">
-          <RefreshCw className="w-8 h-8 animate-spin text-emerald-500 mb-3" />
-          <p className="text-sm font-medium text-slate-200">
-            Kalkulerer optimal butikkrute fra {selectedLocationName}...
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Matcher handlelisten mot 70 tilbud og beregner beste rute...
-          </p>
+      {/* 2. INTERAKTIV HANDLELISTE (Ultra-ren & minimalistisk) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+          <div>
+            <h3 className="font-extrabold text-base sm:text-lg text-white flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-emerald-400" />
+              <span>Handleliste for Butikken</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Kryss av varer med et trykk mens du går gjennom hyllene.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
+            <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-emerald-400">
+              {checkedCount} av {shoppingList.length} i kurven
+            </span>
+
+            {/* Hurtigknapp for å åpne kartet */}
+            <button
+              type="button"
+              onClick={() => setIsMapModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 min-h-[40px]"
+            >
+              <span>🗺️</span>
+              <span>Vis kart</span>
+              {routeData?.bestComboRoute?.combinedSavingsNok ? (
+                <span className="px-1.5 py-0.2 rounded bg-amber-500 text-slate-950 text-[10px] font-black">
+                  Spar {Math.round(routeData.bestComboRoute.combinedSavingsNok)} kr
+                </span>
+              ) : null}
+            </button>
+          </div>
         </div>
-      ) : routeData ? (
-        <div className="space-y-6">
-          {/* Kartkomponenten */}
-          <StoreRouteMap
-            routeData={routeData}
-            onSelectOffer={(off) => setSelectedFlyerOffer(off)}
-            onTravelModeChange={handleModeChange}
-          />
-
-          {/* 3. INTERAKTIV HANDLELISTE (iPhone-vennlige 48pt rader) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div>
-                <h3 className="font-extrabold text-base sm:text-lg text-white flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-emerald-400" />
-                  <span>Interaktiv Handleliste for Butikken</span>
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Kryss av varer med et trykk mens du går gjennom hyllene.
-                </p>
-              </div>
-
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-emerald-400">
-                {checkedCount} av {shoppingList.length} i kurven
-              </span>
-            </div>
 
             {shoppingList.length === 0 ? (
               <div className="p-8 text-center text-slate-400">
@@ -522,10 +521,8 @@ export default function OffersRadarView({
               </div>
             )}
           </div>
-        </div>
-      ) : null}
 
-      {/* 4. PROGRESSIVE DISCLOSURE: TREKKSPILL FOR DE 70 TILBUDENE (Kun synlig ved åpning) */}
+      {/* 3. PROGRESSIVE DISCLOSURE: TREKKSPILL FOR DE 70 TILBUDENE (Kun synlig ved åpning) */}
       <div className="border border-slate-800 rounded-3xl overflow-hidden bg-slate-900 p-5 sm:p-6 shadow-xl space-y-4">
         <button
           type="button"
@@ -651,6 +648,15 @@ export default function OffersRadarView({
           </div>
         )}
       </div>
+
+      {/* 4. Flytende Chat-boble Kart-knapp nederst til høyre (🗺️) */}
+      <FloatingRouteMapButton
+        routeData={routeData}
+        isOpen={isMapModalOpen}
+        onOpenChange={setIsMapModalOpen}
+        onSelectOffer={(off) => setSelectedFlyerOffer(off)}
+        onTravelModeChange={handleModeChange}
+      />
 
       {/* 5. Kundeavis-side Modal (Lightbox for å validere at tilbudet faktisk finnes) */}
       <FlyerPageModal

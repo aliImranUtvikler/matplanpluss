@@ -40,6 +40,49 @@ import type {
 } from '../../types/contracts';
 import type { GoogleUserProfile } from '../../services/auth/googleSsoService';
 
+export function getShortDishName(title: string): string {
+  const lower = title.toLowerCase();
+
+  // 1. Spesifikke mønstre for kjente retter
+  if (lower.includes('gochujang') || (lower.includes('tofu') && lower.includes('bowl'))) {
+    return 'Koreansk Tofu Bowl';
+  }
+  if (lower.includes('dal') || lower.includes('lentil') || lower.includes('linse')) {
+    return 'Indisk Linse-Dal';
+  }
+  if (lower.includes('fusilli') || lower.includes('pasta')) {
+    return 'Kremet Kikertpasta';
+  }
+  if (lower.includes('tempeh') || lower.includes('miso')) {
+    return 'Miso Tempeh Bowl';
+  }
+  if (lower.includes('tikka') || (lower.includes('kikerter') && lower.includes('spinat'))) {
+    return 'Kikerter Tikka';
+  }
+  if (lower.includes('ramen')) return 'Kremet Ramen';
+  if (lower.includes('burrito') || lower.includes('fajita')) return 'Burrito Bowl';
+  if (lower.includes('shawarma')) return 'Shawarma Bowl';
+  if (lower.includes('curry')) return 'Thai Curry';
+
+  // 2. Generell rensing for vilkårlige retter:
+  const cleaned = title
+    .replace(/med\s+.*$/i, '')
+    .replace(/High-Protein\s+/gi, '')
+    .replace(/Duftende\s+/gi, '')
+    .replace(/Sprøstekt\s+TRS\s+/gi, '')
+    .replace(/Sprøstekt\s+/gi, '')
+    .replace(/Crispy\s+/gi, '')
+    .replace(/Power\s+Bowl/gi, 'Bowl')
+    .replace(/&amp;/g, '&')
+    .trim();
+
+  const words = cleaned.split(' ').filter(Boolean);
+  if (words.length > 3) {
+    return words.slice(0, 3).join(' ');
+  }
+  return cleaned || title;
+}
+
 interface MealPlanViewProps {
   currentUser?: GoogleUserProfile;
   macroTargets?: UserMacroTargets;
@@ -291,11 +334,12 @@ export default function MealPlanView({
                   {day.dayName.substring(0, 3)}
                 </span>
                 <span
-                  className={`text-[11px] sm:text-xs font-bold block leading-tight line-clamp-2 mt-0.5 ${
+                  className={`text-xs font-bold block leading-tight truncate mt-0.5 ${
                     isSelected ? 'text-white' : 'text-slate-200'
                   }`}
+                  title={day.title}
                 >
-                  {day.title}
+                  {getShortDishName(day.title)}
                 </span>
               </button>
             );
@@ -354,6 +398,13 @@ export default function MealPlanView({
                 100% Peanøttfri
               </span>
             </div>
+          </div>
+
+          {/* Rettens fulle tittel (rent og diskret) */}
+          <div>
+            <h3 className="text-base sm:text-lg font-black text-white tracking-tight leading-snug">
+              {currentDay.title}
+            </h3>
           </div>
 
           {/* 3 Fremhevede Nøkkeltall (UU: Maks 3 for å unngå overbelastning) */}

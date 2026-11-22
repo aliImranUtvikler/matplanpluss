@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   X,
   ZoomIn,
@@ -59,15 +59,59 @@ const CHAIN_STYLES: Record<StoreChain, { label: string; badgeClass: string; hex:
   }
 };
 
+/**
+ * Robust kandidat-resolusjon for kundeavis-bilder
+ * Støtter både localhost:3000, subpaths som /matplanpluss på GitHub Pages, samt relative filbaner
+ */
+function getFlyerImageCandidates(rawUrl: string | undefined): string[] {
+  if (!rawUrl) return [];
+  if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+    return [rawUrl];
+  }
+
+  const clean = rawUrl.replace(/^\.?\/+/, '');
+  const basePath = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_BASE_PATH) || '';
+  const isGhPages =
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/matplanpluss');
+
+  const list: string[] = [];
+
+  // 1. BasePath fra environment (f.eks. /matplanpluss)
+  if (basePath) {
+    const cleanBase = basePath.replace(/\/+$/, '');
+    list.push(`${cleanBase}/${clean}`);
+  }
+
+  // 2. Window pathname sjekk for GitHub Pages
+  if (isGhPages && !basePath) {
+    list.push(`/matplanpluss/${clean}`);
+  }
+
+  // 3. Relativ sti (fungerer uansett subpath når appen serverer fra public/)
+  list.push(`./${clean}`);
+  list.push(clean);
+
+  // 4. Absolutt sti (fungerer lokalt på localhost og under rot-domener)
+  list.push(`/${clean}`);
+
+  return Array.from(new Set(list));
+}
+
 export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) {
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [imgLoading, setImgLoading] = useState<boolean>(true);
   const [imgError, setImgError] = useState<boolean>(false);
 
-  // Nullstill zoom ved endring av tilbud
+  // Kandidat-URL-er for feilfri lasting på tvers av miljøer
+  const rawImageUrl = offer?.flyerImageUrl || offer?.imageUrl;
+  const candidateUrls = useMemo(() => getFlyerImageCandidates(rawImageUrl), [rawImageUrl]);
+  const [candidateIndex, setCandidateIndex] = useState<number>(0);
+
+  // Nullstill ved endring av tilbud
   useEffect(() => {
     if (offer) {
       setZoomLevel(1);
+      setCandidateIndex(0);
       setImgLoading(true);
       setImgError(false);
     }
@@ -86,7 +130,6 @@ export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) 
   useEffect(() => {
     if (offer) {
       window.addEventListener('keydown', handleKeyDown);
-      // Forhindre bakgrunns-scrolling på body
       document.body.style.overflow = 'hidden';
     }
     return () => {
@@ -103,13 +146,17 @@ export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) 
     hex: '#10B981'
   };
 
-  // Bestem bilde-URL (fallback til flyerImageUrl eller imageUrl)
-  const rawImageUrl = offer.flyerImageUrl || offer.imageUrl;
-  const imageSrc = rawImageUrl
-    ? rawImageUrl.startsWith('/')
-      ? rawImageUrl
-      : `/${rawImageUrl}`
-    : null;
+  const currentSrc = candidateUrls[candidateIndex] || null;
+
+  const handleImageError = () => {
+    if (candidateIndex < candidateUrls.length - 1) {
+      // Automatisk prøv neste kandidat-sti (f.eks. /matplanpluss/data/... -> ./data/...)
+      setCandidateIndex((prev) => prev + 1);
+    } else {
+      setImgLoading(false);
+      setImgError(true);
+    }
+  };
 
   const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.35, 2.5));
   const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.35, 0.75));
@@ -201,9 +248,9 @@ export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) 
               </button>
             </div>
 
-            {imageSrc && (
+            {currentSrc && (
               <a
-                href={imageSrc}
+                href={currentSrc}
                 target="_blank"
                 rel="noreferrer"
                 title="Åpne høyoppløst bilde i ny fane"
@@ -226,7 +273,7 @@ export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) 
 
         {/* 2. Bildevisning (Lightbox med Zoom & Pan) */}
         <div className="relative flex-1 overflow-auto bg-slate-950 flex items-center justify-center min-h-[350px] p-2 sm:p-4 select-none">
-          {imageSrc && !imgError ? (
+          {currentSrc && !imgError ? (
             <div
               className="relative transition-transform duration-150 ease-out cursor-zoom-in"
               style={{
@@ -244,13 +291,13 @@ export default function FlyerPageModal({ offer, onClose }: FlyerPageModalProps) 
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={imageSrc}
+                src={currentSrc}
                 alt={`${offer.productName} i kundeavisen for ${chainInfo.label}`}
-                onLoad={() => setImgLoading(false)}
-                onError={() => {
+                onLoad={() => {
                   setImgLoading(false);
-                  setImgError(true);
+                  setImgError(false);
                 }}
+                onError={handleImageError}
                 className="max-h-[72vh] w-auto rounded-xl shadow-2xl border border-slate-800 object-contain mx-auto"
               />
             </div>

@@ -1566,16 +1566,24 @@ function normalizeCandidate(
 /**
  * Skanner én enkelt kundeavis-side med Gemini Vision (eller deterministisk simulator hvis GEMINI_API_KEY mangler).
  * Sjekker alltid <kjede>/offers.json først slik at manuelle brukerendringer umiddelbart overstyrer/brukes!
+ * Ved ny Gemini Vision-skanning: 1 side av gangen med 4,5s pause og 22s auto-retry ved 429.
  */
 export async function scanSingleFlyerPageWithVision(
   page: FlyerPageAsset,
-  options?: { apiKey?: string; forceDeterministic?: boolean; forceGeminiScan?: boolean }
+  options?: {
+    apiKey?: string;
+    forceDeterministic?: boolean;
+    forceGeminiScan?: boolean;
+    forceRescan?: boolean;
+  }
 ): Promise<FlyerPageScanResult> {
   const apiKey = options?.apiKey || process.env.GEMINI_API_KEY;
   const isDeterministic = options?.forceDeterministic || !apiKey;
+  const shouldForceRescan = !!(options?.forceRescan || options?.forceGeminiScan);
 
-  // 1. Sjekk ALLTID om det finnes redigerte tilbud i offers.json for denne butikken
+  // 1. Sjekk ALLTID om det finnes ferdig analyserte/redigerte tilbud i offers.json for denne butikken
   const diskCandidates = loadOffersFromStoreJson(page);
+  const alreadyInOffersJson = diskCandidates !== null;
 
   const template = FLYER_PAGES_SIM_TEMPLATES.find(
     (tpl) => tpl.chain === page.chain && tpl.pageNumber === page.pageNumber
@@ -1583,91 +1591,130 @@ export async function scanSingleFlyerPageWithVision(
 
   let rawCandidates: RawPageItemCandidate[] = diskCandidates ?? template?.itemsOnPage ?? [];
 
-  // Hvis GEMINI_API_KEY er tilgjengelig og vi har et bilde/base64:
-  // Kjøres hvis ingen offers.json fantes fra før, eller hvis forceGeminiScan er eksplisitt satt
-  if (!isDeterministic && apiKey && page.imageUrlOrBase64 && (!diskCandidates || options?.forceGeminiScan)) {
-    try {
-      const isBase64 = page.imageUrlOrBase64.startsWith('data:') || !page.imageUrlOrBase64.startsWith('http');
-      const imagePart = isBase64
-        ? {
-            inline_data: {
-              mime_type: page.mimeType,
-              data: page.imageUrlOrBase64.replace(/^data:image\/\w+;base64,/, '')
+  // Hvis siden IKKE finnes i offers.json fra før (eller forceRescan er satt), og vi har API-nøkkel + bilde:
+  // Skann 1 side av gangen med tålmodig pacing (4,5 sek pause) og auto-retry (22 sek) ved 429.
+  if (!isDeterministic && apiKey && page.imageUrlOrBase64 && (!alreadyInOffersJson || shouldForceRescan)) {
+    const maxRetries = 2;
+    let attempt = 0;
+    let geminiSuccess = false;
+
+    while (attempt <= maxRetries && !geminiSuccess) {
+      if (attempt > 0) {
+        console.warn(
+          `[Gemini Vision] ⚠️ 429 Too Many Requests for ${page.chain} side ${page.pageNumber}. Venter 22 sekunder før forsøk ${attempt + 1}/${maxRetries + 1}...`
+        );
+        await new Promise((r) => setTimeout(r, 22000));
+      } else {
+        // Tålmodig pacing: 4,5 sekunder pause mellom hvert kall for å holde oss trygt under 15 RPM
+        await new Promise((r) => setTimeout(r, 4500));
+      }
+
+      attempt++;
+
+      try {
+        const isBase64 = page.imageUrlOrBase64.startsWith('data:') || !page.imageUrlOrBase64.startsWith('http');
+        const imagePart = isBase64
+          ? {
+              inline_data: {
+                mime_type: page.mimeType,
+                data: page.imageUrlOrBase64.replace(/^data:image\/\w+;base64,/, '')
+              }
+            }
+          : {
+              text: `Kundeavis-bilde URL: ${page.imageUrlOrBase64}`
+            };
+
+        const requestBody = {
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                imagePart,
+                {
+                  text: `Analyser denne kundeavis-siden for ${page.chain} (Side ${page.pageNumber} av ${page.totalPages}). Ekstraher alle tilbud.`
+                }
+              ]
+            }
+          ],
+          systemInstruction: {
+            parts: [{ text: GEMINI_FLYER_PAGE_SYSTEM_PROMPT }]
+          },
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: GEMINI_PAGE_RESPONSE_SCHEMA,
+            temperature: 0.1
+          }
+        };
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+          }
+        );
+
+        if (res.status === 429) {
+          if (attempt <= maxRetries) {
+            continue; // Prøv på nytt etter 22 sek pause
+          } else {
+            console.warn(
+              `[Gemini Vision] 429 Too Many Requests vedvarer for ${page.chain} side ${page.pageNumber} etter ${maxRetries} gjentakelser. Bruker verifisert mal.`
+            );
+            break;
+          }
+        }
+
+        if (res.ok) {
+          const json = await res.json();
+          const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (rawText) {
+            const parsed = JSON.parse(rawText) as {
+              offers: Array<{
+                productName: string;
+                offerPrice: number;
+                regularPrice?: number;
+                unitDescription?: string;
+                unitPrice?: number;
+                detectedTags?: string[];
+                detectedIngredientsOrAllergens?: string[];
+              }>;
+            };
+            if (Array.isArray(parsed.offers) && parsed.offers.length > 0) {
+              rawCandidates = parsed.offers.map((item, idx) => ({
+                rawId: `gemini-p${page.pageNumber}-${idx + 1}`,
+                productName: item.productName,
+                offerPrice: item.offerPrice,
+                regularPrice: item.regularPrice,
+                unitDescription: item.unitDescription,
+                unitPrice: item.unitPrice,
+                tags: item.detectedTags,
+                allergens: item.detectedIngredientsOrAllergens
+              }));
+
+              // Lagre automatisk de nyoppdagede Gemini Vision-funnene til butikkens offers.json
+              saveOffersToStoreJson(page.chain, page.pageNumber, rawCandidates, {
+                localFilePath: page.localFilePath
+              });
+
+              geminiSuccess = true;
+              break;
             }
           }
-        : {
-            text: `Kundeavis-bilde URL: ${page.imageUrlOrBase64}`
-          };
-
-      const requestBody = {
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              imagePart,
-              {
-                text: `Analyser denne kundeavis-siden for ${page.chain} (Side ${page.pageNumber} av ${page.totalPages}). Ekstraher alle tilbud.`
-              }
-            ]
-          }
-        ],
-        systemInstruction: {
-          parts: [{ text: GEMINI_FLYER_PAGE_SYSTEM_PROMPT }]
-        },
-        generationConfig: {
-          responseMimeType: 'application/json',
-          responseSchema: GEMINI_PAGE_RESPONSE_SCHEMA,
-          temperature: 0.1
+        } else {
+          console.warn(
+            `[Gemini Vision] Returnerte status ${res.status} for ${page.chain} side ${page.pageNumber}, faller tilbake.`
+          );
+          break;
         }
-      };
-
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
-        }
-      );
-
-      if (res.ok) {
-        const json = await res.json();
-        const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (rawText) {
-          const parsed = JSON.parse(rawText) as {
-            offers: Array<{
-              productName: string;
-              offerPrice: number;
-              regularPrice?: number;
-              unitDescription?: string;
-              unitPrice?: number;
-              detectedTags?: string[];
-              detectedIngredientsOrAllergens?: string[];
-            }>;
-          };
-          if (Array.isArray(parsed.offers) && parsed.offers.length > 0) {
-            rawCandidates = parsed.offers.map((item, idx) => ({
-              rawId: `gemini-p${page.pageNumber}-${idx + 1}`,
-              productName: item.productName,
-              offerPrice: item.offerPrice,
-              regularPrice: item.regularPrice,
-              unitDescription: item.unitDescription,
-              unitPrice: item.unitPrice,
-              tags: item.detectedTags,
-              allergens: item.detectedIngredientsOrAllergens
-            }));
-
-            // Lagre automatisk de nyoppdagede Gemini Vision-funnene til butikkens offers.json
-            saveOffersToStoreJson(page.chain, page.pageNumber, rawCandidates, {
-              localFilePath: page.localFilePath
-            });
-          }
-        }
-      } else {
-        console.warn(`Gemini Vision returnerte status ${res.status} for ${page.chain} side ${page.pageNumber}, bruker verifisert mal.`);
+      } catch (err) {
+        console.warn(
+          `[Gemini Vision] Nettverkskall feilet for ${page.chain} side ${page.pageNumber}:`,
+          err
+        );
+        break;
       }
-    } catch (err) {
-      console.warn(`Gemini Vision nettverkskall feilet for ${page.chain} side ${page.pageNumber}, faller tilbake:`, err);
     }
   }
 
@@ -1724,6 +1771,7 @@ export async function scanFlyerPagesWithAiVision(
     apiKey?: string;
     forceDeterministic?: boolean;
     forceGeminiScan?: boolean;
+    forceRescan?: boolean;
     bypassCache?: boolean;
     onPageProgress?: (result: FlyerPageScanResult, index: number, total: number) => void;
   }

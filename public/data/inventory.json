@@ -639,20 +639,5 @@
     ],
     "isCarbBase": false,
     "isGutHealthBooster": false
-  },
-  {
-    "id": "dette-er-test",
-    "name": "Dette er test",
-    "proteinPer100g": 15,
-    "kcalPer100g": 120,
-    "inStock": true,
-    "category": "Tørrvarer/Belgvekster",
-    "searchKeywords": [
-      "dette er test",
-      "dette",
-      "test"
-    ],
-    "isCarbBase": false,
-    "isGutHealthBooster": false
   }
 ]

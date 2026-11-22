@@ -1,7 +1,7 @@
 {
-  "pipelineRunId": "run-1794864184263-lv9v5c",
-  "startedAt": "2026-11-16T21:23:04.262Z",
-  "completedAt": "2026-11-16T21:23:04.339Z",
+  "pipelineRunId": "run-1795373420522-y26xmz",
+  "startedAt": "2026-11-22T18:50:20.521Z",
+  "completedAt": "2026-11-22T18:50:20.600Z",
   "trigger": "MANUAL_DISPATCH",
   "macroTargetsUsed": {
     "minProteinGrams": 40,
@@ -25,7 +25,7 @@
     "pagesScannedCount": 127,
     "totalOffersExtracted": 71,
     "rejectedUnsafeItems": 19,
-    "outputPath": "public/data/weekly-offers.json"
+    "outputPath": "/Users/alianjum/dev/Antigravity/matplan/public/data/weekly-offers.json"
   },
   "stage2_mealPlanTask": {
     "daysGenerated": 5,
@@ -33,7 +33,7 @@
     "avgKcal": 754,
     "shoppingListCount": 19,
     "pantryItemsUsedCount": 15,
-    "outputPath": "public/data/default-mealplan.json"
+    "outputPath": "/Users/alianjum/dev/Antigravity/matplan/public/data/default-mealplan.json"
   },
   "stage3_mapRouterTask": {
     "storesEvaluatedCount": 12,
@@ -45,6 +45,6 @@
       "REMA 1000 Vulkan"
     ],
     "bestComboSavingsNok": 196.6,
-    "outputPath": "public/data/routes-cache.json"
+    "outputPath": "/Users/alianjum/dev/Antigravity/matplan/public/data/routes-cache.json"
   }
 }

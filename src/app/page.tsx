@@ -310,14 +310,9 @@ export default function HomePage() {
                 <UtensilsCrossed className="w-5 h-5 text-slate-950" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
-                    Matplan & Tilbuds-Radar
-                  </h1>
-                </div>
-                <p className="text-[11px] text-slate-400 hidden sm:block">
-                  100% Vegansk & Peanøttfri • Rute-radar for 7 kjeder
-                </p>
+                <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+                  Matplan
+                </h1>
               </div>
             </div>
 
@@ -333,7 +328,7 @@ export default function HomePage() {
                 }`}
               >
                 <UtensilsCrossed className="w-4 h-4" />
-                <span>1. Ukemeny</span>
+                <span>Ukemeny</span>
               </button>
 
               <button
@@ -346,7 +341,7 @@ export default function HomePage() {
                 }`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>2. Handle & Kart</span>
+                <span>Handleliste</span>
                 {shoppingListCount > 0 && (
                   <span className="ml-0.5 px-1.5 py-0.2 rounded-md bg-amber-950 text-[10px] font-extrabold text-amber-300 border border-amber-800/50">
                     {shoppingListCount}
@@ -364,7 +359,7 @@ export default function HomePage() {
                 }`}
               >
                 <Boxes className="w-4 h-4" />
-                <span>3. Kjøkkenskap</span>
+                <span>Kjøkkenskap</span>
                 <span className="ml-0.5 px-1.5 py-0.2 rounded-md bg-slate-950/60 text-[10px] font-extrabold text-emerald-300">
                   {inStockCount}/{totalItemsCount}
                 </span>
@@ -380,7 +375,7 @@ export default function HomePage() {
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
-                <span>4. Preferanser</span>
+                <span>Preferanser</span>
               </button>
             </nav>
 
@@ -496,7 +491,7 @@ export default function HomePage() {
           }`}
         >
           <ShoppingBag className="w-5 h-5" />
-          <span className="text-[10px]">Handle & Kart</span>
+          <span className="text-[10px]">Handleliste</span>
           {shoppingListCount > 0 && (
             <span className="absolute top-0.5 right-3 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-500 text-slate-950">
               {shoppingListCount}
