@@ -343,7 +343,7 @@ export default function OffersRadarView({
   return (
     <div className={`space-y-6 max-w-4xl mx-auto ${className}`}>
       {/* 1. LOKASJONS- OG REISELINJE (Diskret og ren) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 p-0 sm:p-4 rounded-none sm:rounded-2xl shadow-none sm:shadow-lg">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none -mx-2 px-2 sm:mx-0 sm:px-0">
           <span className="text-xs font-semibold text-slate-400 flex items-center gap-1 shrink-0">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
@@ -418,8 +418,8 @@ export default function OffersRadarView({
       </div>
 
       {/* 2. INTERAKTIV HANDLELISTE (Ultra-ren & minimalistisk) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 rounded-none sm:rounded-3xl p-0 sm:p-6 shadow-none sm:shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06] sm:border-slate-800">
           <div>
             <h3 className="font-extrabold text-base sm:text-lg text-white flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-emerald-400" />
@@ -459,7 +459,7 @@ export default function OffersRadarView({
                 <p className="text-xs text-slate-500 mt-1">Alt er allerede på lager i kjøkkenskapet.</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="divide-y divide-white/[0.06] sm:divide-y-0 sm:space-y-2 border-y sm:border-y-0 border-white/[0.06]">
                 {shoppingList.map((item) => {
                   const isChecked = Boolean(checkedItemIds[item.id]);
                   const hasOffers = Boolean(item.matchedOffers && item.matchedOffers.length > 0);
@@ -468,10 +468,10 @@ export default function OffersRadarView({
                     <div
                       key={item.id}
                       onClick={() => toggleCheckItem(item.id)}
-                      className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none min-h-[52px] ${
+                      className={`py-3 sm:p-4 px-1 sm:px-4 rounded-none sm:rounded-2xl border-0 sm:border transition-all cursor-pointer flex items-center justify-between gap-3 select-none min-h-[50px] ${
                         isChecked
-                          ? 'bg-slate-950/40 border-slate-800/60 opacity-50 line-through'
-                          : 'bg-slate-950/80 border-slate-800 hover:border-slate-700 active:scale-[0.99]'
+                          ? 'bg-transparent sm:bg-slate-950/40 border-slate-800/60 opacity-50 line-through'
+                          : 'bg-transparent sm:bg-slate-950/80 border-slate-800 hover:bg-white/[0.02] sm:hover:border-slate-700 active:scale-[0.99]'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -531,7 +531,7 @@ export default function OffersRadarView({
           </div>
 
       {/* 3. PROGRESSIVE DISCLOSURE: TREKKSPILL FOR DE 70 TILBUDENE (Kun synlig ved åpning) */}
-      <div className="border border-slate-800 rounded-3xl overflow-hidden bg-slate-900 p-5 sm:p-6 shadow-xl space-y-4">
+      <div className="border-0 sm:border border-slate-800 rounded-none sm:rounded-3xl overflow-hidden bg-transparent sm:bg-slate-900 p-0 sm:p-6 shadow-none sm:shadow-xl space-y-4">
         <button
           type="button"
           onClick={() => setIsOffersAccordionOpen(!isOffersAccordionOpen)}

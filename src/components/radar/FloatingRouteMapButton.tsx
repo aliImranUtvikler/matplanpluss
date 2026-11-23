@@ -13,6 +13,7 @@ interface FloatingRouteMapButtonProps {
   onTravelModeChange?: (mode: 'DRIVING' | 'WALKING' | 'BICYCLING') => void;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  showFloatingButton?: boolean;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ export default function FloatingRouteMapButton({
   onTravelModeChange,
   isOpen: controlledIsOpen,
   onOpenChange,
+  showFloatingButton = false,
   className = ''
 }: FloatingRouteMapButtonProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -114,30 +116,31 @@ export default function FloatingRouteMapButton({
 
   return (
     <>
-      {/* 1. Flytende Chat-boble knapp (forankret nederst til høyre på ALLE faner) */}
-      <div className={`fixed bottom-20 md:bottom-6 right-5 z-40 ${className}`}>
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? 'Lukk kart og butikkrute' : 'Åpne butikk-rute og kart'}
-          className="relative group w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-2xl flex items-center justify-center text-white ring-4 ring-slate-950 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        >
-          {isOpen ? (
-            <X className="w-6 h-6 text-white" />
-          ) : (
-            <div className="flex flex-col items-center justify-center">
-              <span className="text-2xl leading-none select-none">🗺️</span>
-            </div>
-          )}
+      {/* 1. Valgfri Flytende Chat-boble knapp (skjult som standard for å unngå visuell støy på mobil) */}
+      {showFloatingButton && (
+        <div className={`fixed bottom-20 md:bottom-6 right-5 z-40 ${className}`}>
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? 'Lukk kart og butikkrute' : 'Åpne butikk-rute og kart'}
+            className="relative group w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-2xl flex items-center justify-center text-white ring-4 ring-slate-950 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            {isOpen ? (
+              <X className="w-6 h-6 text-white" />
+            ) : (
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-2xl leading-none select-none">🗺️</span>
+              </div>
+            )}
 
-          {/* Liten rabatt-badge over boblen */}
-          {!isOpen && displaySavings > 0 && (
-            <span className="absolute -top-2 -left-2 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950 shadow-md whitespace-nowrap animate-pulse">
-              Spar {Math.round(displaySavings)} kr
-            </span>
-          )}
-        </button>
-      </div>
+            {!isOpen && displaySavings > 0 && (
+              <span className="absolute -top-2 -left-2 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950 shadow-md whitespace-nowrap animate-pulse">
+                Spar {Math.round(displaySavings)} kr
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* 2. Flytende Kart-vindu / Drawer */}
       {isOpen && (

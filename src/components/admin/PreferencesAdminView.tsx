@@ -124,6 +124,8 @@ export default function PreferencesAdminView({
   const [isCustomNotesAccordionOpen, setIsCustomNotesAccordionOpen] = useState<boolean>(
     dashboard.chefModes?.enableCustomNotes ?? false
   );
+  // Hurtigpanel-tilstand for sekundære innstillinger (skjult som standard)
+  const [activeQuickPanel, setActiveQuickPanel] = useState<'NONE' | 'ACCOUNT' | 'PARTNER' | 'LOCATION' | 'DATA'>('NONE');
   const [chefSaving, setChefSaving] = useState<boolean>(false);
   const [chefMessage, setChefMessage] = useState<string | null>(null);
   const [lastChefModesSavedAt, setLastChefModesSavedAt] = useState<string | null>(null);
@@ -455,290 +457,470 @@ export default function PreferencesAdminView({
 
   return (
     <div className={`max-w-4xl mx-auto space-y-6 pb-12 ${className}`}>
-      {/* Topplinje */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Preferanser & Administrasjon
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-            Innlogget profil, felles husstand, makromål, standardadresse og kjøkkenskap-synkronisering.
-          </p>
+      {/* 1. Topplinje med tittel */}
+      <div className="pb-1">
+        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+          Preferanser & Administrasjon
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+          Kokkens modus, matstil og dine personlige makromål.
+        </p>
+
+        {/* 2. Rask tilgang: 4 venstre-kompakte ikon-knapper for konto, partner, lokasjon og CSV */}
+        <div className="flex flex-wrap items-center gap-2 pt-3">
+          <button
+            type="button"
+            onClick={() => setActiveQuickPanel(activeQuickPanel === 'ACCOUNT' ? 'NONE' : 'ACCOUNT')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] border ${
+              activeQuickPanel === 'ACCOUNT'
+                ? 'bg-emerald-950/80 border-emerald-500 text-emerald-300 shadow-sm'
+                : 'bg-white/[0.03] border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.06]'
+            }`}
+          >
+            <User className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Konto: {currentUser.givenName || currentUser.name.split(' ')[0]}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveQuickPanel(activeQuickPanel === 'PARTNER' ? 'NONE' : 'PARTNER')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] border ${
+              activeQuickPanel === 'PARTNER'
+                ? 'bg-purple-950/80 border-purple-500 text-purple-300 shadow-sm'
+                : 'bg-white/[0.03] border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.06]'
+            }`}
+          >
+            <Users2 className="w-3.5 h-3.5 text-purple-400" />
+            <span>{dashboard.household ? 'Husstand' : 'Partnerdeling'}</span>
+            {dashboard.household && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveQuickPanel(activeQuickPanel === 'LOCATION' ? 'NONE' : 'LOCATION')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] border ${
+              activeQuickPanel === 'LOCATION'
+                ? 'bg-sky-950/80 border-sky-500 text-sky-300 shadow-sm'
+                : 'bg-white/[0.03] border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.06]'
+            }`}
+          >
+            <MapPin className="w-3.5 h-3.5 text-sky-400" />
+            <span>Lokasjon ({preferredLocation.label.split(',')[0].trim()})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveQuickPanel(activeQuickPanel === 'DATA' ? 'NONE' : 'DATA')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] border ${
+              activeQuickPanel === 'DATA'
+                ? 'bg-amber-950/80 border-amber-500 text-amber-300 shadow-sm'
+                : 'bg-white/[0.03] border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.06]'
+            }`}
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" />
+            <span>Data & CSV-synk</span>
+          </button>
         </div>
       </div>
 
-      {/* SEKSJON 1: GOOGLE SSO & KONTOVEKSLER */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2.5 min-w-0">
-            {currentUser.pictureUrl ? (
-              <img
-                src={currentUser.pictureUrl}
-                alt={currentUser.name}
-                className="w-10 h-10 rounded-full border border-emerald-500 object-cover shrink-0"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-emerald-950 border border-emerald-500 flex items-center justify-center font-bold text-emerald-400 text-sm shrink-0">
-                {currentUser.name.charAt(0).toUpperCase()}
+      {/* QUICK PANEL 1: KONTO */}
+      {activeQuickPanel === 'ACCOUNT' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {currentUser.pictureUrl ? (
+                <img
+                  src={currentUser.pictureUrl}
+                  alt={currentUser.name}
+                  className="w-10 h-10 rounded-full border border-emerald-500 object-cover shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-emerald-950 border border-emerald-500 flex items-center justify-center font-bold text-emerald-400 text-sm shrink-0">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-white truncate">{currentUser.name}</h3>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Aktiv innlogget profil" />
+                </div>
+                <p className="text-xs text-slate-400 truncate">{currentUser.email}</p>
               </div>
-            )}
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h3 className="font-extrabold text-sm sm:text-base text-white truncate">{currentUser.name}</h3>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Aktiv innlogget profil" />
-              </div>
-              <p className="text-xs text-slate-400 truncate">{currentUser.email}</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onLoggedOut}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-800/40 transition-colors shrink-0 min-h-[36px]"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logg ut</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveQuickPanel('NONE')}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                title="Lukk panel"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onLoggedOut}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-800/40 transition-colors shrink-0 whitespace-nowrap min-h-[36px]"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Logg ut</span>
-          </button>
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowDemoProfiles(!showDemoProfiles)}
+              className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors py-1 cursor-pointer"
+            >
+              <span>{showDemoProfiles ? 'Skjul testprofiler ▴' : 'Bytt til en test-/demoprofil ▾'}</span>
+            </button>
+
+            {showDemoProfiles && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
+                {DEMO_GOOGLE_ACCOUNTS.map((acc) => {
+                  const isCurrent = currentUser.id === acc.id || currentUser.email === acc.email;
+                  return (
+                    <button
+                      key={acc.id}
+                      type="button"
+                      onClick={() => {
+                        handleSwitchAccount(acc.id);
+                        setActiveQuickPanel('NONE');
+                      }}
+                      className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
+                        isCurrent
+                          ? 'bg-emerald-950/60 border-emerald-500'
+                          : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05]'
+                      }`}
+                    >
+                      <img
+                        src={acc.pictureUrl}
+                        alt={acc.name}
+                        className="w-7 h-7 rounded-full border border-slate-700 object-cover shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <span className="font-bold text-xs text-white block truncate">{acc.name}</span>
+                        <span className="text-[10px] text-slate-400 block truncate">{acc.dietaryFocus}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
+      )}
 
-        {/* Diskret test-/demoprofil veksler (skjult bak toggle på mobil) */}
-        <div className="pt-1">
-          <button
-            type="button"
-            onClick={() => setShowDemoProfiles(!showDemoProfiles)}
-            className="text-[11px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors py-1 cursor-pointer"
-          >
-            <span>{showDemoProfiles ? 'Skjul testprofiler ▴' : 'Bytt til en test-/demoprofil ▾'}</span>
-          </button>
-
-          {showDemoProfiles && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 animate-in fade-in duration-150">
-              {DEMO_GOOGLE_ACCOUNTS.map((acc) => {
-                const isCurrent = currentUser.id === acc.id || currentUser.email === acc.email;
-                return (
-                  <button
-                    key={acc.id}
-                    type="button"
-                    onClick={() => handleSwitchAccount(acc.id)}
-                    className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
-                      isCurrent
-                        ? 'bg-emerald-950/60 border-emerald-500'
-                        : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05]'
-                    }`}
-                  >
-                    <img
-                      src={acc.pictureUrl}
-                      alt={acc.name}
-                      className="w-7 h-7 rounded-full border border-slate-700 object-cover shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <span className="font-bold text-xs text-white block truncate">{acc.name}</span>
-                      <span className="text-[10px] text-slate-400 block truncate">{acc.dietaryFocus}</span>
-                    </div>
-                  </button>
-                );
-              })}
+      {/* QUICK PANEL 2: PARTNERDELING */}
+      {activeQuickPanel === 'PARTNER' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <Users2 className="w-4 h-4 text-purple-400" />
+              <h3 className="font-extrabold text-sm sm:text-base text-white">Felles Husstand & Partnerdeling</h3>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* SEKSJON 2: FELLES HUSSTAND / DEL MED PARTNER (Google-konto) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-purple-950 border border-purple-800/80 text-purple-400">
-              <Users2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-extrabold text-base text-white">Felles Husstand / Del med partner</h3>
-              <p className="text-xs text-slate-400">
-                Del samme kjøkkenskap, ukeplan og handleliste i sanntid (0 ms forsinkelse).
-              </p>
-            </div>
+            <button
+              type="button"
+              onClick={() => setActiveQuickPanel('NONE')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+              title="Lukk panel"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
           </div>
 
           {dashboard.household ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-[11px] font-bold text-emerald-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Sanntidssynk aktiv</span>
-            </div>
-          ) : (
-            <span className="text-[11px] font-semibold text-slate-500">Individuell profil</span>
-          )}
-        </div>
-
-        {/* TILSTAND 1: Brukeren er tilkoblet en felles husstand */}
-        {dashboard.household ? (
-          <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-slate-950 border border-purple-900/50 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 block">
-                    Aktiv Husstand
-                  </span>
-                  <h4 className="text-base font-extrabold text-white flex items-center gap-2">
-                    <span>{dashboard.household.name}</span>
-                  </h4>
-                </div>
-
-                {/* Invitasjonskode boks */}
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono font-bold text-purple-300">
-                    {dashboard.household.inviteCode}
+            <div className="space-y-3">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-purple-900/40 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 block">
+                      Aktiv Husstand
+                    </span>
+                    <h4 className="text-sm font-bold text-white">{dashboard.household.name}</h4>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyInviteCode(dashboard.household?.inviteCode || '')}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors min-h-[38px] flex items-center gap-1 text-xs"
-                    title="Kopier invitasjonskode til utklippstavlen"
-                  >
-                    {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedCode ? 'Kopiert!' : 'Kopier'}</span>
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono font-bold text-purple-300">
+                      {dashboard.household.inviteCode}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyInviteCode(dashboard.household?.inviteCode || '')}
+                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors text-xs flex items-center gap-1"
+                      title="Kopier invitasjonskode"
+                    >
+                      {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Medlemmer */}
-              <div>
-                <span className="text-xs font-semibold text-slate-400 block mb-1.5">
-                  Tilkoblede Google-kontoer som deler dette dashboardet:
-                </span>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {dashboard.household.memberEmails.map((email) => {
                     const isSelf = email.toLowerCase() === currentUser.email.toLowerCase();
                     return (
-                      <div
+                      <span
                         key={email}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border ${
                           isSelf
                             ? 'bg-purple-950/70 border-purple-500/80 text-purple-200'
                             : 'bg-slate-900 border-slate-700 text-slate-300'
                         }`}
                       >
-                        <User className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                        <User className="w-3 h-3 text-purple-400" />
                         <span>{email}</span>
-                        {isSelf && <span className="text-[10px] text-purple-400 font-bold ml-0.5">(deg)</span>}
-                      </div>
+                      </span>
                     );
                   })}
                 </div>
               </div>
 
-              {dashboard.household.updatedByEmail && (
-                <p className="text-[11px] text-slate-400 pt-1">
-                  Sist oppdatert av:{' '}
-                  <span className="text-slate-200 font-semibold">{dashboard.household.updatedByEmail}</span>{' '}
-                  (Sanntidssynk oppdaterer begge kontoers app automatisk ved endringer)
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleUnlinkHousehold}
+                  disabled={householdLoading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-800/60 bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-xs font-semibold transition-all min-h-[38px] disabled:opacity-50"
+                >
+                  {householdLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Unlink className="w-3.5 h-3.5" />}
+                  <span>Koble fra husstand</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <form onSubmit={handleLinkPartner} className="space-y-2">
+                <label className="text-xs font-semibold text-slate-300 block">
+                  Koble sammen via Google-epost eller invitasjonskode:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={partnerInput}
+                    onChange={(e) => setPartnerInput(e.target.value)}
+                    placeholder="partner@epost.no eller kode"
+                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 min-h-[40px]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={householdLoading || !partnerInput.trim()}
+                    className="flex items-center justify-center gap-1 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all min-h-[40px] disabled:opacity-50"
+                  >
+                    {householdLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+                    <span>Koble til</span>
+                  </button>
+                </div>
+              </form>
+
+              <div className="pt-2 flex items-center justify-between border-t border-white/[0.06]">
+                <span className="text-[11px] text-slate-400">Test partner-synk med ett klikk:</span>
+                <button
+                  type="button"
+                  onClick={handleLinkAlexLunaDemo}
+                  disabled={householdLoading}
+                  className="px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/60 text-purple-300 text-[11px] font-semibold transition-all min-h-[32px] flex items-center gap-1"
+                >
+                  <Users2 className="w-3 h-3 text-purple-400" />
+                  <span>Koble Alex & Luna</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {householdMessage && (
+            <div
+              className={`p-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                householdMessage.isError
+                  ? 'bg-rose-950/80 border border-rose-800 text-rose-300'
+                  : 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
+              }`}
+            >
+              <span>{householdMessage.text}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* QUICK PANEL 3: LOKASJON & REISE */}
+      {activeQuickPanel === 'LOCATION' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-sky-400" />
+              <h3 className="font-extrabold text-sm sm:text-base text-white">Standard Hjemmeadresse & Rute</h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveQuickPanel('NONE')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+              title="Lukk panel"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-semibold text-slate-300 block mb-1">Aktiv adresse / nabolag:</label>
+              <input
+                type="text"
+                value={preferredLocation.label}
+                onChange={(e) => setPreferredLocation((prev) => ({ ...prev, label: e.target.value }))}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500 min-h-[44px]"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {QUICK_LOCATIONS.map((loc) => {
+                const isSelected = preferredLocation.label === loc.label;
+                return (
+                  <button
+                    key={loc.label}
+                    type="button"
+                    onClick={() => {
+                      const updatedLoc: UserDashboardLocation = {
+                        ...preferredLocation,
+                        label: loc.label,
+                        lat: loc.lat,
+                        lng: loc.lng
+                      };
+                      setPreferredLocation(updatedLoc);
+                      handleSavePreferences(macroTargets, updatedLoc);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all min-h-[36px] border ${
+                      isSelected
+                        ? 'bg-sky-950/80 border-sky-500 text-sky-300'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {loc.label.split(',')[0]}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-1">
+              <label className="text-xs font-semibold text-slate-300 block mb-1">Foretrukket reisemodus:</label>
+              <div className="flex items-center gap-2">
+                {(['WALKING', 'BICYCLING', 'DRIVING'] as const).map((mode) => {
+                  const isCurrent = preferredLocation.travelMode === mode;
+                  const label = mode === 'WALKING' ? 'Gange' : mode === 'BICYCLING' ? 'Sykkel' : 'Bil';
+                  const Icon = mode === 'WALKING' ? Footprints : mode === 'BICYCLING' ? Bike : Car;
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => {
+                        const updatedLoc = { ...preferredLocation, travelMode: mode };
+                        setPreferredLocation(updatedLoc);
+                        handleSavePreferences(macroTargets, updatedLoc);
+                      }}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all min-h-[40px] border ${
+                        isCurrent
+                          ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
+                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* QUICK PANEL 4: DATA, CSV & AI */}
+      {activeQuickPanel === 'DATA' && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-amber-400" />
+              <h3 className="font-extrabold text-sm sm:text-base text-white">Datakilder, CSV & AI Ukeplan</h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveQuickPanel('NONE')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+              title="Lukk panel"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <span className="text-xs font-semibold text-slate-300 block mb-1">
+                Toveis synk med Google Sheets (CSV):
+              </span>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="url"
+                  value={sheetsUrl}
+                  onChange={(e) => setSheetsUrl(e.target.value)}
+                  placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
+                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 min-h-[40px]"
+                />
+                <button
+                  type="button"
+                  onClick={handleSyncSheets}
+                  disabled={syncLoading || !sheetsUrl}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all min-h-[40px] disabled:opacity-50"
+                >
+                  {syncLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                  <span>Importer CSV</span>
+                </button>
+              </div>
+              {syncMessage && (
+                <p className={`text-xs font-semibold mt-1.5 ${syncMessage.isError ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  {syncMessage.text}
                 </p>
               )}
             </div>
 
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleUnlinkHousehold}
-                disabled={householdLoading}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-800/60 bg-rose-950/40 hover:bg-rose-900 text-rose-300 hover:text-white text-xs font-bold transition-all min-h-[44px] disabled:opacity-50"
-              >
-                {householdLoading ? (
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Unlink className="w-3.5 h-3.5" />
-                )}
-                <span>Koble fra husstand (gå tilbake til separat profil)</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* TILSTAND 2: Brukeren er ikke tilkoblet */
-          <div className="space-y-4">
-            {/* Fremhevet 1-klikks binding for Alex & Luna demo */}
-            <div className="p-4 rounded-xl bg-gradient-to-r from-purple-950/80 via-slate-950 to-pink-950/80 border border-purple-800/60 space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-purple-900/60 text-purple-300 shrink-0">
-                  <Heart className="w-5 h-5 text-pink-400" />
-                </div>
-                <div>
-                  <span className="text-xs font-extrabold text-pink-300 uppercase tracking-wider block">
-                    1-Klikks Partner-demo
-                  </span>
-                  <h4 className="text-sm font-bold text-white">
-                    Koble sammen Alex (Styrke/Majorstuen) og Luna (Balansert/Grünerløkka)
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Opplev umiddelbar toveis sanntidssynk: Begge kontoer deler samme felles kjøkkenskap, ukeplan og handleliste.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleLinkAlexLunaDemo}
-                disabled={householdLoading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold text-xs shadow-lg shadow-purple-600/25 transition-all min-h-[48px] disabled:opacity-50"
-              >
-                {householdLoading ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Users2 className="w-4 h-4" />
-                )}
-                <span>Koble sammen Alex & Luna (Partner-demo) 💑</span>
-              </button>
-            </div>
-
-            {/* Manuell kobling med partner */}
-            <form onSubmit={handleLinkPartner} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-              <label className="text-xs font-semibold text-slate-300 block">
-                Eller koble sammen med partner via Google-epost eller invitasjonskode:
-              </label>
-
+            <div className="pt-2 border-t border-white/[0.06]">
+              <span className="text-xs font-semibold text-slate-300 block mb-1">
+                Generer ukeplan med Gemini 2.5 Flash:
+              </span>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
-                  value={partnerInput}
-                  onChange={(e) => setPartnerInput(e.target.value)}
-                  placeholder="Partnerens Google-epost eller kode (f.eks. luna@matplan.no el. HUS-ALILUNA)"
-                  className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-3 text-base text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 min-h-[48px]"
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  placeholder="Valgfri instruks til AI-kokken..."
+                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 min-h-[40px]"
                 />
                 <button
-                  type="submit"
-                  disabled={householdLoading || !partnerInput.trim()}
-                  className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all min-h-[48px] disabled:opacity-50 shadow-md shadow-purple-600/30 shrink-0"
+                  type="button"
+                  onClick={handleGenerateAiPlan}
+                  disabled={aiGenerating}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all min-h-[40px] disabled:opacity-50"
                 >
-                  {householdLoading ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <UserPlus className="w-4 h-4" />
-                  )}
-                  <span>Koble til partner</span>
+                  {aiGenerating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  <span>Kalkuler Plan</span>
                 </button>
               </div>
-            </form>
-          </div>
-        )}
+              {aiMessage && <p className="text-xs font-bold text-emerald-400 mt-1">{aiMessage}</p>}
+            </div>
 
-        {/* Melding / Feedback */}
-        {householdMessage && (
-          <div
-            className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
-              householdMessage.isError
-                ? 'bg-rose-950/80 border border-rose-800 text-rose-300'
-                : 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
-            }`}
-          >
-            {householdMessage.isError ? (
-              <XCircle className="w-4 h-4 shrink-0 text-rose-400" />
-            ) : (
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-            )}
-            <span>{householdMessage.text}</span>
+            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5 text-amber-400" />
+                <span>87 tilbud skannet (Uke 47)</span>
+              </span>
+              <span className="text-emerald-400 font-bold">Radar Aktiv</span>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* SEKSJON 3: KOKKENS MODUS & OPPSKRIFTSSTIL (UU & iPhone HIG Spesifikasjon) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+      <div className="bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 rounded-none sm:rounded-2xl p-0 sm:p-5 shadow-none sm:shadow-xl space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-emerald-950 border border-emerald-800/80 text-emerald-400">
@@ -1161,7 +1343,7 @@ export default function PreferencesAdminView({
       </div>
 
       {/* SEKSJON 4: PERSONLIGE MAKROMÅL */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+      <div className="bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 rounded-none sm:rounded-2xl p-0 sm:p-5 shadow-none sm:shadow-xl space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-emerald-950 border border-emerald-800/80 text-emerald-400">
@@ -1332,250 +1514,6 @@ export default function PreferencesAdminView({
               <span>Lagre Makromål & Oppdater</span>
             )}
           </button>
-        </div>
-      </div>
-
-      {/* SEKSJON 5: FAST HJEMMEADRESSE & TRANSPORTMODUS */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-800">
-          <div className="p-2 rounded-xl bg-sky-950 border border-sky-800/80 text-sky-400">
-            <MapPin className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-extrabold text-base text-white">Standard Hjemmeadresse & Rute</h3>
-            <p className="text-xs text-slate-400">
-              Butikkruten og reisetiden kalkuleres med utgangspunkt i denne lokasjonen.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {/* Valgt lokasjon */}
-          <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1">
-              Aktiv adresse / nabolag:
-            </label>
-            <input
-              type="text"
-              value={preferredLocation.label}
-              onChange={(e) =>
-                setPreferredLocation((prev) => ({ ...prev, label: e.target.value }))
-              }
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-base text-white focus:outline-none focus:border-sky-500 min-h-[48px]"
-            />
-          </div>
-
-          {/* Hurtigvalg nabolag */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {QUICK_LOCATIONS.map((loc) => {
-              const isSelected = preferredLocation.label === loc.label;
-              return (
-                <button
-                  key={loc.label}
-                  type="button"
-                  onClick={() => {
-                    const updatedLoc: UserDashboardLocation = {
-                      ...preferredLocation,
-                      label: loc.label,
-                      lat: loc.lat,
-                      lng: loc.lng
-                    };
-                    setPreferredLocation(updatedLoc);
-                    handleSavePreferences(macroTargets, updatedLoc);
-                  }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all min-h-[44px] border ${
-                    isSelected
-                      ? 'bg-sky-950/80 border-sky-500 text-sky-300'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {loc.label.split(',')[0]}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Transportmodus */}
-          <div className="pt-2">
-            <label className="text-xs font-semibold text-slate-300 block mb-1">
-              Foretrukket reisemodus:
-            </label>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const updatedLoc = { ...preferredLocation, travelMode: 'WALKING' as const };
-                  setPreferredLocation(updatedLoc);
-                  handleSavePreferences(macroTargets, updatedLoc);
-                }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[48px] border ${
-                  preferredLocation.travelMode === 'WALKING'
-                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                }`}
-              >
-                <Footprints className="w-4 h-4" />
-                <span>Gange</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const updatedLoc = { ...preferredLocation, travelMode: 'BICYCLING' as const };
-                  setPreferredLocation(updatedLoc);
-                  handleSavePreferences(macroTargets, updatedLoc);
-                }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[48px] border ${
-                  preferredLocation.travelMode === 'BICYCLING'
-                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                }`}
-              >
-                <Bike className="w-4 h-4" />
-                <span>Sykkel</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const updatedLoc = { ...preferredLocation, travelMode: 'DRIVING' as const };
-                  setPreferredLocation(updatedLoc);
-                  handleSavePreferences(macroTargets, updatedLoc);
-                }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[48px] border ${
-                  preferredLocation.travelMode === 'DRIVING'
-                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                }`}
-              >
-                <Car className="w-4 h-4" />
-                <span>Bil</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* SEKSJON 6: DATAKILDER, CSV/GOOGLE SHEETS & AI GEMINI PROMPT */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-5">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-800">
-          <div className="p-2 rounded-xl bg-purple-950 border border-purple-800/80 text-purple-400">
-            <FileSpreadsheet className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-extrabold text-base text-white">Datakilder, Synk & AI Ukeplan-prompt</h3>
-            <p className="text-xs text-slate-400">
-              Synkroniser ditt eget kjøkkenskap via Google Sheets eller generer ny ukeplan med Gemini 2.5 Flash.
-            </p>
-          </div>
-        </div>
-
-        {/* Google Sheets Toveis Synk */}
-        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-1.5">
-              <LinkIcon className="w-4 h-4 text-emerald-400" />
-              Toveis Synkronisering med Google Sheets
-            </span>
-            <span className="text-[10px] font-semibold text-slate-400">Direkte CSV-import</span>
-          </div>
-          <p className="text-xs text-slate-400">
-            Lim inn URL-en til et publisert regneark (Fil → Del → Publiser på nett → Velg CSV) for å overskrive eller oppdatere kjøkkenskapet:
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="url"
-              value={sheetsUrl}
-              onChange={(e) => setSheetsUrl(e.target.value)}
-              placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
-              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 min-h-[44px]"
-            />
-            <button
-              type="button"
-              onClick={handleSyncSheets}
-              disabled={syncLoading || !sheetsUrl}
-              className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all min-h-[44px] disabled:opacity-50"
-            >
-              {syncLoading ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Upload className="w-3.5 h-3.5" />
-              )}
-              <span>Importer Ark</span>
-            </button>
-          </div>
-          {syncMessage && (
-            <p
-              className={`text-xs font-semibold ${
-                syncMessage.isError ? 'text-rose-400' : 'text-emerald-400'
-              }`}
-            >
-              {syncMessage.text}
-            </p>
-          )}
-        </div>
-
-        {/* AI Gemini 2.5 Prompt */}
-        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-white flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              Generer Tilpasset Ukeplan med Gemini 2.5 Flash
-            </span>
-            <span className="text-[10px] font-semibold text-purple-400 bg-purple-950 px-2 py-0.5 rounded-full border border-purple-800/60">
-              Structured JSON Schema
-            </span>
-          </div>
-          <p className="text-xs text-slate-400">
-            Gi kokken spesielle instrukser (f.eks. &quot;Kun nøytrale retter basert på ukens tilbud, ekstra poteter og brokkoli, ingen etniske temaer&quot;):
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              value={customPrompt}
-              onChange={(e) => setCustomPrompt(e.target.value)}
-              placeholder="Valgfri instruks til AI-kokken..."
-              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 min-h-[44px]"
-            />
-            <button
-              type="button"
-              onClick={handleGenerateAiPlan}
-              disabled={aiGenerating}
-              className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all min-h-[44px] disabled:opacity-50 shadow-md shadow-purple-600/30"
-            >
-              {aiGenerating ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Send className="w-3.5 h-3.5" />
-              )}
-              <span>Kalkuler Ny Plan</span>
-            </button>
-          </div>
-          {aiMessage && (
-            <p className="text-xs font-bold text-emerald-400">{aiMessage}</p>
-          )}
-        </div>
-
-        {/* Status for ukens kundeaviser */}
-        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-950 border border-amber-800 text-amber-400">
-              <Tag className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-white block">
-                Skannede Kundeaviser: Uke 47 (2026-W47)
-              </span>
-              <span className="text-[11px] text-slate-400 block">
-                87 verifiserte tilbud fra KIWI, REMA 1000, Extra, MENY, SPAR, Joker og Oda.
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
-              Radar Aktiv
-            </span>
-          </div>
         </div>
       </div>
     </div>

@@ -430,8 +430,8 @@ export default function InventoryView({
   return (
     <div className={`space-y-4 max-w-4xl mx-auto ${className}`}>
       {/* 1. Header & Nøkkeltall-dashboard (Støyfritt og rent) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 rounded-none sm:rounded-3xl p-0 sm:p-5 shadow-none sm:shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06] sm:border-slate-800">
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Kjøkkenskap & Lagerstatus
@@ -460,7 +460,7 @@ export default function InventoryView({
 
         {/* Nøkkeltall-brikker */}
         {summary && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
             <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 text-center">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                 Totalt i basen
@@ -493,7 +493,7 @@ export default function InventoryView({
       </div>
 
       {/* 2. Søkefelt, Ny Matvare-knapp & Filterpiller */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-3">
+      <div className="bg-transparent sm:bg-slate-900 border-0 sm:border border-slate-800 rounded-none sm:rounded-3xl p-0 sm:p-4 shadow-none sm:shadow-xl space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Søkefelt */}
           <div className="relative flex-1">
@@ -601,16 +601,16 @@ export default function InventoryView({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 sm:gap-2.5 divide-y divide-white/[0.06] sm:divide-y-0 border-y sm:border-y-0 border-white/[0.06]">
           {filteredItems.map((item) => {
             return (
               <div
                 key={item.id}
                 onClick={() => toggleInStock(item)}
-                className={`cursor-pointer group select-none p-4 rounded-2xl border transition-all duration-150 flex items-center justify-between min-h-[56px] ${
+                className={`cursor-pointer group select-none py-3 px-1 sm:p-4 rounded-none sm:rounded-2xl border-0 sm:border transition-all duration-150 flex items-center justify-between min-h-[56px] ${
                   item.inStock
-                    ? 'bg-slate-900/90 border-emerald-800/60 shadow-sm'
-                    : 'bg-slate-950/70 border-slate-800/80 opacity-80 hover:opacity-100'
+                    ? 'bg-transparent sm:bg-slate-900/90 border-emerald-800/60 shadow-none sm:shadow-sm'
+                    : 'bg-transparent sm:bg-slate-950/70 border-slate-800/80 opacity-80 hover:opacity-100'
                 }`}
               >
                 {/* Varenavn og detaljer */}
