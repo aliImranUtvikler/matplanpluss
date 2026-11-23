@@ -40,6 +40,8 @@ import type {
   WeeklyMealPlanResponse
 } from '../../types/contracts';
 import type { GoogleUserProfile } from '../../services/auth/googleSsoService';
+import type { UserDashboardData } from '../../services/db/userDatabaseService';
+import { saveUserDashboard } from '../../services/db/userDatabaseService';
 
 export function getShortDishName(title: string): string {
   const lower = title.toLowerCase();
@@ -98,6 +100,7 @@ export function getShortDishName(title: string): string {
 
 interface MealPlanViewProps {
   currentUser?: GoogleUserProfile;
+  userDashboard?: UserDashboardData;
   macroTargets?: UserMacroTargets;
   chefModes?: ChefModePreferences;
   weeklyOffers?: NormalizedOffer[];
@@ -109,6 +112,7 @@ interface MealPlanViewProps {
 
 export default function MealPlanView({
   currentUser,
+  userDashboard,
   macroTargets = DEFAULT_USER_MACRO_TARGETS,
   chefModes,
   weeklyOffers: weeklyOffersProp,
@@ -202,6 +206,13 @@ export default function MealPlanView({
         })
       );
     }
+    // Synk byttet oppskrift til sky/Supabase for innlogget bruker så Mac og iPhone er 100% like!
+    if (currentUser?.id) {
+      saveUserDashboard(currentUser.id, {
+        email: currentUser.email,
+        customMealPlan: rescaleResponse
+      }).catch((err) => console.warn('Kunne ikke synke byttet oppskrift til skyen:', err));
+    }
     onPlanUpdated?.(rescaleResponse);
     setTimeout(() => setSwappingDay(false), 350);
   };
@@ -211,23 +222,15 @@ export default function MealPlanView({
     setLoading(true);
     setError(null);
 
-    // 1. Sjekk localStorage først hvis verken chefModes eller custom makroer er overstyrt
-    if (typeof window !== 'undefined' && !chefModes) {
-      const savedPlan = localStorage.getItem('user_mealplan');
-      if (savedPlan) {
-        try {
-          const parsed = JSON.parse(savedPlan) as WeeklyMealPlanResponse;
-          if (parsed.days && parsed.days.length > 0) {
-            setMealPlanData(parsed);
-            setLoading(false);
-            onPlanUpdated?.(parsed);
-            return;
-          }
-        } catch {}
-      }
+    // 0. Sjekk om sky-dashboardet har en customMealPlan – da skal den alltid prioriteres!
+    if (userDashboard?.customMealPlan?.days && userDashboard.customMealPlan.days.length > 0) {
+      setMealPlanData(userDashboard.customMealPlan);
+      setLoading(false);
+      onPlanUpdated?.(userDashboard.customMealPlan);
+      return;
     }
 
-    // 2. Prøv /api/mealplan
+    // 1. Prøv /api/mealplan
     try {
       const res = await fetch(`/api/mealplan?servings=${macroTargets.servings}`);
       if (res.ok) {
@@ -258,7 +261,7 @@ export default function MealPlanView({
       }
       throw new Error('API ikke tilgjengelig, prøver statisk default');
     } catch {
-      // 3. Fallback til statisk public/data/default-mealplan.json
+      // 2. Fallback til statisk public/data/default-mealplan.json
       try {
         const staticRes = await fetch('./data/default-mealplan.json').catch(() =>
           fetch('/data/default-mealplan.json')
@@ -302,7 +305,9 @@ export default function MealPlanView({
     macroTargets.servings,
     macroTargets.targetCarbDryWeightGrams,
     chefModes,
-    weeklyOffersState.length
+    weeklyOffersState.length,
+    userDashboard?.updatedAt,
+    userDashboard?.customMealPlan
   ]);
 
   const currentDay = useMemo(() => {

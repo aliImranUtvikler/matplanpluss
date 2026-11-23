@@ -54,7 +54,8 @@ import {
   loadUserDashboard,
   saveUserDashboard,
   createDefaultUserDashboard,
-  subscribeToHouseholdSync
+  subscribeToHouseholdSync,
+  pullLatestFromSupabase
 } from '../services/db/userDatabaseService';
 
 type ActiveTab = 'MEALPLAN' | 'RADAR' | 'INVENTORY' | 'PREFERENCES';
@@ -196,7 +197,7 @@ export default function HomePage() {
 
     const fetchDashboard = async () => {
       try {
-        const dashboard = await loadUserDashboard(currentUser.id);
+        const dashboard = await loadUserDashboard(currentUser.id, [], undefined, currentUser.email);
         setUserDashboard(dashboard);
 
         // Oppdater lokale nøkkeltall fra dashboard
@@ -212,7 +213,40 @@ export default function HomePage() {
     };
 
     fetchDashboard();
-  }, [currentUser?.id]);
+  }, [currentUser?.id, currentUser?.email]);
+
+  // 2b. Sanntids sky-synk mellom enheter (f.eks. Mac og iPhone) via Supabase polling og focus
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const syncCloud = async () => {
+      try {
+        const cloudData = await pullLatestFromSupabase(currentUser.id, currentUser.email);
+        if (cloudData && cloudData.updatedAt !== userDashboard?.updatedAt) {
+          setUserDashboard(cloudData);
+          if (cloudData.macroTargets) {
+            const minP = cloudData.macroTargets.minProteinGrams;
+            const maxP = cloudData.macroTargets.maxProteinGrams;
+            setAvgProteinGrams(Math.round((minP + maxP) / 2));
+            setAvgKcal(cloudData.macroTargets.maxKcal);
+          }
+        }
+      } catch {
+        // Ignorer bakgrunnsfeil
+      }
+    };
+
+    const intervalId = setInterval(syncCloud, 5000);
+    const onFocus = () => { syncCloud(); };
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('online', onFocus);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('online', onFocus);
+    };
+  }, [currentUser?.id, currentUser?.email, userDashboard?.updatedAt]);
 
   // 3. Render ekte Google Identity Services knapp hvis konfigurert
   useEffect(() => {
@@ -521,6 +555,7 @@ export default function HomePage() {
         {activeTab === 'MEALPLAN' && (
           <MealPlanView
             currentUser={currentUser}
+            userDashboard={userDashboard || undefined}
             macroTargets={activeMacroTargets}
             chefModes={userDashboard?.chefModes}
             onPlanUpdated={handleMealPlanUpdated}

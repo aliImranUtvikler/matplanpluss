@@ -30,6 +30,7 @@ import type {
   WeeklyMealPlanResponse
 } from '@/types/contracts';
 import { DEFAULT_CHEF_MODE_PREFERENCES } from '@/types/contracts';
+import { getCanonicalUserId } from '@/services/auth/googleSsoService';
 
 // ============================================================================
 // 1. TYPER & KONTRAKTER FOR PER-BRUKER & FELLES HUSSTAND DASHBOARD
@@ -750,11 +751,13 @@ export async function loadUserDashboard(
     throw new Error('loadUserDashboard krever en gyldig userId');
   }
 
+  const canonicalUserId = userEmail ? getCanonicalUserId(userEmail, userId) : userId;
+
   // Sjekk om brukeren er del av en felles husstand
-  const householdId = getLinkedHouseholdId(userId, userEmail);
+  const householdId = getLinkedHouseholdId(canonicalUserId, userEmail);
   const primaryStorageKey = householdId
     ? getHouseholdStorageKey(householdId)
-    : getUserDashboardStorageKey(userId);
+    : getUserDashboardStorageKey(canonicalUserId);
 
   let localData: UserDashboardData | null = null;
 
@@ -776,7 +779,7 @@ export async function loadUserDashboard(
     try {
       const queryParam = householdId
         ? `household_id=eq.${encodeURIComponent(householdId)}`
-        : `user_id=eq.${encodeURIComponent(userId)}`;
+        : `user_id=eq.${encodeURIComponent(canonicalUserId)}`;
       const endpoint = `${supabase.url}/rest/v1/user_dashboards?${queryParam}&select=*`;
       const headers: Record<string, string> = {
         apikey: supabase.anonKey,
@@ -793,8 +796,10 @@ export async function loadUserDashboard(
         const rows = await res.json();
         if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
           const cloudData = rows[0].payload as UserDashboardData;
-          if (!localData || new Date(cloudData.updatedAt) >= new Date(localData.updatedAt)) {
-            // Skydata er nyest eller lik
+          // Skydata skal alltid vinne hvis localData mangler, eller hvis skyData er nyere/lik,
+          // eller hvis localData kun er hardkodet standardverdi (fra demo seed el.l.)
+          const isLocalInitial = localData && (!localData.updatedAt || localData.updatedAt === '2026-11-15T20:00:00.000Z');
+          if (!localData || isLocalInitial || new Date(cloudData.updatedAt) >= new Date(localData.updatedAt)) {
             if (typeof window !== 'undefined' && window.localStorage) {
               window.localStorage.setItem(primaryStorageKey, JSON.stringify(cloudData));
             }
@@ -812,7 +817,7 @@ export async function loadUserDashboard(
     try {
       const queryParam = householdId
         ? `householdId=${encodeURIComponent(householdId)}`
-        : `userId=${encodeURIComponent(userId)}`;
+        : `userId=${encodeURIComponent(canonicalUserId)}`;
       const res = await fetch(`/api/user-dashboard?${queryParam}`, {
         method: 'GET',
         headers: { Accept: 'application/json' }
@@ -838,16 +843,83 @@ export async function loadUserDashboard(
   }
 
   // 4. Ingen data funnet: Initialiser et nytt dashboard
-  const freshData = createDefaultUserDashboard(userId, userEmail || '', '', defaultInventory);
+  const freshData = createDefaultUserDashboard(canonicalUserId, userEmail || '', '', defaultInventory);
 
   if (typeof window !== 'undefined' && window.localStorage) {
     window.localStorage.setItem(primaryStorageKey, JSON.stringify(freshData));
   }
 
   // Forsøk å lagre det innledende dashboardet asynkront i bakgrunnen
-  saveUserDashboard(userId, freshData, authToken).catch(() => {});
+  saveUserDashboard(canonicalUserId, freshData, authToken).catch(() => {});
 
   return freshData;
+}
+
+/**
+ * Tvinger en fersk henting fra Supabase for å sikre synkronisering på tvers av enheter (f.eks. Mac og iPhone).
+ * Hvis Supabase har en nyere oppdatering enn den lokale cachen, oppdateres localStorage og
+ * eventuelle abonnenter/faner varsles umiddelbart via notifyHouseholdSync.
+ */
+export async function pullLatestFromSupabase(
+  userId: string,
+  userEmail?: string,
+  authToken?: string
+): Promise<UserDashboardData | null> {
+  const supabase = getSupabaseConfig();
+  if (!supabase || !userId) return null;
+
+  const canonicalUserId = userEmail ? getCanonicalUserId(userEmail, userId) : userId;
+  const householdId = getLinkedHouseholdId(canonicalUserId, userEmail);
+  const primaryStorageKey = householdId
+    ? getHouseholdStorageKey(householdId)
+    : getUserDashboardStorageKey(canonicalUserId);
+
+  let localData: UserDashboardData | null = null;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const stored = window.localStorage.getItem(primaryStorageKey);
+      if (stored) {
+        localData = JSON.parse(stored) as UserDashboardData;
+      }
+    } catch {}
+  }
+
+  try {
+    const queryParam = householdId
+      ? `household_id=eq.${encodeURIComponent(householdId)}`
+      : `user_id=eq.${encodeURIComponent(canonicalUserId)}`;
+    const endpoint = `${supabase.url}/rest/v1/user_dashboards?${queryParam}&select=*`;
+    const headers: Record<string, string> = {
+      apikey: supabase.anonKey,
+      Accept: 'application/json'
+    };
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    } else {
+      headers['Authorization'] = `Bearer ${supabase.anonKey}`;
+    }
+
+    const res = await fetch(endpoint, { method: 'GET', headers });
+    if (res.ok) {
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
+        const cloudData = rows[0].payload as UserDashboardData;
+        const isNewer = !localData || new Date(cloudData.updatedAt) > new Date(localData.updatedAt);
+        if (isNewer || cloudData.updatedAt !== localData?.updatedAt) {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            window.localStorage.setItem(primaryStorageKey, JSON.stringify(cloudData));
+          }
+          notifyHouseholdSync(cloudData);
+          return cloudData;
+        }
+        return cloudData;
+      }
+    }
+  } catch (err) {
+    console.warn('[pullLatestFromSupabase] Feil ved henting fra Supabase:', err);
+  }
+
+  return null;
 }
 
 /**
@@ -865,11 +937,13 @@ export async function saveUserDashboard(
     throw new Error('saveUserDashboard krever en gyldig userId');
   }
 
+  const canonicalUserId = patch.email ? getCanonicalUserId(patch.email, userId) : userId;
+
   // Sjekk om det er en tilknyttet husstand
-  const targetHouseholdId = patch.household?.householdId || getLinkedHouseholdId(userId, patch.email);
+  const targetHouseholdId = patch.household?.householdId || getLinkedHouseholdId(canonicalUserId, patch.email);
   const primaryStorageKey = targetHouseholdId
     ? getHouseholdStorageKey(targetHouseholdId)
-    : getUserDashboardStorageKey(userId);
+    : getUserDashboardStorageKey(canonicalUserId);
 
   let current: UserDashboardData;
 
@@ -880,19 +954,19 @@ export async function saveUserDashboard(
       try {
         current = JSON.parse(raw);
       } catch {
-        current = createDefaultUserDashboard(userId, patch.email);
+        current = createDefaultUserDashboard(canonicalUserId, patch.email);
       }
     } else {
-      current = createDefaultUserDashboard(userId, patch.email);
+      current = createDefaultUserDashboard(canonicalUserId, patch.email);
     }
   } else {
-    current = createDefaultUserDashboard(userId, patch.email);
+    current = createDefaultUserDashboard(canonicalUserId, patch.email);
   }
 
   // Oppdater husstandsinfo dersom det er en felles husstand
   let updatedHousehold = patch.household || current.household;
   if (targetHouseholdId && !updatedHousehold) {
-    const status = getHouseholdStatusForUser(userId, patch.email);
+    const status = getHouseholdStatusForUser(canonicalUserId, patch.email);
     if (status.household) {
       updatedHousehold = status.household;
     }
@@ -908,7 +982,7 @@ export async function saveUserDashboard(
   const updated: UserDashboardData = {
     ...current,
     ...patch,
-    userId: current.userId, // Bevarer opprinnelig brukerreferanse
+    userId: canonicalUserId, // Normalisert stabil canonical ID
     updatedAt: new Date().toISOString(),
     household: updatedHousehold,
     macroTargets: {
@@ -930,7 +1004,11 @@ export async function saveUserDashboard(
     chefModes: {
       ...(current.chefModes || DEFAULT_CHEF_MODE_PREFERENCES),
       ...(patch.chefModes || {})
-    }
+    },
+    customMealPlan:
+      patch.customMealPlan !== undefined
+        ? patch.customMealPlan
+        : current.customMealPlan
   };
 
   // 1. Skriv til synkron browser-cache
@@ -939,7 +1017,7 @@ export async function saveUserDashboard(
       window.localStorage.setItem(primaryStorageKey, JSON.stringify(updated));
       // Hvis vi har en husstand, oppdater også personlig nøkkel for rask offline fallback
       if (targetHouseholdId) {
-        window.localStorage.setItem(getUserDashboardStorageKey(userId), JSON.stringify(updated));
+        window.localStorage.setItem(getUserDashboardStorageKey(canonicalUserId), JSON.stringify(updated));
       }
     } catch {
       // Ignorer kvotebegrensninger
@@ -949,11 +1027,11 @@ export async function saveUserDashboard(
   // 2. Send sanntids-oppdatering til andre vinduer og husstandsmedlemmer
   notifyHouseholdSync(updated);
 
-  // 3. Synkroniser til Supabase REST hvis konfigurert
+  // 3. Synkroniser til Supabase REST hvis konfigurert (NB: KUN eksisterende kolonner i tabellen: user_id, household_id, updated_at, payload)
   const supabase = getSupabaseConfig();
   if (supabase) {
     try {
-      const endpoint = `${supabase.url}/rest/v1/user_dashboards`;
+      const endpoint = `${supabase.url}/rest/v1/user_dashboards?on_conflict=user_id`;
       const headers: Record<string, string> = {
         apikey: supabase.anonKey,
         'Content-Type': 'application/json',
@@ -969,9 +1047,8 @@ export async function saveUserDashboard(
         method: 'POST',
         headers,
         body: JSON.stringify({
-          user_id: userId,
+          user_id: canonicalUserId,
           household_id: targetHouseholdId || null,
-          email: updated.email,
           updated_at: updated.updatedAt,
           payload: updated
         })

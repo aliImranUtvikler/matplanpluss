@@ -154,6 +154,34 @@ export const DEMO_USER_IDS: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * Normaliserer bruker-ID slik at samme e-postadresse (f.eks. imran.jobb@gmail.com)
+ * ALLTID får nøyaktig samme id ("user_imran_jobb_gmail_com") på tvers av enheter,
+ * uansett om man logger inn via Google GSI/OAuth popup eller via e-postfeltet!
+ */
+export function getCanonicalUserId(email: string, fallbackId?: string): string {
+  if (!email) return fallbackId || 'user_anonymous';
+  const cleanEmail = email.trim().toLowerCase();
+
+  // Hvis det matcher en av de 3 faste demo-profilene
+  const existingDemo = DEMO_GOOGLE_ACCOUNTS.find(
+    (acc) => acc.email.toLowerCase() === cleanEmail
+  );
+  if (existingDemo) {
+    return existingDemo.id;
+  }
+  if (fallbackId && DEMO_USER_IDS.has(fallbackId)) {
+    return fallbackId;
+  }
+
+  // Generer stabil canonical ID for alle ekte Google-brukere
+  const safeSlug = cleanEmail
+    .replace(/[^a-z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
+  return `user_${safeSlug}`;
+}
+
+/**
  * Returnerer true KUN for de 3 offisielle demo-profilene (Alex, Luna, Familien Berg),
  * og ALDRI for en brukers egen Gmail- eller e-post-konto (som f.eks. imran.jobb@gmail.com).
  */
@@ -337,6 +365,14 @@ export function getCurrentAuthSession(): AuthSession | null {
     }
 
     activeInMemorySession = parsed;
+    // Normaliser bruker-ID til canonical e-post ID for ekte kontoer slik at Mac og iPhone aldri får ulik ID
+    if (parsed.user && parsed.user.email && !isDemoAccount(parsed.user)) {
+      const canonicalId = getCanonicalUserId(parsed.user.email, parsed.user.id);
+      if (parsed.user.id !== canonicalId) {
+        parsed.user.id = canonicalId;
+        window.localStorage.setItem(STORAGE_AUTH_SESSION_KEY, JSON.stringify(parsed));
+      }
+    }
     // Bug C fiks: Oppgrader automatisk e-post-baserte profiler med pen formatering hvis de har rått brukernavn
     if (parsed.user && parsed.user.email && !parsed.user.id.startsWith('demo_')) {
       const formatted = formatDisplayNameFromEmail(parsed.user.email);
@@ -359,11 +395,13 @@ export function getCurrentAuthSession(): AuthSession | null {
  */
 export function signInWithGoogleCredential(jwtCredential: string): AuthSession {
   const payload = decodeGoogleJwt(jwtCredential);
+  const cleanEmail = payload.email.trim().toLowerCase();
+  const canonicalId = getCanonicalUserId(cleanEmail, payload.sub);
 
   const user: GoogleUserProfile = {
-    id: payload.sub,
-    email: payload.email,
-    name: payload.name || payload.email.split('@')[0],
+    id: canonicalId,
+    email: cleanEmail,
+    name: payload.name || cleanEmail.split('@')[0],
     givenName: payload.given_name || payload.name?.split(' ')[0],
     pictureUrl: payload.picture,
     locale: payload.locale,
@@ -420,11 +458,7 @@ export function signInWithGoogleProfile(profileInput: {
     provider = 'google_demo';
   } else {
     // Egen e-post (f.eks. imran.jobb@gmail.com) - ALDRI regnet som demo!
-    const safeSlug = cleanEmail
-      .replace(/[^a-z0-9]/g, '_')
-      .replace(/_+/g, '_')
-      .replace(/^_|_$/g, '');
-    userId = `user_${safeSlug}`;
+    userId = getCanonicalUserId(cleanEmail);
     provider = 'google_email';
 
     const rawInputName = profileInput.name?.trim();
