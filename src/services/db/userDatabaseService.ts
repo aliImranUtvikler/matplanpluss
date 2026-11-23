@@ -73,6 +73,8 @@ export interface UserDashboardData {
   macroTargets: UserMacroTargets;
   /** Brukerens personlige lagerstatus (map fra vare-id til inStock boolean) */
   inventoryStockMap: Record<string, boolean>;
+  /** Brukerens personlige/tilpassede matvarer i kjøkkenskapet (synkes direkte til Supabase sky) */
+  customInventoryItems?: InventoryItem[];
   /** Brukerens lagrede hjemmeadresse / foretrukket lokasjon på kartet */
   preferredLocation: UserDashboardLocation;
   /** Avkryssede varer på ukens handleliste */
@@ -83,6 +85,28 @@ export interface UserDashboardData {
   customMealPlan?: WeeklyMealPlanResponse;
   /** Informasjon om felles husstand dersom kontoen er koblet med partner/familie */
   household?: UserDashboardHouseholdInfo;
+}
+
+export interface CloudSyncStatus {
+  state: 'SYNCED' | 'SYNCING' | 'LOCAL_ONLY' | 'ERROR';
+  lastSyncedAt?: string;
+  message: string;
+}
+
+let activeCloudSyncStatus: CloudSyncStatus = {
+  state: 'LOCAL_ONLY',
+  message: 'Initialiserer synk...'
+};
+
+export function getCloudSyncStatus(): CloudSyncStatus {
+  return activeCloudSyncStatus;
+}
+
+function setCloudSyncStatus(status: CloudSyncStatus): void {
+  activeCloudSyncStatus = status;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('matplan-sync-status', { detail: status }));
+  }
 }
 
 export interface DemoUserProfile {
@@ -720,15 +744,24 @@ export async function unlinkAccountFromHousehold(
 // 7. BROWSER-SAFE SKY- OG LOKAL-SYNKRONISERING MED HUSSTANDS-STØTTE
 // ============================================================================
 
+export const FALLBACK_SUPABASE_URL = 'https://gjywizcxmnbqgfyttujm.supabase.co';
+
+/**
+ * Sjekker om Supabase er konfigurert med både URL og anon-nøkkel
+ */
+export function isSupabaseConfigured(): boolean {
+  return getSupabaseConfig() !== null;
+}
+
 /**
  * Henter Supabase miljøvariabler (hvis konfigurert)
  */
 function getSupabaseConfig(): { url: string; anonKey: string } | null {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || FALLBACK_SUPABASE_URL).replace(/\/$/, '');
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (url && anonKey) {
-    return { url: url.replace(/\/$/, ''), anonKey };
+    return { url, anonKey };
   }
   return null;
 }
@@ -796,20 +829,47 @@ export async function loadUserDashboard(
         const rows = await res.json();
         if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
           const cloudData = rows[0].payload as UserDashboardData;
-          // Skydata skal alltid vinne hvis localData mangler, eller hvis skyData er nyere/lik,
-          // eller hvis localData kun er hardkodet standardverdi (fra demo seed el.l.)
-          const isLocalInitial = localData && (!localData.updatedAt || localData.updatedAt === '2026-11-15T20:00:00.000Z');
-          if (!localData || isLocalInitial || new Date(cloudData.updatedAt) >= new Date(localData.updatedAt)) {
-            if (typeof window !== 'undefined' && window.localStorage) {
-              window.localStorage.setItem(primaryStorageKey, JSON.stringify(cloudData));
+          // Skydata fra Supabase er ALLTID Single Source of Truth!
+          if (typeof window !== 'undefined' && window.localStorage) {
+            window.localStorage.setItem(primaryStorageKey, JSON.stringify(cloudData));
+            if (householdId) {
+              window.localStorage.setItem(getUserDashboardStorageKey(canonicalUserId), JSON.stringify(cloudData));
             }
-            return cloudData;
           }
+          setCloudSyncStatus({
+            state: 'SYNCED',
+            lastSyncedAt: new Date().toLocaleTimeString('nb-NO'),
+            message: 'Synket med Supabase sky'
+          });
+          return cloudData;
+        } else if (Array.isArray(rows) && rows.length === 0 && localData) {
+          // Ingen rad i Supabase ennå for brukeren, men localData finnes i localStorage!
+          // Last opp localData umiddelbart til Supabase for å seede skyen:
+          saveUserDashboard(canonicalUserId, localData, authToken).catch(() => {});
+          setCloudSyncStatus({
+            state: 'SYNCED',
+            lastSyncedAt: new Date().toLocaleTimeString('nb-NO'),
+            message: 'Lastet opp lokalt dashboard til Supabase'
+          });
+          return localData;
         }
+      } else {
+        setCloudSyncStatus({
+          state: 'ERROR',
+          message: `Supabase HTTP ${res.status}`
+        });
       }
     } catch {
-      // Nettverksfeil mot Supabase – fortsett til neste lag
+      setCloudSyncStatus({
+        state: 'ERROR',
+        message: 'Nettverksfeil mot Supabase'
+      });
     }
+  } else {
+    setCloudSyncStatus({
+      state: 'LOCAL_ONLY',
+      message: 'Kun lokal lagring (Mangler Supabase nøkkel)'
+    });
   }
 
   // 3. Forsøk å hente fra lokal Next.js dev server (/api/user-dashboard)
@@ -904,19 +964,29 @@ export async function pullLatestFromSupabase(
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
         const cloudData = rows[0].payload as UserDashboardData;
-        const isNewer = !localData || new Date(cloudData.updatedAt) > new Date(localData.updatedAt);
-        if (isNewer || cloudData.updatedAt !== localData?.updatedAt) {
+        if (cloudData.updatedAt !== localData?.updatedAt) {
           if (typeof window !== 'undefined' && window.localStorage) {
             window.localStorage.setItem(primaryStorageKey, JSON.stringify(cloudData));
+            if (householdId) {
+              window.localStorage.setItem(getUserDashboardStorageKey(canonicalUserId), JSON.stringify(cloudData));
+            }
           }
           notifyHouseholdSync(cloudData);
-          return cloudData;
         }
+        setCloudSyncStatus({
+          state: 'SYNCED',
+          lastSyncedAt: new Date().toLocaleTimeString('nb-NO'),
+          message: 'Synket med Supabase sky'
+        });
         return cloudData;
       }
     }
   } catch (err) {
     console.warn('[pullLatestFromSupabase] Feil ved henting fra Supabase:', err);
+    setCloudSyncStatus({
+      state: 'ERROR',
+      message: 'Kunne ikke polle Supabase'
+    });
   }
 
   return null;
@@ -993,6 +1063,10 @@ export async function saveUserDashboard(
       ...current.inventoryStockMap,
       ...(patch.inventoryStockMap || {})
     },
+    customInventoryItems:
+      patch.customInventoryItems !== undefined
+        ? patch.customInventoryItems
+        : current.customInventoryItems,
     preferredLocation: {
       ...current.preferredLocation,
       ...(patch.preferredLocation || {})
@@ -1031,6 +1105,7 @@ export async function saveUserDashboard(
   const supabase = getSupabaseConfig();
   if (supabase) {
     try {
+      setCloudSyncStatus({ state: 'SYNCING', message: 'Synkroniserer med Supabase...' });
       const endpoint = `${supabase.url}/rest/v1/user_dashboards?on_conflict=user_id`;
       const headers: Record<string, string> = {
         apikey: supabase.anonKey,
@@ -1043,7 +1118,7 @@ export async function saveUserDashboard(
         headers['Authorization'] = `Bearer ${supabase.anonKey}`;
       }
 
-      await fetch(endpoint, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -1053,8 +1128,24 @@ export async function saveUserDashboard(
           payload: updated
         })
       });
+
+      if (res.ok) {
+        setCloudSyncStatus({
+          state: 'SYNCED',
+          lastSyncedAt: new Date().toLocaleTimeString('nb-NO'),
+          message: 'Synket med Supabase sky'
+        });
+      } else {
+        setCloudSyncStatus({
+          state: 'ERROR',
+          message: `Supabase lagringsfeil: HTTP ${res.status}`
+        });
+      }
     } catch {
-      // Feil i sky-synk – den lokale versjonen er uansett trygg
+      setCloudSyncStatus({
+        state: 'ERROR',
+        message: 'Nettverksfeil ved lagring til Supabase'
+      });
     }
   }
 
@@ -1075,6 +1166,29 @@ export async function saveUserDashboard(
   }
 
   return updated;
+}
+
+/**
+ * Oppdaterer brukerens egendefinerte inventarvarer og synkroniserer med Supabase sky
+ */
+export async function updateUserCustomInventory(
+  userId: string,
+  items: InventoryItem[],
+  userEmail?: string,
+  stockMap?: Record<string, boolean>
+): Promise<UserDashboardData> {
+  const current = await loadUserDashboard(userId, [], undefined, userEmail);
+  const updatedStock = stockMap || { ...current.inventoryStockMap };
+  for (const it of items) {
+    if (it.id in updatedStock) {
+      updatedStock[it.id] = it.inStock;
+    }
+  }
+  return saveUserDashboard(userId, {
+    email: userEmail || current.email,
+    customInventoryItems: items,
+    inventoryStockMap: updatedStock
+  });
 }
 
 /**

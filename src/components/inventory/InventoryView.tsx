@@ -114,27 +114,19 @@ export default function InventoryView({
     };
   };
 
-  // Hent inventar ved oppstart (med synkronisering mot brukerens lagrede stockMap)
+  // Hent inventar ved oppstart (med synkronisering mot brukerens lagrede stockMap og customInventoryItems)
   const loadInventory = async () => {
     setLoading(true);
     setError(null);
 
     let rawItems: InventoryItem[] = [];
 
-    // 1. Sjekk localStorage først
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('user_inventory');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved) as InventoryItem[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            rawItems = parsed;
-          }
-        } catch {}
-      }
+    // 1. Sjekk først om sky-dashboardet fra Supabase allerede har tilpassede varer
+    if (dashboard?.customInventoryItems && Array.isArray(dashboard.customInventoryItems) && dashboard.customInventoryItems.length > 0) {
+      rawItems = [...dashboard.customInventoryItems];
     }
 
-    // 2. Prøv API hvis ikke funnet lokalt
+    // 2. Hvis ingen tilpassede varer, prøv API eller statisk fil
     if (rawItems.length === 0) {
       try {
         const res = await fetch('/api/inventory');
@@ -145,11 +137,11 @@ export default function InventoryView({
           throw new Error('API feilet');
         }
       } catch {
-        // 3. Fallback til statisk public/data/inventory.json
+        // Fallback til statisk public/data/inventory.json
         try {
-          const staticRes = await fetch('./data/inventory.json').catch(() =>
-            fetch('/data/inventory.json')
-          );
+          const staticRes = await fetch('./data/inventory.json')
+            .catch(() => fetch('/matplanpluss/data/inventory.json'))
+            .catch(() => fetch('/data/inventory.json'));
           if (staticRes.ok) {
             rawItems = (await staticRes.json()) as InventoryItem[];
           }
@@ -159,7 +151,7 @@ export default function InventoryView({
       }
     }
 
-    // Synkroniser med brukerens personlige stockMap dersom tilgjengelig
+    // Synkroniser med brukerens personlige stockMap dersom tilgjengelig (overstyrer alltid base inStock)
     if (dashboard?.inventoryStockMap && rawItems.length > 0) {
       rawItems = syncInventoryWithUserStock(rawItems, dashboard.inventoryStockMap);
     }
@@ -171,7 +163,7 @@ export default function InventoryView({
 
   useEffect(() => {
     loadInventory();
-  }, [dashboard?.userId]);
+  }, [dashboard?.userId, dashboard?.updatedAt]);
 
   // Lynrask optimistisk toggle for "På lager" med per-bruker lagring
   const toggleInStock = async (item: InventoryItem) => {
@@ -187,7 +179,7 @@ export default function InventoryView({
       localStorage.setItem('user_inventory', JSON.stringify(updated));
     }
 
-    // Lagre i brukerens personlige dashboard
+    // Lagre i brukerens personlige dashboard og Supabase
     if (dashboard && onDashboardUpdated) {
       const updatedStockMap = {
         ...dashboard.inventoryStockMap,
@@ -195,6 +187,8 @@ export default function InventoryView({
       };
       try {
         const updatedDashboard = await saveUserDashboard(dashboard.userId, {
+          email: currentUser?.email || dashboard.email,
+          customInventoryItems: updated,
           inventoryStockMap: updatedStockMap
         });
         onDashboardUpdated(updatedDashboard);
@@ -308,7 +302,7 @@ export default function InventoryView({
       localStorage.setItem('user_inventory', JSON.stringify(updatedList));
     }
 
-    // Synkroniser med brukerens personlige dashboard
+    // Synkroniser med brukerens personlige dashboard og Supabase
     if (dashboard && onDashboardUpdated) {
       const updatedStockMap = {
         ...dashboard.inventoryStockMap,
@@ -316,6 +310,8 @@ export default function InventoryView({
       };
       try {
         const updatedDashboard = await saveUserDashboard(dashboard.userId, {
+          email: currentUser?.email || dashboard.email,
+          customInventoryItems: updatedList,
           inventoryStockMap: updatedStockMap
         });
         onDashboardUpdated(updatedDashboard);
@@ -370,12 +366,14 @@ export default function InventoryView({
       localStorage.setItem('user_inventory', JSON.stringify(updatedList));
     }
 
-    // Synkroniser fjerning med brukerens dashboard
+    // Synkroniser fjerning med brukerens dashboard og Supabase
     if (dashboard && onDashboardUpdated) {
       const updatedStockMap = { ...dashboard.inventoryStockMap };
       delete updatedStockMap[editingItem.id];
       try {
         const updatedDashboard = await saveUserDashboard(dashboard.userId, {
+          email: currentUser?.email || dashboard.email,
+          customInventoryItems: updatedList,
           inventoryStockMap: updatedStockMap
         });
         onDashboardUpdated(updatedDashboard);

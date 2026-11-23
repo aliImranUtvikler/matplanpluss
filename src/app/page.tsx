@@ -49,13 +49,14 @@ import {
   renderGoogleSignInButton,
   isGoogleGsiConfigured
 } from '../services/auth/googleSsoService';
-import type { UserDashboardData } from '../services/db/userDatabaseService';
+import type { UserDashboardData, CloudSyncStatus } from '../services/db/userDatabaseService';
 import {
   loadUserDashboard,
   saveUserDashboard,
   createDefaultUserDashboard,
   subscribeToHouseholdSync,
-  pullLatestFromSupabase
+  pullLatestFromSupabase,
+  getCloudSyncStatus
 } from '../services/db/userDatabaseService';
 
 type ActiveTab = 'MEALPLAN' | 'RADAR' | 'INVENTORY' | 'PREFERENCES';
@@ -97,7 +98,57 @@ export default function HomePage() {
     message: ''
   });
 
+  // Sky-synk diagnostikk og status mot Supabase
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<CloudSyncStatus>({
+    state: 'LOCAL_ONLY',
+    message: 'Initialiserer...'
+  });
+
   const googleButtonContainerRef = useRef<HTMLDivElement>(null);
+
+  // Lytter på endringer i sky-synk status
+  useEffect(() => {
+    setCloudSyncStatus(getCloudSyncStatus());
+    const handleSyncStatusEvent = (e: Event) => {
+      const custom = e as CustomEvent<CloudSyncStatus>;
+      if (custom.detail) {
+        setCloudSyncStatus(custom.detail);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('matplan-sync-status', handleSyncStatusEvent);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('matplan-sync-status', handleSyncStatusEvent);
+      }
+    };
+  }, []);
+
+  // Tving øyeblikkelig synk mot Supabase sky ved klikk
+  const handleForceSync = async () => {
+    if (!currentUser) return;
+    setPlanStatus({ state: 'working', message: 'Tvinger øyeblikkelig synk med Supabase...' });
+    try {
+      const fresh = await pullLatestFromSupabase(currentUser.id, currentUser.email);
+      if (fresh) {
+        setUserDashboard(fresh);
+        if (fresh.macroTargets) {
+          const minP = fresh.macroTargets.minProteinGrams;
+          const maxP = fresh.macroTargets.maxProteinGrams;
+          setAvgProteinGrams(Math.round((minP + maxP) / 2));
+          setAvgKcal(fresh.macroTargets.maxKcal);
+        }
+        setPlanStatus({ state: 'done', message: '✓ Synket med Supabase' });
+      } else {
+        const loaded = await loadUserDashboard(currentUser.id, [], undefined, currentUser.email);
+        setUserDashboard(loaded);
+        setPlanStatus({ state: 'done', message: '✓ Dashboard oppdatert' });
+      }
+    } catch {
+      setPlanStatus({ state: 'done', message: 'Synk fullført lokalt' });
+    }
+  };
 
   // 1. Initialiser autentisering og global status ved oppstart (starter alltid 'idle' uten svevende boble)
   useEffect(() => {
@@ -499,6 +550,39 @@ export default function HomePage() {
                   <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950">
                     Spar {Math.round(estimatedSavingsNok)} kr
                   </span>
+                )}
+              </button>
+
+              {/* Sky-synk-indikator med sanntidsstatus (klikkbar for å tvinge øyeblikkelig henting) */}
+              <button
+                type="button"
+                onClick={handleForceSync}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-300 transition-all min-h-[44px]"
+                title={`Sky-status: ${cloudSyncStatus.message} · Klikk for å tvinge oppdatering`}
+              >
+                {cloudSyncStatus.state === 'SYNCED' && (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="hidden sm:inline text-emerald-400 text-[11px] font-semibold">☁️ Synket</span>
+                  </>
+                )}
+                {cloudSyncStatus.state === 'SYNCING' && (
+                  <>
+                    <RefreshCw className="w-3 h-3 text-cyan-400 animate-spin" />
+                    <span className="hidden sm:inline text-cyan-300 text-[11px] font-semibold">Synker...</span>
+                  </>
+                )}
+                {cloudSyncStatus.state === 'LOCAL_ONLY' && (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-amber-400" />
+                    <span className="hidden sm:inline text-amber-400 text-[11px] font-semibold">Lokal</span>
+                  </>
+                )}
+                {cloudSyncStatus.state === 'ERROR' && (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-rose-400" />
+                    <span className="hidden sm:inline text-rose-400 text-[11px] font-semibold">Synk-feil</span>
+                  </>
                 )}
               </button>
 

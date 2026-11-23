@@ -41,7 +41,7 @@ import type {
 } from '../../types/contracts';
 import type { GoogleUserProfile } from '../../services/auth/googleSsoService';
 import type { UserDashboardData } from '../../services/db/userDatabaseService';
-import { saveUserDashboard } from '../../services/db/userDatabaseService';
+import { saveUserDashboard, syncInventoryWithUserStock } from '../../services/db/userDatabaseService';
 
 export function getShortDishName(title: string): string {
   const lower = title.toLowerCase();
@@ -150,16 +150,51 @@ export default function MealPlanView({
   const [isStepsOpen, setIsStepsOpen] = useState<boolean>(false);
   const [swappingDay, setSwappingDay] = useState<boolean>(false);
 
+  // Henter effektivt inventar ved å flette base-inventar med userDashboard (ALDRI rå u-synket localStorage!)
+  const getEffectiveInventory = async (): Promise<InventoryItem[]> => {
+    let baseItems: InventoryItem[] = [];
+    if (userDashboard?.customInventoryItems && Array.isArray(userDashboard.customInventoryItems) && userDashboard.customInventoryItems.length > 0) {
+      baseItems = [...userDashboard.customInventoryItems];
+    } else {
+      try {
+        const res = await fetch('./data/inventory.json')
+          .catch(() => fetch('/matplanpluss/data/inventory.json'))
+          .catch(() => fetch('/data/inventory.json'));
+        if (res.ok) {
+          baseItems = (await res.json()) as InventoryItem[];
+        }
+      } catch {}
+    }
+
+    if (userDashboard?.inventoryStockMap && baseItems.length > 0) {
+      return syncInventoryWithUserStock(baseItems, userDashboard.inventoryStockMap);
+    }
+    return baseItems;
+  };
+
+  // Oppdaterer inStock-flagg på alle ingredienser i en ukeplan basert på brukerens inventoryStockMap
+  const applyStockMapToPlan = (plan: WeeklyMealPlanResponse, stockMap?: Record<string, boolean>): WeeklyMealPlanResponse => {
+    if (!stockMap || Object.keys(stockMap).length === 0) return plan;
+    const updatedDays = plan.days.map((day) => ({
+      ...day,
+      ingredients: day.ingredients.map((ing) => {
+        const ingId = ing.name.toLowerCase().trim().replace(/[^a-z0-9æøå]/gi, '-');
+        const inStock = stockMap[ingId] !== undefined ? stockMap[ingId] : ing.inStock;
+        return { ...ing, inStock };
+      })
+    }));
+    return {
+      ...plan,
+      days: updatedDays
+    };
+  };
+
   // Bytt ut dagens rett med en alternativ nøytral/tilbudsbasert oppskrift uten å måtte velge land
-  const handleSwapCurrentDayRecipe = () => {
+  const handleSwapCurrentDayRecipe = async () => {
     if (!mealPlanData?.days || !currentDay) return;
     setSwappingDay(true);
 
-    let inventory: InventoryItem[] = [];
-    try {
-      const invSaved = localStorage.getItem('user_inventory');
-      if (invSaved) inventory = JSON.parse(invSaved);
-    } catch {}
+    const inventory = await getEffectiveInventory();
 
     const usedTitles = mealPlanData.days
       .filter((d) => d.dayNumber !== currentDay.dayNumber)
@@ -222,11 +257,12 @@ export default function MealPlanView({
     setLoading(true);
     setError(null);
 
-    // 0. Sjekk om sky-dashboardet har en customMealPlan – da skal den alltid prioriteres!
+    // 0. Sjekk om sky-dashboardet har en customMealPlan – da skal den alltid prioriteres og synkroniseres med inventoryStockMap!
     if (userDashboard?.customMealPlan?.days && userDashboard.customMealPlan.days.length > 0) {
-      setMealPlanData(userDashboard.customMealPlan);
+      const synchedPlan = applyStockMapToPlan(userDashboard.customMealPlan, userDashboard.inventoryStockMap);
+      setMealPlanData(synchedPlan);
       setLoading(false);
-      onPlanUpdated?.(userDashboard.customMealPlan);
+      onPlanUpdated?.(synchedPlan);
       return;
     }
 
@@ -236,12 +272,7 @@ export default function MealPlanView({
       if (res.ok) {
         const data = await res.json();
         if (data.mealPlan) {
-          // Send gjennom dynamic scaler for å hensynta chefModes hvis til stede
-          let inventory: InventoryItem[] = [];
-          try {
-            const invSaved = localStorage.getItem('user_inventory');
-            if (invSaved) inventory = JSON.parse(invSaved);
-          } catch {}
+          const inventory = await getEffectiveInventory();
 
           const scaled = scaleMealPlanToMacroTargets(
             data.mealPlan.days,
@@ -255,6 +286,13 @@ export default function MealPlanView({
           if (typeof window !== 'undefined') {
             localStorage.setItem('user_mealplan', JSON.stringify(scaled));
           }
+          // Lagre den genererte ukeplanen i Supabase sky for innlogget bruker så både Mac og iPhone ser samme plan umiddelbart!
+          if (currentUser?.id) {
+            saveUserDashboard(currentUser.id, {
+              email: currentUser.email,
+              customMealPlan: scaled
+            }).catch(() => {});
+          }
           onPlanUpdated?.(scaled);
           return;
         }
@@ -263,16 +301,12 @@ export default function MealPlanView({
     } catch {
       // 2. Fallback til statisk public/data/default-mealplan.json
       try {
-        const staticRes = await fetch('./data/default-mealplan.json').catch(() =>
-          fetch('/data/default-mealplan.json')
-        );
+        const staticRes = await fetch('./data/default-mealplan.json')
+          .catch(() => fetch('/matplanpluss/data/default-mealplan.json'))
+          .catch(() => fetch('/data/default-mealplan.json'));
         if (staticRes.ok) {
           const staticData = (await staticRes.json()) as WeeklyMealPlanResponse;
-          let inventory: InventoryItem[] = [];
-          try {
-            const invSaved = localStorage.getItem('user_inventory');
-            if (invSaved) inventory = JSON.parse(invSaved);
-          } catch {}
+          const inventory = await getEffectiveInventory();
 
           const scaled = scaleMealPlanToMacroTargets(
             staticData.days,
@@ -284,6 +318,12 @@ export default function MealPlanView({
           setMealPlanData(scaled);
           if (typeof window !== 'undefined') {
             localStorage.setItem('user_mealplan', JSON.stringify(scaled));
+          }
+          if (currentUser?.id) {
+            saveUserDashboard(currentUser.id, {
+              email: currentUser.email,
+              customMealPlan: scaled
+            }).catch(() => {});
           }
           onPlanUpdated?.(scaled);
           return;
