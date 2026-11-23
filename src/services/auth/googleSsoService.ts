@@ -337,6 +337,16 @@ export function getCurrentAuthSession(): AuthSession | null {
     }
 
     activeInMemorySession = parsed;
+    // Bug C fiks: Oppgrader automatisk e-post-baserte profiler med pen formatering hvis de har rått brukernavn
+    if (parsed.user && parsed.user.email && !parsed.user.id.startsWith('demo_')) {
+      const formatted = formatDisplayNameFromEmail(parsed.user.email);
+      if (parsed.user.name === parsed.user.email.split('@')[0] || parsed.user.name === 'Innlogget Bruker') {
+        parsed.user.name = formatted.name;
+        parsed.user.givenName = formatted.givenName;
+        // Lagre oppgradert sesjon tilbake
+        window.localStorage.setItem(STORAGE_AUTH_SESSION_KEY, JSON.stringify(parsed));
+      }
+    }
     return parsed;
   } catch (err) {
     console.warn('[GoogleSSO] Feil ved lesing av sesjon fra localStorage:', err);

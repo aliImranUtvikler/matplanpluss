@@ -231,7 +231,7 @@ export default function HomePage() {
         }
       });
     }
-  }, [currentUser]);
+  }, [currentUser, authInitialized]);
 
   // Håndter oppdatering av dashboard fra preferanser eller andre visninger
   const handleDashboardUpdated = (updated: UserDashboardData) => {
@@ -264,7 +264,7 @@ export default function HomePage() {
     if (!customEmail.trim()) return;
     const session = signInWithGoogleProfile({
       email: customEmail.trim(),
-      name: customName.trim() || customEmail.split('@')[0]
+      name: customName.trim() || undefined
     });
     setCurrentUser(session.user);
     setCustomEmail('');
